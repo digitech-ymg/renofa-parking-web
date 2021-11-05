@@ -5,12 +5,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "check": "npm-run-all -l -c check:*",
-    "check:lint": "next lint",
-    "check:format": "prettier --check . --write --ignore-path .gitignore",
+    "inspect": "npm-run-all -l -c inspect:*",
+    "inspect:lint": "next lint",
+    "inspect:format": "prettier --check . --ignore-path .gitignore",
     "fix": "npm-run-all -l -c fix:*",
     "fix:lint": "next lint --fix",
-    "fix:format": "yarn check:format --write"
+    "fix:format": "yarn check:format --write",
+    "prepare": "husky install"
   },
   "dependencies": {
     "next": "12.0.2",
