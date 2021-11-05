@@ -1,0 +1,25 @@
+{
+  "recommendations": [
+    "formulahendry.auto-rename-tag",
+    "coenraads.bracket-pair-colorizer",
+    "irongeek.vscode-env",
+    "dsznajder.es7-react-js-snippets",
+    "dbaeumer.vscode-eslint",
+    "mhutchie.git-graph",
+    "github.vscode-pull-request-github",
+    "eamodio.gitlens",
+    "vtrois.gitmoji-vscode",
+    "oderwat.indent-rainbow",
+    "ms-ceintl.vscode-language-pack-ja",
+    "bierner.markdown-preview-github-styles",
+    "davidanson.vscode-markdownlint",
+    "pnp.polacode",
+    "esbenp.prettier-vscode",
+    "gruntfuggly.todo-tree",
+    "shardulm94.trailing-spaces",
+    "visualstudioexptteam.vscodeintellicode",
+    "vscode-icons-team.vscode-icons",
+    "tomoki1207.pdf",
+    "mosapride.zenkaku"
+  ]
+}
