@@ -10,7 +10,7 @@
     "inspect:format": "prettier --check . --ignore-path .gitignore",
     "fix": "npm-run-all -l -c fix:*",
     "fix:lint": "next lint --fix",
-    "fix:format": "yarn check:format --write",
+    "fix:format": "yarn inspect:format --write",
     "prepare": "husky install"
   },
   "dependencies": {
