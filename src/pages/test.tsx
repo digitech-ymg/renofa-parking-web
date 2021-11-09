@@ -15,8 +15,8 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Box bg="tomato" w="100%" p={4} color="white">
-        Yoshidomi test
+      <Box bg="tomato" w="100%" p={4} color="yellow">
+        吉冨　テストです
       </Box>
 
       <main className={styles.main}>
