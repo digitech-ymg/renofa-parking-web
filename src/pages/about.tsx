@@ -5,7 +5,6 @@ import {
   Heading,
   Text,
   Image,
-  Center,
   Link,
   Flex,
   UnorderedList,
@@ -25,22 +24,20 @@ const About: NextPage = () => {
           YAMAGUCHI」の共創プロジェクトの1つです。個人会員による活動として初の試みとなっています。
         </Text>
       </Box>
-      <Box my={4}>
-        <Flex flexDirection="column">
-          <Center>
-            <Image
-              width="50%"
-              objectFit="cover"
-              src="/img/about-digitech-card.png"
-              alt="デジテックのカード画像"
-            />
-            <Link mt={1} fontSize="xs" href="https://digitech-ymg.org/project" isExternal>
-              デジテックのプロジェクトページ <ExternalLinkIcon mx="2px" />
-            </Link>
-          </Center>
+      <Box my={8}>
+        <Flex flexDirection="column" align="center">
+          <Image
+            width="50%"
+            objectFit="cover"
+            src="/img/about-digitech-card.png"
+            alt="デジテックのカード画像"
+          />
+          <Link mt={1} fontSize="xs" href="https://digitech-ymg.org/project" isExternal>
+            デジテックのプロジェクトページ <ExternalLinkIcon mx="2px" />
+          </Link>
         </Flex>
       </Box>
-      <Box my={4}>
+      <Box my={8}>
         <Text fontSize="sm">
           レノファ山口FCのホームスタジアムにご来場されるサポーターの皆さまに、試合当日の駐車場情報をわかりやすく伝えることで、スムーズなご来場や渋滞緩和、主催側の効率的な運営に資することを目的としています。
           当サイトのプログラムをはじめ、開発の情報を全て公開しています。
@@ -54,8 +51,8 @@ const About: NextPage = () => {
           https://github.com/digitech-ymg/renofa-parking-web <ExternalLinkIcon mx="2px" />
         </Link>
       </Box>
-      <Box my={4}>
-        <Heading as="h2" fontSize="lg">
+      <Box my={8}>
+        <Heading as="h2" fontSize="lg" my={2}>
           ＜免責事項＞
         </Heading>
         <UnorderedList fontSize="sm">
