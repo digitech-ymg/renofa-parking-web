@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@svgr/webpack": "^5.5.0",
+    "@types/gtag.js": "^0.0.8",
     "@types/node": "16.11.6",
     "@types/react": "17.0.34",
     "eslint": "7",
