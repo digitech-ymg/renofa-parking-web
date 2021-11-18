@@ -14,7 +14,7 @@ import { ExternalLinkIcon } from "@chakra-ui/icons";
 
 const About: NextPage = () => {
   return (
-    <Container my={8}>
+    <Container py={8} bgColor="white" color="black">
       <Heading as="h1" fontSize="xl" my={4}>
         このサイトについて
       </Heading>
