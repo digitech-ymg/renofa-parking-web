@@ -1,5 +1,5 @@
 import type { VFC } from "react";
-import { Box, Center, Heading } from "@chakra-ui/react";
+import { Center, Heading } from "@chakra-ui/react";
 
 const RenofaBanner: VFC = () => {
   return (

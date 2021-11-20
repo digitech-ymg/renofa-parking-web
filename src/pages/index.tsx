@@ -8,7 +8,7 @@ import RenofaBanner from "@/components/RenofaBanner";
 const Top: NextPage = () => {
   return (
     <Container bgColor="white">
-      <Box pt={5} mb={5}>
+      <Box mt={5} mb={5}>
         <Link href="/about">
           <SiteDescription />
         </Link>
@@ -16,7 +16,7 @@ const Top: NextPage = () => {
       <Box mb={5}>
         <ParkingList />
       </Box>
-      <Box pt={5} mb={5}>
+      <Box mt={5} mb={5}>
         <Link href="https://www.renofa.com/" isExternal>
           <RenofaBanner />
         </Link>

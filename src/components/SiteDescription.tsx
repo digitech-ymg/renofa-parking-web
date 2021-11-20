@@ -1,4 +1,4 @@
-import { Center, Square, Circle, Heading, Text, Box } from "@chakra-ui/react";
+import { Center, Heading, Text, Box } from "@chakra-ui/react";
 import { InfoIcon } from "@chakra-ui/icons";
 import type { VFC } from "react";
 
@@ -6,7 +6,7 @@ const SiteDescription: VFC = () => {
   return (
     <Center bg="white" h="72px" color="black" border="1px" borderColor="gray.200">
       <InfoIcon w={8} h={8} color="gray.500" />
-      <Box ml="3">
+      <Box pl="3">
         <Heading as="h5" size="sm">
           このサイトについて
         </Heading>
