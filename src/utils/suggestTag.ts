@@ -5,7 +5,7 @@ type Tag = {
   color: string;
 };
 
-export const suggestTag = (now: Date, parking: Parking): { tag: Tag } => {
+export const suggestTag = (now: Date, parking: Parking): Tag => {
   let tag: Tag;
   const parkingOpenTime = new Date(parking.openAt);
   const parkingCloseTime = new Date(parking.closeAt);
@@ -22,7 +22,5 @@ export const suggestTag = (now: Date, parking: Parking): { tag: Tag } => {
     }
   }
 
-  return {
-    tag: tag,
-  };
+  return tag;
 };

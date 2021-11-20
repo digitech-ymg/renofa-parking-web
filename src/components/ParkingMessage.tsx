@@ -9,7 +9,7 @@ type Props = {
 };
 
 const ParkingMessage: VFC<Props> = ({ parking }) => {
-  const { tag } = suggestTag(new Date(), parking);
+  const tag = suggestTag(new Date(), parking);
   const message = suggestMessage(new Date(), parking);
 
   return (
