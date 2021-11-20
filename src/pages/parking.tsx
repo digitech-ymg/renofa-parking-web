@@ -28,20 +28,19 @@ const Parking: NextPage = () => {
     return (
       <Box bgColor="white">
         <Container h="100vh">
-          <Box pt={5} mb={5}>
-            <Select
-              color="gray.700"
-              borderColor="gray.200"
-              defaultValue={selectedParking.key}
-              onChange={handleChange}
-            >
-              {parkings.map((parking) => (
-                <option key={parking.key} value={parking.key}>
-                  {parking.name}
-                </option>
-              ))}
-            </Select>
-          </Box>
+          <Select
+            color="gray.700"
+            borderColor="gray.200"
+            defaultValue={selectedParking.key}
+            onChange={handleChange}
+            py={5}
+          >
+            {parkings.map((parking) => (
+              <option key={parking.key} value={parking.key}>
+                {parking.name}
+              </option>
+            ))}
+          </Select>
           <ParkingMessage parking={selectedParking} />
         </Container>
       </Box>
