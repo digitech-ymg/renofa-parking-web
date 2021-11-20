@@ -26,23 +26,25 @@ const Parking: NextPage = () => {
 
   if (selectedParking) {
     return (
-      <Container h="100vh" bgColor="white">
-        <Box pt={5} mb={5}>
-          <Select
-            color="gray.700"
-            borderColor="gray.200"
-            defaultValue={selectedParking.key}
-            onChange={handleChange}
-          >
-            {parkings.map((parking) => (
-              <option key={parking.key} value={parking.key}>
-                {parking.name}
-              </option>
-            ))}
-          </Select>
-        </Box>
-        <ParkingMessage parking={selectedParking} />
-      </Container>
+      <Box bgColor="white">
+        <Container h="100vh">
+          <Box pt={5} mb={5}>
+            <Select
+              color="gray.700"
+              borderColor="gray.200"
+              defaultValue={selectedParking.key}
+              onChange={handleChange}
+            >
+              {parkings.map((parking) => (
+                <option key={parking.key} value={parking.key}>
+                  {parking.name}
+                </option>
+              ))}
+            </Select>
+          </Box>
+          <ParkingMessage parking={selectedParking} />
+        </Container>
+      </Box>
     );
   } else {
     return <>loading...</>;
