@@ -36,20 +36,61 @@ const ParkingMessage: VFC<Props> = ({ parking }) => {
   const predictPercentage = (now: Date, predicts: Predict[]): number => {
     let predictPercent: number = 0;
 
-    predicts.map((predict) => {
-      const predictDate = new Date(predict.at);
+    for (let i = 0; i < predicts.length; i++) {
+      const predictDate = new Date(predicts[i].at);
       if (now.getTime() < predictDate.getTime()) {
-        predictPercent = predict.ratio * 100;
+        predictPercent = predicts[i].ratio * 100;
+        break;
       }
-    });
+    }
 
     return predictPercent;
   };
 
+  const suggestTagLabel = (now: Date, parking: Parking): string => {
+    const parkingOpenTime = new Date(parking.openAt);
+    const parkingCloseTime = new Date(parking.closeAt);
+
+    if (now.getTime() < parkingOpenTime.getTime()) {
+      return "開場前";
+    } else if (now.getTime() > parkingCloseTime.getTime()) {
+      return "閉場";
+    } else {
+      if (parking.status === "full") {
+        return "満車";
+      } else {
+        return "空きあり";
+      }
+    }
+  };
+
+  const suggestTagColor = (now: Date, parking: Parking) => {
+    const parkingOpenTime = new Date(parking.openAt);
+    const parkingCloseTime = new Date(parking.closeAt);
+
+    if (now.getTime() < parkingOpenTime.getTime()) {
+      return "blue.300";
+    } else if (now.getTime() > parkingCloseTime.getTime()) {
+      return "red.500";
+    } else {
+      if (parking.status === "full") {
+        return "red.500";
+      } else {
+        return "teal.500";
+      }
+    }
+  };
+
   return (
     <Box boxShadow="xs" py={3} px={5}>
-      <Tag size="sm" bgColor="blue.300" fontWeight="bold" color="white" mb={1}>
-        開場前
+      <Tag
+        size="sm"
+        bgColor={suggestTagColor(new Date(), parking)}
+        fontWeight="bold"
+        color="white"
+        mb={1}
+      >
+        {suggestTagLabel(new Date(), parking)}
       </Tag>
       <Text color="black" fontSize="sm">
         {suggestMessage(new Date(), parking)}
