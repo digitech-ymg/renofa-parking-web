@@ -1,4 +1,4 @@
-import type { GetServerSidePropsContext, InferGetServerSidePropsType, NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import { Select } from "@chakra-ui/select";
 import { Container } from "@chakra-ui/layout";
 import data from "@/data/data.json";
@@ -7,7 +7,9 @@ import { ChangeEvent, useState } from "react";
 import { Parking } from "@/types/Parking";
 import ParkingMessage from "@/components/ParkingMessage";
 
-type Props = InferGetServerSidePropsType<typeof getServerSideProps>;
+type Props = {
+  parking: Parking;
+};
 
 const Parking: NextPage<Props> = ({ parking }) => {
   const [selectedParking, setSelectedParking] = useState<Parking>(parking);
@@ -22,7 +24,12 @@ const Parking: NextPage<Props> = ({ parking }) => {
   return (
     <Container h="100vh" bgColor="white">
       <Box pt={5} mb={5}>
-        <Select color="gray.700" borderColor="gray.200" onChange={handleChange}>
+        <Select
+          color="gray.700"
+          borderColor="gray.200"
+          defaultValue={parking.key}
+          onChange={handleChange}
+        >
           {parkings.map((parking) => (
             <option key={parking.key} value={parking.key}>
               {parking.name}
