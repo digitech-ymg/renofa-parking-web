@@ -10,7 +10,7 @@ const SiteDescription: VFC = () => {
         <Heading as="h5" size="sm">
           このサイトについて
         </Heading>
-        <Text fontSize="sm">はじめての方は必ずお読みください</Text>
+        <Text fontSize="12">はじめての方は必ずお読みください</Text>
       </Box>
     </Center>
   );

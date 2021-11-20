@@ -7,13 +7,13 @@ import RenofaBanner from "@/components/RenofaBanner";
 
 const Top: NextPage = () => {
   return (
-    <Container h="100vh" bgColor="white">
+    <Container bgColor="white">
       <Box pt={5} mb={5}>
         <Link href="/about">
           <SiteDescription />
         </Link>
       </Box>
-      <Box pt={5} mb={5}>
+      <Box mb={5}>
         <ParkingList />
       </Box>
       <Box pt={5} mb={5}>

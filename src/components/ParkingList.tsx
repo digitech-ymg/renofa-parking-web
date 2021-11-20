@@ -4,12 +4,9 @@ import {
   StackDivider,
   useColorModeValue,
   Heading,
-  Center,
-  Box,
   Flex,
   Spacer,
-  Link,
-  Button,
+  Box,
 } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import data from "@/data/data.json";
@@ -22,7 +19,7 @@ const ParkingList: VFC = () => {
   const router = useRouter();
   return (
     <Stack
-      spacing={4}
+      spacing={5}
       divider={<StackDivider borderColor={useColorModeValue("gray.100", "gray.700")} />}
     >
       {parkings.map((parking) => (
@@ -30,8 +27,8 @@ const ParkingList: VFC = () => {
           key={parking.key}
           onClick={() => {
             router.push({
-              pathname: "/parking", //URL
-              query: { parking: parking.key }, //検索クエリ
+              pathname: "/parking",
+              query: { parking: parking.key },
             });
           }}
         >
