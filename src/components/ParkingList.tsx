@@ -30,6 +30,7 @@ const ParkingList: VFC = () => {
               query: { parking: parking.key },
             });
           }}
+          cursor="pointer"
         >
           <Flex>
             <Heading as="h5" size="sm" pl="3">
