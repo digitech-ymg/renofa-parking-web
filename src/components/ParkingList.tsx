@@ -12,11 +12,10 @@ import { ChevronRightIcon } from "@chakra-ui/icons";
 import data from "@/data/data.json";
 import { useRouter } from "next/router";
 
-const parkings = data.parkings;
-console.info(parkings);
-
 const ParkingList: VFC = () => {
   const router = useRouter();
+  const parkings = data.parkings;
+
   return (
     <Stack
       spacing={5}
@@ -33,7 +32,7 @@ const ParkingList: VFC = () => {
           }}
         >
           <Flex>
-            <Heading as="h5" size="sm" ml="3">
+            <Heading as="h5" size="sm" pl="3">
               {parking.name}
             </Heading>
             <Spacer />
