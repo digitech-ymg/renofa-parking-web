@@ -1,4 +1,5 @@
 import { Parking } from "@/types/Parking";
+import { Predict } from "@/types/Predict";
 import { Box, Tag, Text } from "@chakra-ui/react";
 import { VFC } from "react";
 
@@ -7,7 +8,7 @@ type Props = {
 };
 
 const ParkingMessage: VFC<Props> = ({ parking }) => {
-  const suggestMessage = (now: Date, parking: Parking) => {
+  const suggestMessage = (now: Date, parking: Parking): string => {
     const parkingOpenTime = new Date(parking.openAt);
     const parkingCloseTime = new Date(parking.closeAt);
 
@@ -18,8 +19,31 @@ const ParkingMessage: VFC<Props> = ({ parking }) => {
       // 閉場後
       return "閉場しました。";
     } else {
-      return "開場中";
+      if (parking.status === "full") {
+        // 満車時
+        return "既に満車です。\n他の駐車場をご検討ください。";
+      } else {
+        // 現状の埋まり具合と予測
+        const fullTime = new Date(parking.predicts.slice(-1)[0].at);
+        const fullHour = fullTime.getHours();
+        const fullMinute = fullTime.getMinutes();
+        const percent = predictPercentage(now, parking.predicts);
+        return `現在、${percent}%が埋まっています。\n${fullHour}時${fullMinute}分に満車になりそうです。`;
+      }
     }
+  };
+
+  const predictPercentage = (now: Date, predicts: Predict[]): number => {
+    let predictPercent: number = 0;
+
+    predicts.map((predict) => {
+      const predictDate = new Date(predict.at);
+      if (now.getTime() < predictDate.getTime()) {
+        predictPercent = predict.ratio * 100;
+      }
+    });
+
+    return predictPercent;
   };
 
   return (
