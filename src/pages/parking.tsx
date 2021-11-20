@@ -2,7 +2,7 @@ import type { GetServerSidePropsContext, InferGetServerSidePropsType, NextPage }
 import { Select } from "@chakra-ui/select";
 import { Container } from "@chakra-ui/layout";
 import data from "@/data/data.json";
-import { Box, Tag, Text } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { ChangeEvent, useState } from "react";
 import { Parking } from "@/types/Parking";
 import ParkingMessage from "@/components/ParkingMessage";
