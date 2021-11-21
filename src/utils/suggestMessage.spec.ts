@@ -50,15 +50,21 @@ describe("suggestMessage", () => {
     );
   });
 
-  it("開場の中間", () => {
+  it("開場の予測地点ピッタリ", () => {
     expect(suggestMessage(new Date("2021-11-28T11:30:00"), parkingBase)).toBe(
       "現在、44%が埋まっています。\n13時0分に満車になりそうです。"
     );
   });
 
+  it("開場の予測地点中間", () => {
+    expect(suggestMessage(new Date("2021-11-28T11:45:00"), parkingBase)).toBe(
+      "現在、61%が埋まっています。\n13時0分に満車になりそうです。"
+    );
+  });
+
   it("開場の満車直前", () => {
     expect(suggestMessage(new Date("2021-11-28T12:59:59"), parkingBase)).toBe(
-      "現在、93%が埋まっています。\n13時0分に満車になりそうです。"
+      "現在、99%が埋まっています。\n13時0分に満車になりそうです。"
     );
   });
 
