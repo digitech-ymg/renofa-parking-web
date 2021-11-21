@@ -8,11 +8,11 @@
     "inspect": "npm-run-all -l -c inspect:*",
     "inspect:lint": "next lint --dir src",
     "inspect:format": "prettier --check . --ignore-path .gitignore",
+    "inspect:test": "jest",
     "fix": "npm-run-all -l -c fix:*",
     "fix:lint": "next lint --dir src --fix",
     "fix:format": "yarn inspect:format --write",
-    "prepare": "husky install",
-    "test": "jest"
+    "prepare": "husky install"
   },
   "dependencies": {
     "@chakra-ui/icons": "^1.1.1",
