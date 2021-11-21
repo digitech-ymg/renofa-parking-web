@@ -5,10 +5,13 @@ export const suggestMessage = (now: Date, parking: Parking): string => {
   const parkingOpenTime = new Date(parking.openAt);
   const parkingCloseTime = new Date(parking.closeAt);
 
-  if (now.getTime() < parkingOpenTime.getTime()) {
+  if (parking.status === "disable") {
+    // 未開放
+    return "開放していません。";
+  } else if (now.getTime() < parkingOpenTime.getTime()) {
     // 開場前
     return `開場前です。\n${parkingOpenTime.getHours()}時に開場します。`;
-  } else if (now.getTime() > parkingCloseTime.getTime()) {
+  } else if (now.getTime() >= parkingCloseTime.getTime()) {
     // 閉場後
     return "閉場しました。";
   } else {
@@ -21,21 +24,28 @@ export const suggestMessage = (now: Date, parking: Parking): string => {
       const fullHour = fullTime.getHours();
       const fullMinute = fullTime.getMinutes();
       const percent = suggestPercent(now, parking.predicts);
-      return `現在、${percent}%が埋まっています。\n${fullHour}時${fullMinute}分に満車になりそうです。`;
+      if (percent >= 100) {
+        return "既に満車です。\n他の駐車場をご検討ください。";
+      } else {
+        return `現在、${percent}%が埋まっています。\n${fullHour}時${fullMinute}分に満車になりそうです。`;
+      }
     }
   }
 };
 
 const suggestPercent = (now: Date, predicts: Predict[]): number => {
-  let percent: number = 0;
+  if (predicts.length === 0) {
+    return 0;
+  }
 
-  for (let i = 0; i < predicts.length; i++) {
+  // 予測は時系列の昇順で並んでいる前提で、後ろから対象時間を過ぎているか探す
+  for (let i = predicts.length - 1; i >= 0; i--) {
     const predictDate = new Date(predicts[i].at);
-    if (now.getTime() < predictDate.getTime()) {
-      percent = predicts[i].ratio * 100;
-      break;
+    if (now.getTime() >= predictDate.getTime()) {
+      return predicts[i].ratio * 100;
     }
   }
 
-  return percent;
+  // 予測時間前ということで0
+  return 0;
 };
