@@ -4,6 +4,7 @@ import { Container, Box, Link } from "@chakra-ui/react";
 import SiteDescription from "@/components/SiteDescription";
 import ParkingList from "@/components/ParkingList";
 import RenofaBanner from "@/components/RenofaBanner";
+import Game from "@/components/Game";
 
 const Top: NextPage = () => {
   return (
@@ -12,6 +13,9 @@ const Top: NextPage = () => {
         <Link href="/about">
           <SiteDescription />
         </Link>
+      </Box>
+      <Box mb={5}>
+        <Game />
       </Box>
       <Box mb={5}>
         <ParkingList />
