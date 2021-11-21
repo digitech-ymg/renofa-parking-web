@@ -38,12 +38,32 @@ const suggestPercent = (now: Date, predicts: Predict[]): number => {
     return 0;
   }
 
-  // 予測は時系列の昇順で並んでいる前提で、後ろから対象時間を過ぎているか探す
-  for (let i = predicts.length - 1; i >= 0; i--) {
-    const predictDate = new Date(predicts[i].at);
-    if (now.getTime() >= predictDate.getTime()) {
-      return predicts[i].ratio * 100;
+  const timeNow = now.getTime();
+
+  // 予測は時系列の昇順で並んでいる前提
+  // 最後尾を越えていたら最後尾がそのまま継続しているとして、最後尾を返す
+  let predictAbove = predicts[predicts.length - 1];
+  if (timeNow >= new Date(predictAbove.at).getTime()) {
+    return predictAbove.ratio * 100;
+  }
+
+  // 後尾2つ目から探すので必ず2点の補完になる
+  for (let i = predicts.length - 2; i >= 0; i--) {
+    // 過ぎた地点が下位側
+    const timeBelow = new Date(predicts[i].at).getTime();
+    const ratioBelow = predicts[i].ratio;
+    if (timeNow >= timeBelow) {
+      // 過ぎてない地点が上位側
+      const timeAbove = new Date(predictAbove.at).getTime();
+      const ratioAbove = predictAbove.ratio;
+      // 線形補完
+      const weightBelow = (timeAbove - timeNow) / (timeAbove - timeBelow);
+      const weightAbove = (timeNow - timeBelow) / (timeAbove - timeBelow);
+      const ratio = ratioBelow * weightBelow + ratioAbove * weightAbove;
+      return Math.floor(ratio * 100);
     }
+
+    predictAbove = predicts[i];
   }
 
   // 予測時間前ということで0
