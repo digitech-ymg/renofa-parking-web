@@ -44,7 +44,11 @@ const Parking: NextPage = () => {
           <ParkingMessage parking={selectedParking} />
           <Stack my={5}>
             {selectedParking.images.map((image, index) => (
-              <Image key={index} src={image} alt={`${selectedParking.name}の画像${index + 1}枚目`} />
+              <Image
+                key={index}
+                src={image}
+                alt={`${selectedParking.name}の画像${index + 1}枚目`}
+              />
             ))}
           </Stack>
         </Container>
