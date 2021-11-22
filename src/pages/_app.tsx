@@ -1,5 +1,6 @@
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
+import Head from "next/head";
 import Script from "next/script";
 import { useEffect } from "react";
 import { ChakraProvider } from "@chakra-ui/react";
@@ -36,6 +37,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           });
         `}
       </Script>
+      <Head>
+        <title>レノファ駐車場情報サイト</title>
+      </Head>
       <ChakraProvider>
         <Header />
         <Component {...pageProps} />
