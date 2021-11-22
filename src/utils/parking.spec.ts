@@ -1,6 +1,5 @@
 import type { Parking } from "@/types/Parking";
-import type { Predict } from "@/types/Predict";
-import { State, parkingState } from "./parking";
+import { State, parkingState, parkingFillDate } from "./parking";
 
 const parkingBase: Parking = {
   key: "truck",
@@ -84,5 +83,27 @@ describe("parkingState", () => {
       State.Disable,
       0,
     ]);
+  });
+});
+
+describe("parkingFillDate", () => {
+  it("満車時刻あり", () => {
+    expect(parkingFillDate(parkingBase)).toEqual(new Date(2021, 10, 28, 13));
+  });
+
+  it("満車時刻なし", () => {
+    const parkingNoFill = Object.assign(parkingBase, {
+      predicts: [
+        { at: "2021-11-28T08:00:00", ratio: 0.0 },
+        { at: "2021-11-28T12:00:00", ratio: 0.1 },
+        { at: "2021-11-28T13:00:00", ratio: 0.2 },
+      ],
+    });
+    expect(parkingFillDate(parkingBase)).toBeNull();
+  });
+
+  it("予測なし", () => {
+    const parkingNoFill = Object.assign(parkingBase, { predicts: [] });
+    expect(parkingFillDate(parkingBase)).toBeNull();
   });
 });
