@@ -1,33 +1,41 @@
 import type { Parking } from "@/types/Parking";
 import type { Predict } from "@/types/Predict";
 
-export const suggestMessage = (now: Date, parking: Parking): string => {
-  const parkingOpenTime = new Date(parking.openAt);
-  const parkingCloseTime = new Date(parking.closeAt);
+export const State = {
+  Disable: "disable",
+  BeforeOpen: "beforeOpen",
+  Opened: "opened",
+  Filled: "filled",
+  AfterClosed: "afterClosed",
+} as const;
 
+export type ParkingState = typeof State[keyof typeof State];
+
+export const parkingState = (
+  now: Date,
+  parking: Parking
+): [state: ParkingState, percent: number] => {
   if (parking.status === "disable") {
     // 未開放
-    return "開放していません。";
-  } else if (now.getTime() < parkingOpenTime.getTime()) {
+    return [State.Disable, 0];
+  } else if (now.getTime() < new Date(parking.openAt).getTime()) {
     // 開場前
-    return `開場前です。\n${parkingOpenTime.getHours()}時に開場します。`;
-  } else if (now.getTime() >= parkingCloseTime.getTime()) {
+    return [State.BeforeOpen, 0];
+  } else if (now.getTime() >= new Date(parking.closeAt).getTime()) {
+    const close = parking.closeAt;
     // 閉場後
-    return "閉場しました。";
+    return [State.AfterClosed, 0];
   } else {
     if (parking.status === "full") {
       // 満車時
-      return "既に満車です。\n他の駐車場をご検討ください。";
+      return [State.Filled, 100];
     } else {
       // 現状の埋まり具合と予測
-      const fullTime = new Date(parking.predicts.slice(-1)[0].at);
-      const fullHour = fullTime.getHours();
-      const fullMinute = fullTime.getMinutes();
       const percent = suggestPercent(now, parking.predicts);
       if (percent >= 100) {
-        return "既に満車です。\n他の駐車場をご検討ください。";
+        return [State.Filled, 100];
       } else {
-        return `現在、${percent}%が埋まっています。\n${fullHour}時${fullMinute}分に満車になりそうです。`;
+        return [State.Opened, percent];
       }
     }
   }
@@ -68,4 +76,14 @@ const suggestPercent = (now: Date, predicts: Predict[]): number => {
 
   // 予測時間前ということで0
   return 0;
+};
+
+export const parkingFillDate = (parking: Parking): Date | null => {
+  for (let i = 0; i < parking.predicts.length; i++) {
+    if (parking.predicts[i].ratio >= 1.0) {
+      return new Date(parking.predicts[i].at);
+    }
+  }
+
+  return null;
 };

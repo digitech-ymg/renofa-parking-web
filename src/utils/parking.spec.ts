@@ -1,6 +1,6 @@
 import type { Parking } from "@/types/Parking";
 import type { Predict } from "@/types/Predict";
-import { suggestMessage } from "./suggestMessage";
+import { State, parkingState } from "./parking";
 
 const parkingBase: Parking = {
   key: "truck",
@@ -31,64 +31,58 @@ const parkingBase: Parking = {
   images: ["/img/parking-truck1.jpg", "/img/parking-truck2.jpg"],
 };
 
-describe("suggestMessage", () => {
+describe("parkingState", () => {
   it("開場の前日", () => {
-    expect(suggestMessage(new Date("2021-11-27T00:00:00"), parkingBase)).toBe(
-      "開場前です。\n8時に開場します。"
-    );
+    expect(parkingState(new Date("2021-11-27T00:00:00"), parkingBase)).toEqual([
+      State.BeforeOpen,
+      0,
+    ]);
   });
 
   it("開場の直前", () => {
-    expect(suggestMessage(new Date("2021-11-28T07:59:59"), parkingBase)).toBe(
-      "開場前です。\n8時に開場します。"
-    );
+    expect(parkingState(new Date("2021-11-28T07:59:59"), parkingBase)).toEqual([
+      State.BeforeOpen,
+      0,
+    ]);
   });
 
   it("開場の直後", () => {
-    expect(suggestMessage(new Date("2021-11-28T08:00:00"), parkingBase)).toBe(
-      "現在、0%が埋まっています。\n13時0分に満車になりそうです。"
-    );
+    expect(parkingState(new Date("2021-11-28T08:00:00"), parkingBase)).toEqual([State.Opened, 0]);
   });
 
   it("開場の予測地点ピッタリ", () => {
-    expect(suggestMessage(new Date("2021-11-28T11:30:00"), parkingBase)).toBe(
-      "現在、44%が埋まっています。\n13時0分に満車になりそうです。"
-    );
+    expect(parkingState(new Date("2021-11-28T11:30:00"), parkingBase)).toEqual([State.Opened, 44]);
   });
 
   it("開場の予測地点中間", () => {
-    expect(suggestMessage(new Date("2021-11-28T11:45:00"), parkingBase)).toBe(
-      "現在、61%が埋まっています。\n13時0分に満車になりそうです。"
-    );
+    expect(parkingState(new Date("2021-11-28T11:45:00"), parkingBase)).toEqual([State.Opened, 61]);
   });
 
   it("開場の満車直前", () => {
-    expect(suggestMessage(new Date("2021-11-28T12:59:59"), parkingBase)).toBe(
-      "現在、99%が埋まっています。\n13時0分に満車になりそうです。"
-    );
+    expect(parkingState(new Date("2021-11-28T12:59:59"), parkingBase)).toEqual([State.Opened, 99]);
   });
 
   it("開場の満車直後", () => {
-    expect(suggestMessage(new Date("2021-11-28T13:00:00"), parkingBase)).toBe(
-      "既に満車です。\n他の駐車場をご検討ください。"
-    );
+    expect(parkingState(new Date("2021-11-28T13:00:00"), parkingBase)).toEqual([State.Filled, 100]);
   });
 
   it("閉場の直後", () => {
-    expect(suggestMessage(new Date("2021-11-28T18:00:00"), parkingBase)).toBe("閉場しました。");
+    expect(parkingState(new Date("2021-11-28T18:00:00"), parkingBase)).toEqual([
+      State.AfterClosed,
+      0,
+    ]);
   });
 
   it("開場中だけど、ステータスが満車", () => {
     const parkingFull = Object.assign(parkingBase, { status: "full" });
-    expect(suggestMessage(new Date("2021-11-28T12:00:00"), parkingFull)).toBe(
-      "既に満車です。\n他の駐車場をご検討ください。"
-    );
+    expect(parkingState(new Date("2021-11-28T12:00:00"), parkingFull)).toEqual([State.Filled, 100]);
   });
 
   it("使用できない（予測情報などがあって開場時間中でも無視）", () => {
     const parkingDisable = Object.assign(parkingBase, { status: "disable" });
-    expect(suggestMessage(new Date("2021-11-28T12:00:00"), parkingDisable)).toBe(
-      "開放していません。"
-    );
+    expect(parkingState(new Date("2021-11-28T12:00:00"), parkingDisable)).toEqual([
+      State.Disable,
+      0,
+    ]);
   });
 });

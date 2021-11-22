@@ -1,5 +1,7 @@
 import { Predict } from "@/types/Predict";
 
+export type ParkingStatus = "enable" | "disable" | "full";
+
 export type Parking = {
   key: string;
   name: string;
@@ -12,7 +14,7 @@ export type Parking = {
   longitude: number;
   openAt: string;
   closeAt: string;
-  status: string;
+  status: ParkingStatus;
   predicts: Predict[];
   images: string[];
 };
