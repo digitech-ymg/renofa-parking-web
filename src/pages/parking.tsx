@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import { Select } from "@chakra-ui/select";
 import { Container } from "@chakra-ui/layout";
 import data from "@/data/data.json";
-import { Box } from "@chakra-ui/react";
+import { Box, Stack, Image } from "@chakra-ui/react";
 import { ChangeEvent, useState, useEffect } from "react";
 import { Parking } from "@/types/Parking";
 import ParkingMessage from "@/components/ParkingMessage";
@@ -42,6 +42,15 @@ const Parking: NextPage = () => {
             ))}
           </Select>
           <ParkingMessage parking={selectedParking} />
+          <Stack my={5}>
+            {selectedParking.images.map((image, index) => (
+              <Image
+                key={index}
+                src={image}
+                alt={`${selectedParking.name}の画像${index + 1}枚目`}
+              />
+            ))}
+          </Stack>
         </Container>
       </Box>
     );
