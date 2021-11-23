@@ -27,7 +27,7 @@ const Parking: NextPage = () => {
   if (selectedParking) {
     return (
       <Box bgColor="white">
-        <Container h="100vh">
+        <Container>
           <Select
             color="gray.700"
             borderColor="gray.200"

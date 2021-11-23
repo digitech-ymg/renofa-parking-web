@@ -33,11 +33,11 @@ const ParkingList: VFC = () => {
           cursor="pointer"
         >
           <Flex>
-            <Heading as="h5" size="sm" pl="3">
+            <Heading as="h5" size="sm" pl="3" textColor={"black"}>
               {parking.name}
             </Heading>
             <Spacer />
-            <ChevronRightIcon mr="3" />
+            <ChevronRightIcon mr="3" color={"black"} />
           </Flex>
         </Box>
       ))}
