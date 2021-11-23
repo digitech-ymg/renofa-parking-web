@@ -1,5 +1,4 @@
 import type { NextPage } from "next";
-import { Center, Square, Circle } from "@chakra-ui/react";
 import { Container, Box, Link } from "@chakra-ui/react";
 import SiteDescription from "@/components/SiteDescription";
 import ParkingList from "@/components/ParkingList";
@@ -8,7 +7,7 @@ import Game from "@/components/Game";
 
 const Top: NextPage = () => {
   return (
-    <Container bgColor="white" my={5}>
+    <Container bgColor="white">
       <Box mt={5} mb={5}>
         <Link href="/about">
           <SiteDescription />
