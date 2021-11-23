@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import { Select } from "@chakra-ui/select";
 import { Container } from "@chakra-ui/layout";
 import data from "@/data/data.json";
-import { Box, Stack, Image } from "@chakra-ui/react";
+import { Box, VStack, Image } from "@chakra-ui/react";
 import { ChangeEvent, useState, useEffect } from "react";
 import { Parking } from "@/types/Parking";
 import ParkingMessage from "@/components/ParkingMessage";
@@ -50,7 +50,7 @@ const Parking: NextPage = () => {
               loading="lazy"
             ></iframe>
           </Box>
-          <Stack my={5}>
+          <VStack my={5}>
             {selectedParking.images.map((image, index) => (
               <Image
                 key={index}
@@ -58,7 +58,7 @@ const Parking: NextPage = () => {
                 alt={`${selectedParking.name}の画像${index + 1}枚目`}
               />
             ))}
-          </Stack>
+          </VStack>
         </Container>
       </Box>
     );
