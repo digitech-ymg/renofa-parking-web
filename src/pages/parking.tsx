@@ -50,14 +50,16 @@ const Parking: NextPage = () => {
               loading="lazy"
             ></iframe>
           </Box>
-          {selectedParking.images.map((image, index) => (
-            <Image
-              key={index}
-              src={image}
-              alt={`${selectedParking.name}の画像${index + 1}枚目`}
-              my={5}
-            />
-          ))}
+          <Box my={5}>
+            {selectedParking.images.map((image, index) => (
+              <Image
+                key={index}
+                src={image}
+                alt={`${selectedParking.name}の画像${index + 1}枚目`}
+                my={5}
+              />
+            ))}
+          </Box>
         </Container>
       </Box>
     );

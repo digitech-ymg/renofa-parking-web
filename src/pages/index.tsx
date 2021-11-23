@@ -8,7 +8,7 @@ import Game from "@/components/Game";
 
 const Top: NextPage = () => {
   return (
-    <Container bgColor="white">
+    <Container bgColor="white" my={5}>
       <Box mt={5} mb={5}>
         <Link href="/about">
           <SiteDescription />
