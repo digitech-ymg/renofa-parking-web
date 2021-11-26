@@ -16,7 +16,7 @@ const Parking: NextPage = () => {
   useEffect(() => {
     const parking = parkings.filter((parking) => parking.key === router.query.parking)[0];
     setSelectedParking(parking);
-  }, [router.query.parking]);
+  }, [parkings, router.query.parking]);
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     // 渡された key から駐車場を特定する
