@@ -48,8 +48,13 @@
       "longitude": 131.4396906,
       "openAt": "2021-11-28T11:00:00",
       "closeAt": "2021-11-28T18:00:00",
-      "status": "disable",
-      "predicts": [{ "at": "2021-11-28T11:00:00", "ratio": 0.0 }],
+      "status": "enable",
+      "predicts": [
+        { "at": "2021-11-28T11:00:00", "ratio": 0.0 },
+        { "at": "2021-11-28T11:15:00", "ratio": 0.25 },
+        { "at": "2021-11-28T11:30:00", "ratio": 0.6 },
+        { "at": "2021-11-28T11:45:00", "ratio": 1.0 }
+      ],
       "images": ["/img/parking-ja1.jpg", "/img/parking-ja2.jpg"]
     },
     {
