@@ -48,7 +48,7 @@
       "longitude": 131.4396906,
       "openAt": "2021-11-28T11:00:00",
       "closeAt": "2021-11-28T18:00:00",
-      "status": "enable",
+      "status": "full",
       "predicts": [
         { "at": "2021-11-28T11:00:00", "ratio": 0.0 },
         { "at": "2021-11-28T11:15:00", "ratio": 0.25 },
