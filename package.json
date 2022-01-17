@@ -8,6 +8,7 @@
     "inspect": "npm-run-all -l -c inspect:*",
     "inspect:lint": "next lint --dir src",
     "inspect:format": "prettier --check . --ignore-path .gitignore",
+    "inspect:test": "jest",
     "fix": "npm-run-all -l -c fix:*",
     "fix:lint": "next lint --dir src --fix",
     "fix:format": "yarn inspect:format --write",
@@ -26,15 +27,18 @@
   "devDependencies": {
     "@svgr/webpack": "^5.5.0",
     "@types/gtag.js": "^0.0.8",
+    "@types/jest": "^27.0.3",
     "@types/node": "16.11.6",
     "@types/react": "17.0.34",
     "eslint": "7",
     "eslint-config-next": "12.0.2",
     "eslint-config-prettier": "^8.3.0",
     "husky": "^7.0.4",
+    "jest": "^27.3.1",
     "lint-staged": "^11.2.6",
     "npm-run-all": "^4.1.5",
     "prettier": "2.4.1",
+    "ts-jest": "^27.0.7",
     "typescript": "4.4.4"
   }
 }

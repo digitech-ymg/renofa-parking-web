@@ -1,11 +1,23 @@
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
+import Head from "next/head";
 import Script from "next/script";
 import { useEffect } from "react";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import * as gtag from "../lib/gtag";
 
 import Header from "@/components/Header";
+
+const theme = extendTheme({
+  styles: {
+    global: {
+      body: {
+        backgroundColor: "white",
+        color: "black",
+      },
+    },
+  },
+});
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -36,7 +48,10 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           });
         `}
       </Script>
-      <ChakraProvider>
+      <Head>
+        <title>レノファ駐車場情報サイト</title>
+      </Head>
+      <ChakraProvider theme={theme}>
         <Header />
         <Component {...pageProps} />
       </ChakraProvider>

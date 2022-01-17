@@ -10,16 +10,9 @@ export type Parking = {
   timeToStadium: number;
   latitude: number;
   longitude: number;
-  hourToOpen: number;
-  hourToClose: number;
   openAt: string;
   closeAt: string;
   status: string;
   predicts: Predict[];
   images: string[];
-};
-
-export type ParkingInfo = {
-  head: string;
-  content: string;
 };
