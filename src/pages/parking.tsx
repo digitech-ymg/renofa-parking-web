@@ -17,7 +17,7 @@ const Parking: NextPage = () => {
   useEffect(() => {
     const parking = parkings.filter((parking) => parking.key === router.query.parking)[0];
     setSelectedParking(parking);
-  }, [router.query.parking]);
+  }, [parkings, router.query.parking]);
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     // 渡された key から駐車場を特定する
@@ -58,7 +58,7 @@ const Parking: NextPage = () => {
     ];
     return (
       <Box bgColor="white">
-        <Container h="100vh">
+        <Container>
           <Center h="64px">
             <Heading as="h1" size="sm">
               {selectedParking.name}
@@ -84,6 +84,7 @@ const Parking: NextPage = () => {
               ))}
             </Tbody>
           </Table>
+
           <Box my={5}>
             <iframe
               src={`https://maps.google.com/maps?output=embed&q=${selectedParking.latitude},${selectedParking.longitude}&t=m&hl=ja&z=15`}
