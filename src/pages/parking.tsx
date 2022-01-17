@@ -9,7 +9,6 @@ import { useRouter } from "next/router";
 
 const Parking: NextPage = () => {
   const [selectedParking, setSelectedParking] = useState<Parking>();
-  const [parkingInfos, setParkingInfos] = useState<ParkingInfo[]>();
   const router = useRouter();
   const parkings = data.parkings;
 
@@ -22,41 +21,39 @@ const Parking: NextPage = () => {
     // 渡された key から駐車場を特定する
     const parking = parkings.filter((parking) => parking.key === e.target.value)[0];
     setSelectedParking(parking);
+  };
 
-    const parkingInfos = [
+  if (selectedParking) {
+    const infos = [
       {
         head: "正式名称",
-        content: parking.officialName,
+        content: selectedParking.officialName,
       },
       {
         head: "住所",
-        content: parking.address,
+        content: selectedParking.address,
       },
       {
         head: "収容台数",
-        content: `${parking.carCapacity}台`,
+        content: `${selectedParking.carCapacity}台`,
       },
       {
         head: "スタジアムまでの距離",
-        content: `${parking.distanceToStadium}m`,
+        content: `${selectedParking.distanceToStadium}m`,
       },
       {
         head: "スタジアムまでの時間",
-        content: `${parking.timeToStadium}分`,
+        content: `${selectedParking.timeToStadium}分`,
       },
       {
         head: "開場時間",
-        content: `${parking.hourToOpen}時間`,
+        content: `${selectedParking.hourToOpen}時間`,
       },
       {
         head: "閉場時間",
-        content: `${parking.hourToClose}時間`,
+        content: `${selectedParking.hourToClose}時間`,
       },
     ];
-    setParkingInfos(parkingInfos);
-  };
-
-  if (selectedParking && parkingInfos) {
     return (
       <Box bgColor="white">
         <Container h="">
@@ -67,9 +64,15 @@ const Parking: NextPage = () => {
           </Center>
           <Table variant="unstyled">
             <Tbody>
-              {parkingInfos.map((info, index) => (
+              {infos.map((info, index) => (
                 <Tr key={index}>
-                  <Th width="50%" backgroundColor="gray.50" fontWeight="normal" border="1px">
+                  <Th
+                    width="50%"
+                    backgroundColor="gray.50"
+                    fontWeight="normal"
+                    fontSize="md"
+                    border="1px"
+                  >
                     {info.head}
                   </Th>
                   <Td width="50%" border="1px">
