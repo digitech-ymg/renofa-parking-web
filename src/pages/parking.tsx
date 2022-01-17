@@ -26,7 +26,7 @@ const Parking: NextPage = () => {
   };
 
   if (selectedParking) {
-    const infos = [
+    const infos: ParkingInfo[] = [
       {
         head: "正式名称",
         content: selectedParking.officialName,
