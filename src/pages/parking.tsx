@@ -84,6 +84,14 @@ const Parking: NextPage = () => {
               ))}
             </Tbody>
           </Table>
+          <Box my={5}>
+            <iframe
+              src={`https://maps.google.com/maps?output=embed&q=${selectedParking.latitude},${selectedParking.longitude}&t=m&hl=ja&z=15`}
+              width="100%"
+              height="360"
+              loading="lazy"
+            ></iframe>
+          </Box>
           <Stack my={5}>
             {selectedParking.images.map((image, index) => (
               <Image
