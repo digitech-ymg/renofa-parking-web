@@ -11,8 +11,6 @@ const parkingBase: Parking = {
   timeToStadium: 16,
   latitude: 34.158161,
   longitude: 131.4450973,
-  hourToOpen: 6,
-  hourToClose: 2,
   openAt: "2021-11-28T08:00:00",
   closeAt: "2021-11-28T18:00:00",
   status: "enable",

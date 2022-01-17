@@ -1,5 +1,4 @@
 import type { NextPage } from "next";
-import { Center, Square, Circle } from "@chakra-ui/react";
 import { Container, Box, Link } from "@chakra-ui/react";
 import SiteDescription from "@/components/SiteDescription";
 import ParkingList from "@/components/ParkingList";
