@@ -10,6 +10,7 @@ export type Parking = {
   timeToStadium: number;
   latitude: number;
   longitude: number;
+  routeUrl: string;
   hourToOpen: number;
   hourToClose: number;
   openAt: string;
