@@ -1,41 +1,28 @@
-import type { Parking } from "@/types/Parking";
+import type { Parking, ParkingStatus } from "@/types/Parking";
 import type { Predict } from "@/types/Predict";
 
-export const State = {
-  Disable: "disable",
-  BeforeOpen: "beforeOpen",
-  Opened: "opened",
-  Filled: "filled",
-  AfterClosed: "afterClosed",
-} as const;
-
-export type ParkingState = typeof State[keyof typeof State];
-
-export const parkingState = (
-  now: Date,
-  parking: Parking
-): [state: ParkingState, percent: number] => {
+export const parkingStatus = (now: Date, parking: Parking): ParkingStatus => {
   if (parking.status === "disable") {
     // 未開放
-    return [State.Disable, 0];
+    return { state: "disable", percent: 0 };
   } else if (now.getTime() < new Date(parking.openAt).getTime()) {
     // 開場前
-    return [State.BeforeOpen, 0];
+    return { state: "beforeOpen", percent: 0 };
   } else if (now.getTime() >= new Date(parking.closeAt).getTime()) {
     const close = parking.closeAt;
     // 閉場後
-    return [State.AfterClosed, 0];
+    return { state: "afterClosed", percent: 0 };
   } else {
     if (parking.status === "full") {
       // 満車時
-      return [State.Filled, 100];
+      return { state: "filled", percent: 100 };
     } else {
       // 現状の埋まり具合と予測
       const percent = suggestPercent(now, parking.predicts);
       if (percent >= 100) {
-        return [State.Filled, 100];
+        return { state: "filled", percent: 100 };
       } else {
-        return [State.Opened, percent];
+        return { state: "opened", percent: percent };
       }
     }
   }
