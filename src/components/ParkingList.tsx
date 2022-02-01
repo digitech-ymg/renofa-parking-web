@@ -6,8 +6,7 @@ import { parkingStatus } from "@/utils/parking";
 
 const ParkingList: VFC = () => {
   const parkings = data.parkings;
-  // const now = new Date();
-  const now = new Date(2022, 1, 20, 11, 20, 0, 0);
+  const now = new Date();
   const statuses = parkings.map((parking) => parkingStatus(now, parking));
 
   return (
