@@ -1,5 +1,5 @@
 import type { VFC } from "react";
-import { Center, Heading } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { Stack, Box, Text } from "@chakra-ui/react";
 import data from "@/data/data.json";
 
@@ -13,7 +13,7 @@ const Game: VFC = () => {
 
   const dayString = (date: Date): string => {
     const days = ["日", "月", "火", "水", "木", "金", "土"];
-    return `（${days[date.getDay()]}）`;
+    return `(${days[date.getDay()]})`;
   };
 
   const timeString = (date: Date): string => {
@@ -22,28 +22,25 @@ const Game: VFC = () => {
   };
 
   return (
-    <Center bg="black" p="8" color="white">
-      <Stack textAlign="center">
-        <Heading as="h3" size="xs">
-          次の試合
-        </Heading>
-        <Box display="flex" alignItems="baseline">
-          <Text fontSize="3xl" fontWeight="bold">
+    <Flex bg="black" p="4" color="white">
+      <Box flex="1">
+        <Stack textAlign="center">
+          <Text fontSize="sm">
             {dateString(start)}
-          </Text>
-          <Text fontSize="lg" fontWeight="bold">
             {dayString(start)}
           </Text>
-          <Text fontSize="xl" fontWeight="bold">
-            {timeString(start)}〜
+          <Text fontSize="lg">{timeString(start)}〜</Text>
+        </Stack>
+      </Box>
+      <Box flex="3">
+        <Stack textAlign="center">
+          <Text fontSize="xs" color="gray.300">
+            {game.kind} {game.section}
           </Text>
-        </Box>
-        <Text fontSize="xs" color="gray.300">
-          {game.kind} {game.section}
-        </Text>
-        <Text fontSize="lg">{game.opponent}</Text>
-      </Stack>
-    </Center>
+          <Text fontSize="lg">{game.opponent}</Text>
+        </Stack>
+      </Box>
+    </Flex>
   );
 };
 

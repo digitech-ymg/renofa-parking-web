@@ -24,3 +24,17 @@ export type ParkingInfo = {
   head: string;
   content: string;
 };
+
+const State = {
+  Disable: "disable",
+  BeforeOpen: "beforeOpen",
+  Opened: "opened",
+  Filled: "filled",
+  AfterClosed: "afterClosed",
+} as const;
+type ParkingState = typeof State[keyof typeof State];
+
+export type ParkingStatus = {
+  state: ParkingState;
+  percent: number;
+};

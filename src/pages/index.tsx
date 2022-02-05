@@ -8,18 +8,18 @@ import Game from "@/components/Game";
 const Top: NextPage = () => {
   return (
     <Container bgColor="white">
-      <Box mt={5} mb={5}>
+      <Box mt={4} mb={4}>
         <Link href="/about">
           <SiteDescription />
         </Link>
       </Box>
-      <Box mb={5}>
-        <Game />
+      <Box bg="gray.100" p={4}>
+        <Box experimental_spaceY={4}>
+          <Game />
+          <ParkingList />
+        </Box>
       </Box>
-      <Box mb={5}>
-        <ParkingList />
-      </Box>
-      <Box mt={5} mb={5}>
+      <Box mt={4} mb={4}>
         <Link href="https://www.renofa.com/" isExternal>
           <RenofaBanner />
         </Link>
