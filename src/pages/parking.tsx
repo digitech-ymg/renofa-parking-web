@@ -4,6 +4,7 @@ import data from "@/data/data.json";
 import { Box, Stack, Image, Heading, Center } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tfoot, Tr, Th, Td, TableCaption } from "@chakra-ui/react";
 import { ChangeEvent, useState, useEffect } from "react";
+import Iframe from "react-iframe";
 import { Parking, ParkingInfo } from "@/types/Parking";
 import { useRouter } from "next/router";
 
@@ -83,12 +84,7 @@ const Parking: NextPage = () => {
             </Tbody>
           </Table>
           <Box my={5}>
-            <iframe
-              src={`https://maps.google.com/maps?output=embed&q=${selectedParking.latitude},${selectedParking.longitude}&t=m&hl=ja&z=15`}
-              width="100%"
-              height="360"
-              loading="lazy"
-            ></iframe>
+            <Iframe url={selectedParking.routeUrl} width="100%" height="360" />
           </Box>
           <Stack my={5}>
             {selectedParking.images.map((image, index) => (
