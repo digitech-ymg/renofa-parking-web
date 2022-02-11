@@ -1,4 +1,4 @@
 export type Predict = {
-  at: string;
+  minutes: number;
   ratio: number;
 };

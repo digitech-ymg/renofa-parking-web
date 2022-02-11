@@ -4,7 +4,7 @@ import { Stack, Box, Text } from "@chakra-ui/react";
 import data from "@/data/data.json";
 
 const Game: VFC = () => {
-  const game = data;
+  const game = data.game;
   const start = new Date(game.startAt);
 
   const dateString = (date: Date): string => {

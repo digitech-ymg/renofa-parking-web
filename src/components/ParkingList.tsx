@@ -5,9 +5,10 @@ import ParkingCard from "@/components/ParkingCard";
 import { parkingStatus } from "@/utils/parking";
 
 const ParkingList: VFC = () => {
+  const game = data.game;
   const parkings = data.parkings;
   const now = new Date();
-  const statuses = parkings.map((parking) => parkingStatus(now, parking));
+  const statuses = parkings.map((parking) => parkingStatus(now, game, parking));
 
   return (
     <Stack spacing={2}>

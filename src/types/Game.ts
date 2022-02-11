@@ -7,6 +7,5 @@ export type Game = {
   thanksday: string;
   startAt: string;
   finishAt: string;
-  parkings: Parking[];
   opponent: string;
 };
