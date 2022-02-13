@@ -3,10 +3,10 @@ import type { Parking, ParkingStatus } from "@/types/Parking";
 import type { Predict } from "@/types/Predict";
 
 export const parkingStatus = (now: Date, game: Game, parking: Parking): ParkingStatus => {
-  const openDate = new Date(game.startAt);
+  const openDate = new Date(game.startAt.getTime());
   openDate.setHours(openDate.getHours() - parking.hourToOpen);
 
-  const closeDate = new Date(game.finishAt);
+  const closeDate = new Date(game.finishAt.getTime());
   closeDate.setHours(closeDate.getHours() + parking.hourToClose);
 
   if (parking.status === "disable") {
@@ -24,7 +24,7 @@ export const parkingStatus = (now: Date, game: Game, parking: Parking): ParkingS
       return { state: "filled", percent: 100 };
     } else {
       // 現状の埋まり具合と予測
-      const percent = suggestPercent(now, new Date(game.startAt), parking.predicts);
+      const percent = suggestPercent(now, new Date(game.startAt.getTime()), parking.predicts);
       if (percent >= 100) {
         return { state: "filled", percent: 100 };
       } else {
@@ -80,7 +80,7 @@ const suggestPercent = (now: Date, gameStart: Date, predicts: Predict[]): number
 export const parkingFillDate = (game: Game, parking: Parking): Date | null => {
   for (let i = 0; i < parking.predicts.length; i++) {
     if (parking.predicts[i].ratio >= 1.0) {
-      const date = new Date(game.startAt);
+      const date = new Date(game.startAt.getTime());
       date.setMinutes(date.getMinutes() + parking.predicts[i].minutes);
       return date;
     }

@@ -7,13 +7,13 @@ const game: Game = {
   section: "第1節",
   partner: "",
   thanksday: "",
-  startAt: "2021-11-28T14:00:00",
-  finishAt: "2021-11-28T16:00:00",
+  startAt: new Date(2021, 10, 28, 5), // 2021-11-28T14:00:00/JST
+  finishAt: new Date(2021, 10, 28, 7), // 2021-11-28T16:00:00/JST
   opponent: "ロアッソ熊本",
 };
 
 const parkingBase: Parking = {
-  key: "truck",
+  id: "truck",
   name: "トラック協会",
   officialName: "山口県トラック協会臨時駐車場",
   address: "山口市宝町２−８４",
@@ -44,56 +44,56 @@ const parkingBase: Parking = {
 
 describe("parkingStatus", () => {
   it("開場の前日", () => {
-    expect(parkingStatus(new Date("2021-11-27T00:00:00"), game, parkingBase)).toMatchObject({
+    expect(parkingStatus(new Date("2021-11-26T15:00:00"), game, parkingBase)).toMatchObject({
       state: "beforeOpen",
       percent: 0,
     });
   });
 
   it("開場の直前", () => {
-    expect(parkingStatus(new Date("2021-11-28T07:59:59"), game, parkingBase)).toMatchObject({
+    expect(parkingStatus(new Date("2021-11-27T22:59:59"), game, parkingBase)).toMatchObject({
       state: "beforeOpen",
       percent: 0,
     });
   });
 
   it("開場の直後", () => {
-    expect(parkingStatus(new Date("2021-11-28T08:00:00"), game, parkingBase)).toMatchObject({
+    expect(parkingStatus(new Date("2021-11-27T23:00:00"), game, parkingBase)).toMatchObject({
       state: "opened",
       percent: 0,
     });
   });
 
   it("開場の予測地点ピッタリ", () => {
-    expect(parkingStatus(new Date("2021-11-28T11:30:00"), game, parkingBase)).toMatchObject({
+    expect(parkingStatus(new Date("2021-11-28T02:30:00"), game, parkingBase)).toMatchObject({
       state: "opened",
       percent: 44,
     });
   });
 
   it("開場の予測地点中間", () => {
-    expect(parkingStatus(new Date("2021-11-28T11:45:00"), game, parkingBase)).toMatchObject({
+    expect(parkingStatus(new Date("2021-11-28T02:45:00"), game, parkingBase)).toMatchObject({
       state: "opened",
       percent: 61,
     });
   });
 
   it("開場の満車直前", () => {
-    expect(parkingStatus(new Date("2021-11-28T12:59:59"), game, parkingBase)).toMatchObject({
+    expect(parkingStatus(new Date("2021-11-28T03:59:59"), game, parkingBase)).toMatchObject({
       state: "opened",
       percent: 99,
     });
   });
 
   it("開場の満車直後", () => {
-    expect(parkingStatus(new Date("2021-11-28T13:00:00"), game, parkingBase)).toMatchObject({
+    expect(parkingStatus(new Date("2021-11-28T04:00:00"), game, parkingBase)).toMatchObject({
       state: "filled",
       percent: 100,
     });
   });
 
   it("閉場の直後", () => {
-    expect(parkingStatus(new Date("2021-11-28T18:00:00"), game, parkingBase)).toMatchObject({
+    expect(parkingStatus(new Date("2021-11-28T09:00:00"), game, parkingBase)).toMatchObject({
       state: "afterClosed",
       percent: 0,
     });
@@ -101,7 +101,7 @@ describe("parkingStatus", () => {
 
   it("開場中だけど、ステータスが満車", () => {
     const parkingFull = Object.assign(parkingBase, { status: "full" });
-    expect(parkingStatus(new Date("2021-11-28T12:00:00"), game, parkingFull)).toMatchObject({
+    expect(parkingStatus(new Date("2021-11-28T03:00:00"), game, parkingFull)).toMatchObject({
       state: "filled",
       percent: 100,
     });
@@ -109,7 +109,7 @@ describe("parkingStatus", () => {
 
   it("使用できない（予測情報などがあって開場時間中でも無視）", () => {
     const parkingDisable = Object.assign(parkingBase, { status: "disable" });
-    expect(parkingStatus(new Date("2021-11-28T12:00:00"), game, parkingDisable)).toMatchObject({
+    expect(parkingStatus(new Date("2021-11-28T03:00:00"), game, parkingDisable)).toMatchObject({
       state: "disable",
       percent: 0,
     });
@@ -118,7 +118,7 @@ describe("parkingStatus", () => {
 
 describe("parkingFillDate", () => {
   it("満車時刻あり", () => {
-    expect(parkingFillDate(game, parkingBase)).toEqual(new Date(2021, 10, 28, 13));
+    expect(parkingFillDate(game, parkingBase)).toEqual(new Date(2021, 10, 28, 4));
   });
 
   it("満車時刻なし", () => {

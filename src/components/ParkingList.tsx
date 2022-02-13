@@ -1,20 +1,27 @@
-import type { VFC } from "react";
 import { Stack } from "@chakra-ui/react";
-import data from "@/data/data.json";
 import ParkingCard from "@/components/ParkingCard";
 import { parkingStatus } from "@/utils/parking";
+import { Parking } from "@/types/Parking";
+import { Game } from "@/types/Game";
 
-const ParkingList: VFC = () => {
-  const game = data.game;
-  const parkings = data.parkings;
+type Props = {
+  game: Game;
+  parkings: Parking[];
+};
+
+const ParkingList = ({ game, parkings }: Props) => {
   const now = new Date();
-  const statuses = parkings.map((parking) => parkingStatus(now, game, parking));
 
   return (
     <Stack spacing={2}>
-      {parkings.map((parking, idx) => (
-        <ParkingCard key={parking.key} parking={parking} status={statuses[idx]} />
-      ))}
+      {parkings &&
+        parkings.map((parking) => (
+          <ParkingCard
+            key={parking.id}
+            parking={parking}
+            status={parkingStatus(now, game, parking)}
+          />
+        ))}
     </Stack>
   );
 };

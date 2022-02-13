@@ -1,7 +1,7 @@
 import { Predict } from "@/types/Predict";
 
 export type Parking = {
-  key: string;
+  id: string;
   name: string;
   officialName: string;
   address: string;

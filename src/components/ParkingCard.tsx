@@ -75,7 +75,7 @@ const ParkingCard: VFC<Props> = ({ parking, status }: Props) => {
       onClick={() => {
         router.push({
           pathname: "/parking",
-          query: { parking: parking.key },
+          query: { parking: parking.id },
         });
       }}
       cursor="pointer"

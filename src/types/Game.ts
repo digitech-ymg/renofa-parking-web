@@ -5,7 +5,7 @@ export type Game = {
   section: string;
   partner: string;
   thanksday: string;
-  startAt: string;
-  finishAt: string;
+  startAt: Date;
+  finishAt: Date;
   opponent: string;
 };
