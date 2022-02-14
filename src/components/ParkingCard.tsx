@@ -1,7 +1,7 @@
 import { VFC } from "react";
 import { FaCarSide } from "react-icons/fa";
 import { useRouter } from "next/router";
-import { Heading, Flex, Text, HStack, Spacer } from "@chakra-ui/react";
+import { Heading, Flex, Text, HStack, Spacer, Center } from "@chakra-ui/react";
 import { ChevronRightIcon, Icon } from "@chakra-ui/icons";
 import { Parking, ParkingStatus } from "@/types/Parking";
 
@@ -46,25 +46,37 @@ const stateColor = (status: ParkingStatus): string => {
   }
 };
 
-const stateText = (status: ParkingStatus): string => {
+const renderStateText = (status: ParkingStatus): JSX.Element => {
+  const texts = [];
+
   switch (status.state) {
     case "disable":
-      return "未開場";
+      texts.push("未開場");
+      break;
     case "beforeOpen":
-      return "開場前";
+      texts.push("開場前");
+      break;
     case "afterClosed":
-      return "閉場";
+      texts.push("閉場");
+      break;
     case "opened":
       if (status.percent == 100) {
-        return "満車";
+        texts.push("満車");
       } else {
-        return `およそ ${status.percent.toString()}%`;
+        texts.push("満車まで", `およそ${status.fillMinutes.toString()}分`);
       }
+      break;
     case "filled":
-      return "満車";
-    default:
-      return "";
+      texts.push("満車");
+      break;
   }
+  return (
+    <Text fontSize="sm" align="right">
+      {texts.map((text, index) => (
+        <p key={index}>{text}</p>
+      ))}
+    </Text>
+  );
 };
 
 const ParkingCard: VFC<Props> = ({ parking, status }: Props) => {
@@ -94,7 +106,7 @@ const ParkingCard: VFC<Props> = ({ parking, status }: Props) => {
       </HStack>
       <Spacer />
       <HStack>
-        <Text fontSize="sm">{stateText(status)}</Text>
+        {renderStateText(status)}
         <ChevronRightIcon />
       </HStack>
     </Flex>

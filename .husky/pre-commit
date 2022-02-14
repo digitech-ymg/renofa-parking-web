@@ -1,6 +1,6 @@
+#!/bin/sh
 ## .husky/pre-commit
 
-#!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
 yarn inspect
