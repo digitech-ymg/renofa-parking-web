@@ -1,7 +1,7 @@
 import { VFC } from "react";
 import { FaCarSide } from "react-icons/fa";
 import { useRouter } from "next/router";
-import { Heading, Flex, Text, HStack, Spacer, Center } from "@chakra-ui/react";
+import { Heading, Flex, Text, HStack, Spacer, Stack } from "@chakra-ui/react";
 import { ChevronRightIcon, Icon } from "@chakra-ui/icons";
 import { Parking, ParkingStatus } from "@/types/Parking";
 
@@ -28,21 +28,21 @@ const stateColor = (status: ParkingStatus): string => {
     case "disable":
     case "beforeOpen":
     case "afterClosed":
-      return "gray.500";
+      return "gray.400";
     case "opened":
       if (status.percent < 50) {
-        return "green.500";
+        return "green.400";
       } else if (status.percent < 70) {
-        return "yellow.500";
+        return "yellow.400";
       } else if (status.percent < 90) {
-        return "orange.500";
+        return "orange.400";
       } else {
-        return "red.500";
+        return "red.400";
       }
     case "filled":
-      return "red.500";
+      return "red.400";
     default:
-      return "gray.500";
+      return "gray.400";
   }
 };
 
@@ -63,7 +63,10 @@ const renderStateText = (status: ParkingStatus): JSX.Element => {
       if (status.percent == 100) {
         texts.push("満車");
       } else {
-        texts.push("満車まで", `およそ${status.fillMinutes.toString()}分`);
+        texts.push(`駐車率：約${status.percent}%`);
+        if (status.fillMinutes > 0) {
+          texts.push(`満車まで：約${status.fillMinutes.toString()}分`);
+        }
       }
       break;
     case "filled":
@@ -71,11 +74,13 @@ const renderStateText = (status: ParkingStatus): JSX.Element => {
       break;
   }
   return (
-    <Text fontSize="sm" align="right">
+    <Stack>
       {texts.map((text, index) => (
-        <p key={index}>{text}</p>
+        <Text key={index} fontSize="xs" align="right">
+          {text}
+        </Text>
       ))}
-    </Text>
+    </Stack>
   );
 };
 
@@ -93,7 +98,8 @@ const ParkingCard: VFC<Props> = ({ parking, status }: Props) => {
       cursor="pointer"
       border={1}
       bg={stateBg(status)}
-      p={4}
+      minH={14}
+      px={4}
       borderRadius={4}
       justify="center"
       align="center"

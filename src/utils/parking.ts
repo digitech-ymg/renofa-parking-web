@@ -29,9 +29,7 @@ export const parkingStatus = (now: Date, game: Game, parking: Parking): ParkingS
         return { state: "filled", percent: 100, fillMinutes: 0 };
       } else {
         const fillDate = parkingFillDate(game, parking);
-        const fillMinutes = fillDate
-          ? Math.floor((fillDate?.getTime() - now.getTime()) / 60000)
-          : 0;
+        const fillMinutes = fillDate ? Math.ceil((fillDate?.getTime() - now.getTime()) / 60000) : 0;
         return { state: "opened", percent: percent, fillMinutes: fillMinutes };
       }
     }
