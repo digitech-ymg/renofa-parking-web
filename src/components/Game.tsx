@@ -1,10 +1,13 @@
 import type { VFC } from "react";
 import { Flex } from "@chakra-ui/react";
 import { Stack, Box, Text } from "@chakra-ui/react";
-import data from "@/data/data.json";
+import { Game } from "@/types/Game";
 
-const Game: VFC = () => {
-  const game = data;
+type Props = {
+  game: Game;
+};
+
+const GameInfo = ({ game }: Props) => {
   const start = new Date(game.startAt);
 
   const dateString = (date: Date): string => {
@@ -44,4 +47,4 @@ const Game: VFC = () => {
   );
 };
 
-export default Game;
+export default GameInfo;

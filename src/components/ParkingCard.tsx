@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { Heading, Flex, Text, HStack, Spacer } from "@chakra-ui/react";
 import { ChevronRightIcon, Icon } from "@chakra-ui/icons";
 import { Parking, ParkingStatus } from "@/types/Parking";
-import { parkingStatus } from "../utils/parking";
 
 type Props = {
   parking: Parking;
@@ -76,7 +75,7 @@ const ParkingCard: VFC<Props> = ({ parking, status }: Props) => {
       onClick={() => {
         router.push({
           pathname: "/parking",
-          query: { parking: parking.key },
+          query: { parking: parking.id },
         });
       }}
       cursor="pointer"
