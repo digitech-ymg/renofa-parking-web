@@ -64,9 +64,8 @@ const gameConverter = {
 
 export const getMostRecentGame = async (): Promise<Game> => {
   const ref = collection(db, "games");
-  // const now = new Date();
-  const now = new Date(2022, 1, 19);
   // 当日の試合を終日見せる（日が変わったら次の試合になる）
+  const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
   const q = query(ref, where("startAt", ">=", today), limit(1)).withConverter(gameConverter);
