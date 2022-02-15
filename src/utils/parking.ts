@@ -11,24 +11,26 @@ export const parkingStatus = (now: Date, game: Game, parking: Parking): ParkingS
 
   if (parking.status === "disable") {
     // 未開放
-    return { state: "disable", percent: 0 };
+    return { state: "disable", percent: 0, fillMinutes: 0 };
   } else if (now.getTime() < openDate.getTime()) {
     // 開場前
-    return { state: "beforeOpen", percent: 0 };
+    return { state: "beforeOpen", percent: 0, fillMinutes: 0 };
   } else if (now.getTime() >= closeDate.getTime()) {
     // 閉場後
-    return { state: "afterClosed", percent: 0 };
+    return { state: "afterClosed", percent: 0, fillMinutes: 0 };
   } else {
     if (parking.status === "full") {
       // 満車時
-      return { state: "filled", percent: 100 };
+      return { state: "filled", percent: 100, fillMinutes: 0 };
     } else {
       // 現状の埋まり具合と予測
       const percent = suggestPercent(now, new Date(game.startAt.getTime()), parking.predicts);
       if (percent >= 100) {
-        return { state: "filled", percent: 100 };
+        return { state: "filled", percent: 100, fillMinutes: 0 };
       } else {
-        return { state: "opened", percent: percent };
+        const fillDate = parkingFillDate(game, parking);
+        const fillMinutes = fillDate ? Math.ceil((fillDate?.getTime() - now.getTime()) / 60000) : 0;
+        return { state: "opened", percent: percent, fillMinutes: fillMinutes };
       }
     }
   }

@@ -64,7 +64,7 @@ const gameConverter = {
 
 export const getMostRecentGame = async (): Promise<Game> => {
   const ref = collection(db, "games");
-  // 当日の試合を終日見せる（日が変わったら次の試合になる）
+  // 当日0時以降の直近の試合を1つ取得する（試合当日は試合が終わってもその日の終日まで対象になる）
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 

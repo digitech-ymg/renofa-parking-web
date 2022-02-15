@@ -35,4 +35,5 @@ type ParkingState = typeof State[keyof typeof State];
 export type ParkingStatus = {
   state: ParkingState;
   percent: number;
+  fillMinutes: number;
 };
