@@ -11,6 +11,7 @@ type Props = {
 
 const ParkingList = ({ game, parkings }: Props) => {
   const now = new Date();
+  now.setDate(20);
 
   return (
     <Stack spacing={2}>
