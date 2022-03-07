@@ -7,6 +7,7 @@ import RenofaBanner from "@/components/RenofaBanner";
 import Game from "@/components/Game";
 
 import { getMostRecentGame, getParkings } from "@/lib/firestore";
+import ParkingColorSample from "@/components/ParkingColorSample";
 
 const Top: NextPage = () => {
   const {
@@ -33,6 +34,9 @@ const Top: NextPage = () => {
           {isLoadingGame && <p>loading...</p>}
           {game && <Game game={game} />}
           {errorGame && <p>試合情報の取得に失敗しました。</p>}
+
+          <ParkingColorSample />
+
           {/* parkings */}
           {isLoadingParkings && <p>loading...</p>}
           {game && parkings && <ParkingList game={game} parkings={parkings} />}
