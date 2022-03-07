@@ -8,6 +8,7 @@ import Game from "@/components/Game";
 
 import { getMostRecentGame, getParkings } from "@/lib/firestore";
 import ParkingColorSample from "@/components/ParkingColorSample";
+import ParkingStatusSharer from "@/components/ParkingStatusSharer";
 
 const Top: NextPage = () => {
   const {
@@ -42,6 +43,22 @@ const Top: NextPage = () => {
           {game && parkings && <ParkingList game={game} parkings={parkings} />}
           {errorParkings && <p>駐車場情報の取得に失敗しました。</p>}
         </Box>
+      </Box>
+      <Box mt={4} mb={4}>
+        {/* TODO: DB取得データ挿入 */}
+        <ParkingStatusSharer
+          names={[
+            "ほげほげ",
+            "レノ丸",
+            "やーまん",
+            "ジョージ",
+            "防府っ子",
+            "維新太郎",
+            "サッカー小僧",
+            "ゆーべ",
+            "シズル",
+          ]}
+        />
       </Box>
       <Box mt={4} mb={4}>
         <Link href="https://www.renofa.com/" isExternal>
