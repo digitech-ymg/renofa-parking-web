@@ -9,6 +9,7 @@ import Game from "@/components/Game";
 import { getMostRecentGame, getParkings } from "@/lib/firestore";
 import ParkingColorSample from "@/components/ParkingColorSample";
 import ParkingStatusSharer from "@/components/ParkingStatusSharer";
+import ParkingStateButton from "@/components/ParkingStatusButton";
 
 const Top: NextPage = () => {
   const {
@@ -27,6 +28,11 @@ const Top: NextPage = () => {
       <Box mt={4} mb={4}>
         <Link href="/about">
           <SiteDescription />
+        </Link>
+      </Box>
+      <Box mt={4} mb={4}>
+        <Link href="/post">
+          <ParkingStateButton />
         </Link>
       </Box>
       <Box bg="gray.100" p={4}>
