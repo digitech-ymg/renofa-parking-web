@@ -1,5 +1,3 @@
-import { Parking } from "@/types/Parking";
-
 export type Game = {
   kind: string;
   section: string;
