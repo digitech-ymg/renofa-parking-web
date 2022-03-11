@@ -1,7 +1,12 @@
 import { createContext, useEffect, useState, useContext } from "react";
-import { getAuth, signInAnonymously } from "@firebase/auth";
-import { firebaseApp } from "@/lib/firebase";
+import { getAuth, connectAuthEmulator, signInAnonymously } from "@firebase/auth";
+import { firebaseApp, isEmulator } from "@/lib/firebase";
 import { User } from "@/types/User";
+
+const auth = getAuth(firebaseApp);
+if (isEmulator()) {
+  connectAuthEmulator(auth, "http://localhost:9099");
+}
 
 type AuthContextProps = {
   user: User | null | undefined;

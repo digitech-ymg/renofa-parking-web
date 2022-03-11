@@ -1,5 +1,6 @@
 import {
   getFirestore,
+  connectFirestoreEmulator,
   collection,
   getDocs,
   query,
@@ -11,11 +12,14 @@ import {
   Timestamp,
 } from "firebase/firestore/lite";
 
-import { firebaseApp } from "@/lib/firebase";
+import { firebaseApp, isEmulator } from "@/lib/firebase";
 import { Parking } from "@/types/Parking";
 import { Game } from "@/types/Game";
 
 const db = getFirestore(firebaseApp);
+if (isEmulator()) {
+  connectFirestoreEmulator(db, "localhost", 8080);
+}
 
 const gameConverter = {
   toFirestore(game: Game): DocumentData {

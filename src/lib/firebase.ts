@@ -14,3 +14,8 @@ const apps = getApps();
 export const firebaseApp = apps.find(({ name }) => name == "client")
   ? getApp("client")
   : initializeApp(firebaseConfig, "client");
+
+export const isEmulator = () => {
+  const useEmulator = process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR;
+  return !!(useEmulator && useEmulator === "true");
+};
