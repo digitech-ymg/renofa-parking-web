@@ -1,24 +1,31 @@
 import type { NextPage } from "next";
-import { useQuery } from "react-query";
 import { Container } from "@chakra-ui/layout";
 import { Box, Stack, Image, Heading, Center } from "@chakra-ui/react";
 import { Table, Tbody, Tr, Th, Td } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Iframe from "react-iframe";
 import { Parking, ParkingInfo } from "@/types/Parking";
 import { useRouter } from "next/router";
 import { getParkings } from "@/lib/firestore";
+import { useAuthContext } from "@/context/AuthContext";
+import useSWR from "swr";
 
 const Parking: NextPage = () => {
+  const { user } = useAuthContext();
+
   const [parking, setParking] = useState<Parking>();
   const router = useRouter();
 
-  const { data, isLoading, error } = useQuery("parkings", getParkings, {
-    onSuccess: (data) => {
-      const selectedParking = data.filter((parking) => parking.id === router.query.parking)[0];
-      setParking(selectedParking);
-    },
-  });
+  const { data, error } = useSWR<Parking[]>(
+    user ? ["parkings", router.query.parking] : null,
+    getParkings,
+    {
+      onSuccess: (data) => {
+        const selectedParking = data.filter((parking) => parking.id === router.query.parking)[0];
+        setParking(selectedParking);
+      },
+    }
+  );
 
   const renderParkingTable = (parking: Parking) => {
     const infos: ParkingInfo[] = [
@@ -75,10 +82,6 @@ const Parking: NextPage = () => {
       </Table>
     );
   };
-
-  if (isLoading) {
-    return <>loading...</>;
-  }
 
   if (error) {
     return <>データの取得に失敗しました。</>;
