@@ -3,13 +3,11 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Script from "next/script";
 import { useEffect } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import * as gtag from "../lib/gtag";
 
 import Header from "@/components/Header";
-
-const queryClient = new QueryClient();
+import { AuthProvider } from "@/context/AuthContext";
 
 const theme = extendTheme({
   styles: {
@@ -54,12 +52,12 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       <Head>
         <title>レノファ駐車場情報サイト</title>
       </Head>
-      <QueryClientProvider client={queryClient}>
+      <AuthProvider>
         <ChakraProvider theme={theme}>
           <Header />
           <Component {...pageProps} />
         </ChakraProvider>
-      </QueryClientProvider>
+      </AuthProvider>
     </>
   );
 };

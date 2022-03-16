@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /games/{game} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    match /parkings/{parking} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    match /posts/{post} {
+      allow list: if request.auth != null;
+      allow create: if request.auth != null;
+    }
+  }
+}

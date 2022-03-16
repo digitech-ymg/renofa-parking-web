@@ -27,26 +27,48 @@
 
 ## 開発環境構築
 
-以下のいずれかの方法で環境構築を行う
+事前準備を経て、以下のいずれかの方法で環境構築を行う
+
+### 事前準備
+
+Firebase Local Emulator を使います。
+
+[公式ドキュメントに従って必要な環境を構築してください。](https://firebase.google.com/docs/emulator-suite/install_and_configure?hl=ja&authuser=0)
+
+起動コマンド(他のコマンドは別 Terminal から実行してください)
+
+```shell
+yarn emu:start
+```
+
+エミュレータの UI が用意されています。
+
+<http://localhost:4000/>
+
+エミュレータの追加データを残したい（次回再利用したい）場合は出力してください。
+
+```shell
+yarn emu:export
+```
 
 ### 方法 1
 
 - 以下のコマンドをターミナルで実行
 
-```
-$ git clone git@github.com:digitech-ymg/renofa-parking-web.git
-$ yarn
-$ yarn dev
+```shell
+git clone git@github.com:digitech-ymg/renofa-parking-web.git
+yarn
+yarn dev
 ```
 
 ### 方法 2
 
 - 以下のコマンドをターミナルで実行
 
-```
-$ git clone git@github.com:digitech-ymg/renofa-parking-web.git
-$ make i
-$ make up
+```shell
+git clone git@github.com:digitech-ymg/renofa-parking-web.git
+make i
+make up
 ```
 
 ### VSCode をエディターとして利用している方へ
