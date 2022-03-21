@@ -3,6 +3,7 @@ import type { Parking } from "@/types/Parking";
 import { parkingStatus, parkingFillDate } from "./parking";
 
 const game: Game = {
+  id: "20211128",
   kind: "明治安田生命J2リーグ",
   section: "第1節",
   partner: "",

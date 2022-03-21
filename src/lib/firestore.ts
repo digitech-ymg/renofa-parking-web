@@ -24,6 +24,7 @@ if (isEmulator()) {
 const gameConverter = {
   toFirestore(game: Game): DocumentData {
     return {
+      id: game.id,
       kind: game.kind,
       section: game.section,
       partner: game.partner,
@@ -36,6 +37,7 @@ const gameConverter = {
   fromFirestore(snapshot: QueryDocumentSnapshot): Game {
     const data = snapshot.data()!;
     return {
+      id: data.id,
       kind: data.kind,
       section: data.section,
       partner: data.partner,

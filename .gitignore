@@ -41,3 +41,6 @@ yarn-error.log*
 firebase-debug.log
 firestore-debug.log
 ui-debug.log
+
+# firebase local emulator
+/data/auth_export/accounts.json
