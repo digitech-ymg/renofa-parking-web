@@ -1,32 +1,29 @@
 import type { NextPage } from "next";
-import { Container, Heading, Text, VStack, Box, Link, Stack, Button } from "@chakra-ui/react";
+import { Container, Heading, Text, HStack, Box, Link, Button } from "@chakra-ui/react";
 import { Icon } from "@chakra-ui/icons";
 import { WarningIcon } from "@chakra-ui/icons";
 
 const Posterror: NextPage = () => {
   return (
-    <Container py={8} bgColor="white">
-      <Box border="4px" borderColor="red.500" rounded={8} py={20}>
-        <VStack color="red.500" spacing={10}>
-          <Box align="center">
-            <Heading as="h5" size="xl" mb={4}>
-              エラー
+    <Container py={4} bgColor="white" px={0}>
+      <Box border="4px" borderColor="red.500" rounded={8} mx={4} mb={4} p={4}>
+        <HStack color="red.400" spacing={4}>
+          <Icon as={WarningIcon} w="48px" h="48px" />
+          <Box>
+            <Heading as="h1" mb={2} fontSize="xl">
+              投稿失敗
             </Heading>
-            <Box fontSize="xl">
-              <Text>申し訳ございません。</Text>
-              <Text>投稿できませんでした。</Text>
-            </Box>
+            <Text>申し訳ございません。</Text>
           </Box>
-          <Icon as={WarningIcon} w="100px" h="100px" />
-        </VStack>
+        </HStack>
       </Box>
-      <Stack mt={8}>
+      <Box px={4}>
         <Link href="/">
           <Button colorScheme="yellow" color="black" size="lg" width="100%">
             <Text>トップページに戻る</Text>
           </Button>
         </Link>
-      </Stack>
+      </Box>
     </Container>
   );
 };

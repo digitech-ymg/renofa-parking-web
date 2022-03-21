@@ -2,7 +2,9 @@ import {
   getFirestore,
   connectFirestoreEmulator,
   collection,
+  doc,
   getDocs,
+  setDoc,
   query,
   orderBy,
   where,
@@ -10,11 +12,13 @@ import {
   QueryDocumentSnapshot,
   DocumentData,
   Timestamp,
+  serverTimestamp,
 } from "firebase/firestore/lite";
 
 import { firebaseApp, isEmulator } from "@/lib/firebase";
 import { Parking } from "@/types/Parking";
 import { Game } from "@/types/Game";
+import { Post } from "@/types/Post";
 
 const db = getFirestore(firebaseApp);
 if (isEmulator()) {
@@ -115,4 +119,32 @@ export const getParkings = async (): Promise<Parking[]> => {
   const parkingSnapshot = await getDocs(q);
   const parkingList = parkingSnapshot.docs.map((doc) => doc.data());
   return parkingList;
+};
+
+const postConverter = {
+  toFirestore(post: Post): DocumentData {
+    return {
+      nickname: post.nickname,
+      gameId: post.gameId,
+      parkingId: post.parkingId,
+      parkingRatio: post.parkingRatio,
+      createdAt: serverTimestamp(),
+    };
+  },
+  fromFirestore(snapshot: QueryDocumentSnapshot): Post {
+    const data = snapshot.data()!;
+    return {
+      nickname: data.nickname,
+      gameId: data.gameId,
+      parkingId: data.parkingId,
+      parkingRatio: data.parkingRatio,
+      createdAt: data.createdAt.toDate(),
+    };
+  },
+};
+
+export const createPost = async (post: Post): Promise<void> => {
+  const ref = doc(collection(db, "posts")).withConverter(postConverter);
+
+  return await setDoc(ref, post);
 };

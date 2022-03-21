@@ -15,6 +15,9 @@ import {
 } from "@chakra-ui/react";
 import { FaCarSide } from "react-icons/fa";
 import { Icon } from "@chakra-ui/icons";
+import { createPost } from "@/lib/firestore";
+import { Post } from "@/types/Post";
+import { useRouter } from "next/router";
 
 const parkingStatuses = [
   {
@@ -36,6 +39,8 @@ const parkingStatuses = [
 ];
 
 const Post: NextPage = () => {
+  const router = useRouter();
+
   return (
     <Container py={8} bgColor="white">
       <Center bg="#FFDB6A" h="40px" rounded={8}>
@@ -98,7 +103,27 @@ const Post: NextPage = () => {
         </SimpleGrid>
       </Box>
       <Stack>
-        <Button colorScheme="teal" size="lg">
+        <Button
+          colorScheme="teal"
+          size="lg"
+          onClick={() => {
+            // TODO: propsを使う
+            const post: Post = {
+              nickname: "ローカル",
+              gameId: "20220330",
+              parkingId: "ja",
+              parkingRatio: 0.8,
+            };
+
+            createPost(post)
+              .then(() => {
+                router.push("/postsuccess");
+              })
+              .catch((e) => {
+                router.push("/posterror");
+              });
+          }}
+        >
           送信する
         </Button>
       </Stack>
