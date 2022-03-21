@@ -6,7 +6,7 @@ import { CheckCircleIcon } from "@chakra-ui/icons";
 
 const Postsuccess: NextPage = () => {
   return (
-    <Container py={4} bgColor="white" px={0}>
+    <Container py={8} bgColor="white" px={0}>
       <Box border="4px" borderColor="green.400" rounded={8} mx={4} mb={4} p={4}>
         <HStack color="green.400" spacing={4}>
           <Icon as={CheckCircleIcon} w="48px" h="48px" />
@@ -19,12 +19,14 @@ const Postsuccess: NextPage = () => {
           </Box>
         </HStack>
       </Box>
-      <Box mx={4}>
+
+      <Box mx={4} mb={4}>
         <Text mb={2} fontWeight="bold">
           このサイトの利用に関するアンケートです。皆さんの声がこのサイトの改善に役立ちます。試合の度に、その都度ご回答をお願いします！
         </Text>
       </Box>
-      <Box mb={8}>
+
+      <Box mb={4}>
         <Iframe
           url="https://docs.google.com/forms/d/e/1FAIpQLSd_lTRjm5R3KXLrBleC8VGnZ8-nTIk3lZ2VBR09RdJK1k0Qng/viewform?embedded=true"
           width="100%"

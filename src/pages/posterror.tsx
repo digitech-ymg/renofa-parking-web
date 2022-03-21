@@ -17,7 +17,8 @@ const Posterror: NextPage = () => {
           </Box>
         </HStack>
       </Box>
-      <Box px={4}>
+
+      <Box px={4} mb={4}>
         <Link href="/">
           <Button colorScheme="yellow" color="black" size="lg" width="100%">
             <Text>トップページに戻る</Text>

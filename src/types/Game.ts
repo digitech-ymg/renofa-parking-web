@@ -7,4 +7,5 @@ export type Game = {
   startAt: Date;
   finishAt: Date;
   opponent: string;
+  availableParkings: string[];
 };

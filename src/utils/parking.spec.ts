@@ -11,6 +11,7 @@ const game: Game = {
   startAt: new Date(2021, 10, 28, 14), // 2021-11-28T14:00:00/JST
   finishAt: new Date(2021, 10, 28, 16), // 2021-11-28T16:00:00/JST
   opponent: "ロアッソ熊本",
+  availableParkings: ["paid", "ja", "truck", "riverbed"],
 };
 
 const parkingBase: Parking = {

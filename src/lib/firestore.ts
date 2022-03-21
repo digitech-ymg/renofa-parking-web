@@ -35,6 +35,7 @@ const gameConverter = {
       thanksday: game.thanksday,
       startAt: Timestamp.fromDate(game.startAt),
       finishAt: Timestamp.fromDate(game.finishAt),
+      availableParkings: game.availableParkings,
       opponent: game.opponent,
     };
   },
@@ -48,6 +49,7 @@ const gameConverter = {
       thanksday: data.thanksday,
       startAt: data.startAt.toDate(),
       finishAt: data.finishAt.toDate(),
+      availableParkings: data.availableParkings,
       opponent: data.opponent,
     };
   },
@@ -66,7 +68,6 @@ export const getMostRecentGame = async (): Promise<Game> => {
   if (parkingSnapshot.docs.length === 0) {
     throw new Error("game not found");
   }
-
   return parkingSnapshot.docs[0].data();
 };
 
