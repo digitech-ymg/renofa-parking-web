@@ -12,7 +12,7 @@ service cloud.firestore {
     }
 
     match /posts/{post} {
-      allow list: if request.auth != null;
+      allow read: if request.auth != null;
       allow create: if request.auth != null;
     }
   }

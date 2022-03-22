@@ -9,7 +9,7 @@ export const parkingStatus = (now: Date, game: Game, parking: Parking): ParkingS
   const closeDate = new Date(game.finishAt.getTime());
   closeDate.setHours(closeDate.getHours() + parking.hourToClose);
 
-  if (parking.status === "disable") {
+  if (!game.availableParkings.includes(parking.id)) {
     // 未開放
     return { state: "disable", percent: 0, fillMinutes: 0 };
   } else if (now.getTime() < openDate.getTime()) {
@@ -19,19 +19,14 @@ export const parkingStatus = (now: Date, game: Game, parking: Parking): ParkingS
     // 閉場後
     return { state: "afterClosed", percent: 0, fillMinutes: 0 };
   } else {
-    if (parking.status === "full") {
-      // 満車時
+    // 現状の埋まり具合と予測
+    const percent = suggestPercent(now, new Date(game.startAt.getTime()), parking.predicts);
+    if (percent >= 100) {
       return { state: "filled", percent: 100, fillMinutes: 0 };
     } else {
-      // 現状の埋まり具合と予測
-      const percent = suggestPercent(now, new Date(game.startAt.getTime()), parking.predicts);
-      if (percent >= 100) {
-        return { state: "filled", percent: 100, fillMinutes: 0 };
-      } else {
-        const fillDate = parkingFillDate(game, parking);
-        const fillMinutes = fillDate ? Math.ceil((fillDate?.getTime() - now.getTime()) / 60000) : 0;
-        return { state: "opened", percent: percent, fillMinutes: fillMinutes };
-      }
+      const fillDate = parkingFillDate(game, parking);
+      const fillMinutes = fillDate ? Math.ceil((fillDate?.getTime() - now.getTime()) / 60000) : 0;
+      return { state: "opened", percent: percent, fillMinutes: fillMinutes };
     }
   }
 };

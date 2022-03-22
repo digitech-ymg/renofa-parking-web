@@ -27,7 +27,6 @@ const parkingBase: Parking = {
   routeUrl: "https://...",
   hourToOpen: 6,
   hourToClose: 2,
-  status: "enable",
   predicts: [
     { minutes: -360, ratio: 0.0 },
     { minutes: -330, ratio: 0.01 },
@@ -109,17 +108,8 @@ describe("parkingStatus", () => {
     });
   });
 
-  it("開場中だけど、ステータスが満車", () => {
-    const parkingFull = Object.assign(parkingBase, { status: "full" });
-    expect(parkingStatus(new Date("2021-11-28T12:00:00"), game, parkingFull)).toMatchObject({
-      state: "filled",
-      percent: 100,
-      fillMinutes: 0,
-    });
-  });
-
   it("使用できない（予測情報などがあって開場時間中でも無視）", () => {
-    const parkingDisable = Object.assign(parkingBase, { status: "disable" });
+    const parkingDisable = Object.assign(parkingBase, { id: "panasonic" });
     expect(parkingStatus(new Date("2021-11-28T12:00:00"), game, parkingDisable)).toMatchObject({
       state: "disable",
       percent: 0,

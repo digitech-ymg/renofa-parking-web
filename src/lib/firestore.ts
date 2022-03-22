@@ -86,7 +86,6 @@ const parkingConverter = {
       routeUrl: parking.routeUrl,
       hourToOpen: parking.hourToOpen,
       hourToClose: parking.hourToClose,
-      status: parking.status,
       predicts: parking.predicts,
       images: parking.images,
     };
@@ -106,7 +105,6 @@ const parkingConverter = {
       routeUrl: data.routeUrl,
       hourToOpen: data.hourToOpen,
       hourToClose: data.hourToClose,
-      status: data.status,
       predicts: data.predicts,
       images: data.images,
     };
