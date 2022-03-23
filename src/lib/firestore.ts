@@ -147,3 +147,14 @@ export const createPost = async (post: Post): Promise<void> => {
 
   return await setDoc(ref, post);
 };
+
+export const getPosts = async (key: string, gameId: string): Promise<Post[]> => {
+  const ref = collection(db, "posts");
+  const q = query(ref, where("gameId", "==", gameId), orderBy("createdAt")).withConverter(
+    postConverter
+  );
+
+  const snapshot = await getDocs(q);
+  const postList = snapshot.docs.map((doc) => doc.data());
+  return postList;
+};

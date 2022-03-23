@@ -1,8 +1,14 @@
 import type { Game } from "@/types/Game";
 import type { Parking, ParkingStatus } from "@/types/Parking";
+import { Post } from "@/types/Post";
 import type { Predict } from "@/types/Predict";
 
-export const parkingStatus = (now: Date, game: Game, parking: Parking): ParkingStatus => {
+export const parkingStatus = (
+  now: Date,
+  game: Game,
+  parking: Parking,
+  posts: Post[]
+): ParkingStatus => {
   const openDate = new Date(game.startAt.getTime());
   openDate.setHours(openDate.getHours() - parking.hourToOpen);
 

@@ -13,7 +13,7 @@ const ParkingColorSample = () => {
       <Flex spacing={4} width="100%">
         <Spacer />
         <HStack spacing={2}>
-          <Text fontSize="sm">未開放</Text>
+          <Text fontSize="sm">未開場</Text>
           <Icon as={FaCarSide} w={5} h={5} color={disableColor} />
         </HStack>
         <Spacer />
