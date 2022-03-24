@@ -28,16 +28,19 @@ export const parkingStatus = (
     const gameStart = new Date(game.startAt.getTime());
     const post = selectPostForCalc(game, parking, posts);
     if (post) {
-      // TODO: 採用した投稿データで計算する
-      return { state: "filled", percent: 100, fillMinutes: 0 };
+      const percent = postPercent(now, parking, gameStart, post);
+      if (percent >= 100) {
+        return { state: "filled", percent: 100, fillMinutes: 0 };
+      } else {
+        const fillMinutes = postFillMinutes(now, game, parking, post);
+        return { state: "opened", percent: percent, fillMinutes: fillMinutes };
+      }
     } else {
-      // 現状の埋まり具合と予測
       const percent = predictPercent(now, gameStart, parking.predicts);
       if (percent >= 100) {
         return { state: "filled", percent: 100, fillMinutes: 0 };
       } else {
-        const fillDate = predictsFillDate(game, parking.predicts);
-        const fillMinutes = fillDate ? Math.ceil((fillDate?.getTime() - now.getTime()) / 60000) : 0;
+        const fillMinutes = predictsFillDate(now, game, parking.predicts);
         return { state: "opened", percent: percent, fillMinutes: fillMinutes };
       }
     }
@@ -76,7 +79,57 @@ export const selectPostForCalc = (game: Game, parking: Parking, posts: Post[]): 
   return post;
 };
 
-const predictPercent = (now: Date, gameStart: Date, predicts: Predict[]): number => {
+export const postPercent = (now: Date, parking: Parking, gameStart: Date, post: Post): number => {
+  // 既に満車
+  if (post.parkingRatio === 1.0) {
+    return 100;
+  }
+
+  // 現在時間が試合開始まで何分か（開始前でマイナス値にする）
+  const minutesToStart = (gameStart.getTime() - now.getTime()) / 60000;
+
+  // 試合開始時間の駐車率を上限値とする
+  // 試合開始後にも延々と駐車率が増える（＆満車になる）ことは実際に起こらない
+  const percentToStart = post.parkingRatio + Math.abs(post.parkingMinutes) * parking.slopeToPark;
+  const percentMax = percentToStart < 1.0 ? percentToStart : 1.0;
+
+  // 投稿内容を起点として、駐車率の傾きに経過時間差分を掛ける
+  let current =
+    post.parkingRatio + (Math.abs(post.parkingMinutes) - minutesToStart) * parking.slopeToPark;
+  if (current > percentMax) {
+    current = percentMax;
+  }
+
+  return Math.floor(current * 100);
+};
+
+export const postFillMinutes = (now: Date, game: Game, parking: Parking, post: Post): number => {
+  // 既に満車なら不要
+  if (post.parkingRatio === 1.0) {
+    return 0;
+  }
+
+  // 投稿と駐車場の傾きから満車になる残り時間を出す
+  let postFillMinutes = (1.0 - post.parkingRatio) / parking.slopeToPark;
+
+  // 投稿の試合開始までの時間（マイナス値）と残り時間を足し合わせて、満車になる時間
+  const fillMinutesToStart = post.parkingMinutes + postFillMinutes;
+
+  // マイナスになれば、試合開始前に満車になるの残り分を返す
+  if (fillMinutesToStart < 0) {
+    // 現在時刻から試合開始まで何分かを求めて、投稿時間との差分を出す
+    const nowMinutes = Math.abs(
+      post.parkingMinutes + (game.startAt.getTime() - now.getTime()) / 60000
+    );
+    postFillMinutes -= nowMinutes;
+    return postFillMinutes > 0 ? Math.ceil(postFillMinutes) : 0;
+  }
+
+  // 試合開始後は駐車率がほぼ増えないので満車予想はしない
+  return 0;
+};
+
+export const predictPercent = (now: Date, gameStart: Date, predicts: Predict[]): number => {
   if (predicts.length === 0) {
     return 0;
   }
@@ -119,14 +172,17 @@ const predictPercent = (now: Date, gameStart: Date, predicts: Predict[]): number
   return 0;
 };
 
-export const predictsFillDate = (game: Game, predicts: Predict[]): Date | null => {
+export const predictsFillDate = (now: Date, game: Game, predicts: Predict[]): number => {
+  const nowStartMinutes = (game.startAt.getTime() - now.getTime()) / 60000;
+
   for (let i = 0; i < predicts.length; i++) {
     if (predicts[i].ratio >= 1.0) {
-      const date = new Date(game.startAt.getTime());
-      date.setMinutes(date.getMinutes() + predicts[i].minutes);
-      return date;
+      let fillMinutes = predicts[i].minutes;
+      fillMinutes += nowStartMinutes;
+      // 現在時間を加味して正の数なら、満車時刻より前なのでその分を返す
+      return fillMinutes > 0 ? fillMinutes : 0;
     }
   }
 
-  return null;
+  return 0;
 };
