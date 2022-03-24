@@ -3,5 +3,6 @@ export type Post = {
   gameId: string;
   parkingId: string;
   parkingRatio: number;
-  createdAt?: Date;
+  parkingMinutes: number;
+  postedAt?: Date;
 };

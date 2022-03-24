@@ -182,6 +182,8 @@ const Post: NextPage = () => {
                 gameId: game.id,
                 parkingId: parkingId,
                 parkingRatio: parkingRatio,
+                // TODO: 入力欄を設けて計算して入れる
+                parkingMinutes: -100,
               })
                 .then(() => {
                   router.push("/postsuccess");

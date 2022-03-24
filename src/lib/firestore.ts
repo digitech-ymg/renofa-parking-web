@@ -106,6 +106,8 @@ const parkingConverter = {
       hourToOpen: data.hourToOpen,
       hourToClose: data.hourToClose,
       predicts: data.predicts,
+      minutesToPark: data.minutesToPark,
+      slopeToPark: data.slopeToPark,
       images: data.images,
     };
   },
@@ -127,7 +129,8 @@ const postConverter = {
       gameId: post.gameId,
       parkingId: post.parkingId,
       parkingRatio: post.parkingRatio,
-      createdAt: serverTimestamp(),
+      parkingMinutes: post.parkingMinutes,
+      postedAt: serverTimestamp(),
     };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): Post {
@@ -137,7 +140,8 @@ const postConverter = {
       gameId: data.gameId,
       parkingId: data.parkingId,
       parkingRatio: data.parkingRatio,
-      createdAt: data.createdAt.toDate(),
+      parkingMinutes: data.parkingMinutes,
+      postedAt: data.postedAt.toDate(),
     };
   },
 };

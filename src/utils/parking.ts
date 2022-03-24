@@ -25,19 +25,58 @@ export const parkingStatus = (
     // 閉場後
     return { state: "afterClosed", percent: 0, fillMinutes: 0 };
   } else {
-    // 現状の埋まり具合と予測
-    const percent = suggestPercent(now, new Date(game.startAt.getTime()), parking.predicts);
-    if (percent >= 100) {
+    const gameStart = new Date(game.startAt.getTime());
+    const post = selectPostForCalc(game, parking, posts);
+    if (post) {
+      // TODO: 採用した投稿データで計算する
       return { state: "filled", percent: 100, fillMinutes: 0 };
     } else {
-      const fillDate = parkingFillDate(game, parking);
-      const fillMinutes = fillDate ? Math.ceil((fillDate?.getTime() - now.getTime()) / 60000) : 0;
-      return { state: "opened", percent: percent, fillMinutes: fillMinutes };
+      // 現状の埋まり具合と予測
+      const percent = predictPercent(now, gameStart, parking.predicts);
+      if (percent >= 100) {
+        return { state: "filled", percent: 100, fillMinutes: 0 };
+      } else {
+        const fillDate = predictsFillDate(game, parking.predicts);
+        const fillMinutes = fillDate ? Math.ceil((fillDate?.getTime() - now.getTime()) / 60000) : 0;
+        return { state: "opened", percent: percent, fillMinutes: fillMinutes };
+      }
     }
   }
 };
 
-const suggestPercent = (now: Date, gameStart: Date, predicts: Predict[]): number => {
+export const selectPostForCalc = (game: Game, parking: Parking, posts: Post[]): Post | null => {
+  let post = null;
+
+  const isValidRatio = (minutes: number, ratio: number): boolean => {
+    // 開始前と駐車率0.1以下は除外
+    const duration = minutes - parking.minutesToPark;
+    if (duration < 0 || ratio <= 0.1) {
+      return false;
+    }
+    // 駐車場が持つ駐車開始時間と駐車率傾き2倍までを有効な投稿とみなす
+    return ratio <= parking.slopeToPark * duration * 2;
+  };
+
+  let selectedRatio = 0;
+  posts.forEach((p) => {
+    // 無効投稿は無視
+    if (!isValidRatio(p.parkingMinutes, p.parkingRatio)) {
+      return;
+    }
+    // 選出駐車率以下は無視
+    if (p.parkingRatio <= selectedRatio) {
+      return;
+    }
+
+    // 選出上書き
+    post = p;
+    selectedRatio = p.parkingRatio;
+  });
+
+  return post;
+};
+
+const predictPercent = (now: Date, gameStart: Date, predicts: Predict[]): number => {
   if (predicts.length === 0) {
     return 0;
   }
@@ -80,11 +119,11 @@ const suggestPercent = (now: Date, gameStart: Date, predicts: Predict[]): number
   return 0;
 };
 
-export const parkingFillDate = (game: Game, parking: Parking): Date | null => {
-  for (let i = 0; i < parking.predicts.length; i++) {
-    if (parking.predicts[i].ratio >= 1.0) {
+export const predictsFillDate = (game: Game, predicts: Predict[]): Date | null => {
+  for (let i = 0; i < predicts.length; i++) {
+    if (predicts[i].ratio >= 1.0) {
       const date = new Date(game.startAt.getTime());
-      date.setMinutes(date.getMinutes() + parking.predicts[i].minutes);
+      date.setMinutes(date.getMinutes() + predicts[i].minutes);
       return date;
     }
   }

@@ -14,6 +14,8 @@ export type Parking = {
   hourToOpen: number;
   hourToClose: number;
   predicts: Predict[];
+  minutesToPark: number;
+  slopeToPark: number;
   images: string[];
 };
 
