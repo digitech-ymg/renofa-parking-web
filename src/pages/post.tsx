@@ -45,6 +45,33 @@ const parkingStatuses = [
   },
 ];
 
+const parkingMinutesList = [
+  {
+    label: "ついさっき",
+    value: 0,
+  },
+  {
+    label: "10分ぐらい前",
+    value: 10,
+  },
+  {
+    label: "20分ぐらい前",
+    value: 20,
+  },
+  {
+    label: "30分ぐらい前",
+    value: 30,
+  },
+  {
+    label: "1時間ぐらい前",
+    value: 60,
+  },
+  {
+    label: "2時間ぐらい前",
+    value: 120,
+  },
+];
+
 const Post: NextPage = () => {
   const router = useRouter();
   const { user } = useAuthContext();
@@ -71,7 +98,10 @@ const Post: NextPage = () => {
   const parkingIdIsError = parkingId == "";
 
   const [parkingRatio, setParkingRatio] = useState(0);
-  const parkingRatioIsError = parkingRatio == 0;
+  const parkingRatioIsError = parkingRatio === 0;
+
+  const [parkingMinutes, setParkingMinutes] = useState(-1);
+  const parkingMinutesIsError = parkingMinutes === -1;
 
   return (
     <Container py={8} bgColor="white">
@@ -170,20 +200,56 @@ const Post: NextPage = () => {
       </Box>
 
       <Box mb={10}>
+        <FormControl isInvalid={parkingMinutesIsError} isRequired>
+          <FormLabel fontWeight="bold">いつ駐車場に停めましたか？</FormLabel>
+          <SimpleGrid templateColumns="repeat(3, 1fr)" gap={4}>
+            {parkingMinutesList.map((minutes, index) => (
+              <Button
+                key={index}
+                h="100"
+                fontSize="sm"
+                bg="white"
+                border={minutes.value === parkingMinutes ? "4px" : "1px"}
+                borderColor={minutes.value === parkingMinutes ? "red.500" : "gray.200"}
+                rounded={8}
+                shadow="md"
+                _hover={{ bg: "white" }}
+                _active={{
+                  bg: "white",
+                }}
+                onClick={() => setParkingMinutes(minutes.value)}
+              >
+                {minutes.label}
+              </Button>
+            ))}
+          </SimpleGrid>
+          {parkingMinutesIsError && (
+            <FormErrorMessage>どれか1つを選択してください。</FormErrorMessage>
+          )}
+        </FormControl>
+      </Box>
+
+      <Box mb={10}>
         {game && (
           <Button
             colorScheme="teal"
             size="lg"
             width="100%"
-            isDisabled={nicknameIsError || parkingIdIsError || parkingRatioIsError}
+            isDisabled={
+              nicknameIsError || parkingIdIsError || parkingRatioIsError || parkingMinutesIsError
+            }
             onClick={() => {
+              //　試合開始時間に対する現在時間（分）を求めて、投稿の時間を加味する
+              //　試合開始前はマイナス値でよい
+              const minutes =
+                Math.floor((new Date().getTime() - game.startAt.getTime()) / 60000) -
+                parkingMinutes;
               createPost({
                 nickname: nickname,
                 gameId: game.id,
                 parkingId: parkingId,
                 parkingRatio: parkingRatio,
-                // TODO: 入力欄を設けて計算して入れる
-                parkingMinutes: -100,
+                parkingMinutes: minutes,
               })
                 .then(() => {
                   router.push("/postsuccess");
