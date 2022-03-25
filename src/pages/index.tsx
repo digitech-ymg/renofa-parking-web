@@ -29,6 +29,7 @@ const Top: NextPage = () => {
     user && game ? ["posts", game.id] : null,
     getPosts,
     {
+      fallbackData: [],
       refreshInterval: 50000,
     }
   );
