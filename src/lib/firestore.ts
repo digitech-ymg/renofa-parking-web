@@ -86,7 +86,6 @@ const parkingConverter = {
       routeUrl: parking.routeUrl,
       hourToOpen: parking.hourToOpen,
       hourToClose: parking.hourToClose,
-      status: parking.status,
       predicts: parking.predicts,
       images: parking.images,
     };
@@ -106,8 +105,9 @@ const parkingConverter = {
       routeUrl: data.routeUrl,
       hourToOpen: data.hourToOpen,
       hourToClose: data.hourToClose,
-      status: data.status,
       predicts: data.predicts,
+      minutesToPark: data.minutesToPark,
+      slopeToPark: data.slopeToPark,
       images: data.images,
     };
   },
@@ -129,7 +129,8 @@ const postConverter = {
       gameId: post.gameId,
       parkingId: post.parkingId,
       parkingRatio: post.parkingRatio,
-      createdAt: serverTimestamp(),
+      parkingMinutes: post.parkingMinutes,
+      postedAt: serverTimestamp(),
     };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): Post {
@@ -139,7 +140,8 @@ const postConverter = {
       gameId: data.gameId,
       parkingId: data.parkingId,
       parkingRatio: data.parkingRatio,
-      createdAt: data.createdAt.toDate(),
+      parkingMinutes: data.parkingMinutes,
+      postedAt: data.postedAt.toDate(),
     };
   },
 };
@@ -148,4 +150,15 @@ export const createPost = async (post: Post): Promise<void> => {
   const ref = doc(collection(db, "posts")).withConverter(postConverter);
 
   return await setDoc(ref, post);
+};
+
+export const getPosts = async (key: string, gameId: string): Promise<Post[]> => {
+  const ref = collection(db, "posts");
+  const q = query(ref, where("gameId", "==", gameId), orderBy("createdAt")).withConverter(
+    postConverter
+  );
+
+  const snapshot = await getDocs(q);
+  const postList = snapshot.docs.map((doc) => doc.data());
+  return postList;
 };

@@ -13,8 +13,9 @@ export type Parking = {
   routeUrl: string;
   hourToOpen: number;
   hourToClose: number;
-  status: string;
   predicts: Predict[];
+  minutesToPark: number;
+  slopeToPark: number;
   images: string[];
 };
 

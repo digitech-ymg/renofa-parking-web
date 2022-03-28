@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { getMostRecentGame, getParkings } from "@/lib/firestore";
+import { getMostRecentGame, getParkings, getPosts } from "@/lib/firestore";
 import useSWR from "swr";
 import { useAuthContext } from "@/context/AuthContext";
 
@@ -25,6 +25,14 @@ const Top: NextPage = () => {
   const { data: parkings, error: errorParkings } = useSWR(user ? "parkings" : null, getParkings, {
     refreshInterval: 50000,
   });
+  const { data: posts, error: errorPosts } = useSWR(
+    user && game ? ["posts", game.id] : null,
+    getPosts,
+    {
+      fallbackData: [],
+      refreshInterval: 50000,
+    }
+  );
 
   return (
     <Container bgColor="white">
@@ -49,7 +57,9 @@ const Top: NextPage = () => {
 
           {/* parkings */}
           {!parkings && !errorParkings && <p>loading...</p>}
-          {game && parkings && <ParkingList game={game} parkings={parkings} />}
+          {game && parkings && posts && (
+            <ParkingList game={game} parkings={parkings} posts={posts} />
+          )}
           {errorParkings && <p>駐車場情報の取得に失敗しました。</p>}
         </Box>
       </Box>
