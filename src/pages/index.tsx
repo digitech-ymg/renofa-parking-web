@@ -64,20 +64,7 @@ const Top: NextPage = () => {
         </Box>
       </Box>
       <Box mt={4} mb={4}>
-        {/* TODO: DB取得データ挿入 */}
-        <ParkingStatusSharer
-          names={[
-            "ほげほげ",
-            "レノ丸",
-            "やーまん",
-            "ジョージ",
-            "防府っ子",
-            "維新太郎",
-            "サッカー小僧",
-            "ゆーべ",
-            "シズル",
-          ]}
-        />
+        {posts && <ParkingStatusSharer names={posts?.map((post) => post.nickname)} />}
       </Box>
       <Box mt={4} mb={4}>
         <Link href="https://www.renofa.com/" isExternal>

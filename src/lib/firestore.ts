@@ -154,7 +154,7 @@ export const createPost = async (post: Post): Promise<void> => {
 
 export const getPosts = async (key: string, gameId: string): Promise<Post[]> => {
   const ref = collection(db, "posts");
-  const q = query(ref, where("gameId", "==", gameId), orderBy("createdAt")).withConverter(
+  const q = query(ref, where("gameId", "==", gameId), orderBy("parkingMinutes")).withConverter(
     postConverter
   );
 
