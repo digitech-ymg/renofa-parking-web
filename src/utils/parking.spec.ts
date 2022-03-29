@@ -579,6 +579,11 @@ describe("predictsFillDate", () => {
     expect(predictsFillDate(now, game, parkingWillFill.predicts)).toEqual(15);
   });
 
+  it("満車時刻あり（12分33秒前は小数点の切り上げで13分前）", () => {
+    const now = new Date("2021-11-28T11:17:27");
+    expect(predictsFillDate(now, game, parkingWillFill.predicts)).toEqual(13);
+  });
+
   it("満車時刻あり（ちょうど）", () => {
     const now = new Date("2021-11-28T11:30:00");
     expect(predictsFillDate(now, game, parkingWillFill.predicts)).toEqual(0);

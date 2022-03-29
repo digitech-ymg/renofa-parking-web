@@ -180,7 +180,8 @@ export const predictsFillDate = (now: Date, game: Game, predicts: Predict[]): nu
       let fillMinutes = predicts[i].minutes;
       fillMinutes += nowStartMinutes;
       // 現在時間を加味して正の数なら、満車時刻より前なのでその分を返す
-      return fillMinutes > 0 ? fillMinutes : 0;
+      // 切り上げ
+      return fillMinutes > 0 ? Math.ceil(fillMinutes) : 0;
     }
   }
 
