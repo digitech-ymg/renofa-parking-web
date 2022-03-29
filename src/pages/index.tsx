@@ -33,6 +33,15 @@ const Top: NextPage = () => {
       refreshInterval: 50000,
     }
   );
+  // const posts: Post[] = [
+  //   {
+  //     gameId: "20220329",
+  //     nickname: "hoge",
+  //     parkingId: "truck",
+  //     parkingMinutes: -33,
+  //     parkingRatio: 0.8,
+  //   },
+  // ];
 
   return (
     <Container bgColor="white">

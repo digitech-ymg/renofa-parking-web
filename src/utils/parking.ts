@@ -3,6 +3,12 @@ import type { Parking, ParkingStatus } from "@/types/Parking";
 import { Post } from "@/types/Post";
 import type { Predict } from "@/types/Predict";
 
+const debug = process.env.NEXT_PUBLIC_DEBUG;
+
+export const isDebug = (): boolean => {
+  return debug ? true : false;
+};
+
 export const parkingStatus = (
   now: Date,
   game: Game,
@@ -48,16 +54,32 @@ export const parkingStatus = (
 };
 
 export const selectPostForCalc = (game: Game, parking: Parking, posts: Post[]): Post | null => {
-  let post = null;
+  let post: Post | null = null;
+
+  const debugMode = isDebug();
 
   const isValidRatio = (minutes: number, ratio: number): boolean => {
     // 開始前と駐車率0.1以下は除外
     const duration = minutes - parking.minutesToPark;
     if (duration < 0 || ratio <= 0.1) {
+      if (duration && debugMode) {
+        console.log(`[${parking.id}, ${minutes}, ${ratio}] -> 不採用：開始前`);
+      }
+      if (ratio <= 0.1 && debugMode) {
+        console.log(`[${parking.id}, ${minutes}, ${ratio}] -> 不採用：10%以下`);
+      }
       return false;
     }
     // 駐車場が持つ駐車開始時間と駐車率傾き2倍までを有効な投稿とみなす
-    return ratio <= parking.slopeToPark * duration * 2;
+    const maxRatio = parking.slopeToPark * duration * 2;
+    const valid = ratio <= maxRatio;
+    if (!valid && debugMode) {
+      console.log(
+        `[${parking.id}, ${minutes}, ${ratio}] -> 不採用：非採用ライン越え（${maxRatio}）`
+      );
+    }
+
+    return valid;
   };
 
   let selectedRatio = 0;
@@ -68,12 +90,20 @@ export const selectPostForCalc = (game: Game, parking: Parking, posts: Post[]): 
     }
     // 選出駐車率以下は無視
     if (p.parkingRatio <= selectedRatio) {
+      if (debugMode) {
+        console.log(
+          `[${parking.id}, ${p.parkingMinutes}, ${p.parkingRatio}] -> 不採用：採用済み駐車率以下`
+        );
+      }
       return;
     }
 
     // 選出上書き
     post = p;
     selectedRatio = p.parkingRatio;
+    if (debugMode) {
+      console.log(`[${parking.id}, ${p.parkingMinutes}, ${p.parkingRatio}] -> 採用（上書き）`);
+    }
   });
 
   return post;
@@ -85,19 +115,42 @@ export const postPercent = (now: Date, parking: Parking, gameStart: Date, post: 
     return 100;
   }
 
+  const debugMode = isDebug();
+
   // 現在時間が試合開始まで何分か（開始前でマイナス値にする）
   const minutesToStart = (gameStart.getTime() - now.getTime()) / 60000;
+  if (debugMode) {
+    console.log(
+      `[${parking.id}, ${post.parkingMinutes}, ${post.parkingRatio}] -> 試合開始まで: ${
+        Math.floor(minutesToStart * 100) / 100
+      }分`
+    );
+  }
 
   // 試合開始時間の駐車率を上限値とする
   // 試合開始後にも延々と駐車率が増える（＆満車になる）ことは実際に起こらない
   const percentToStart = post.parkingRatio + Math.abs(post.parkingMinutes) * parking.slopeToPark;
   const percentMax = percentToStart < 1.0 ? percentToStart : 1.0;
+  if (debugMode) {
+    console.log(
+      `[${parking.id}, ${post.parkingMinutes}, ${post.parkingRatio}] -> 試合開始時刻駐車率上限: ${
+        Math.floor(percentMax * 100) / 100
+      }`
+    );
+  }
 
   // 投稿内容を起点として、駐車率の傾きに経過時間差分を掛ける
   let current =
     post.parkingRatio + (Math.abs(post.parkingMinutes) - minutesToStart) * parking.slopeToPark;
   if (current > percentMax) {
     current = percentMax;
+  }
+  if (debugMode) {
+    console.log(
+      `[${parking.id}, ${post.parkingMinutes}, ${post.parkingRatio}] -> 最終結果: ${
+        Math.floor(current * 100) / 100
+      }`
+    );
   }
 
   return Math.floor(current * 100);
