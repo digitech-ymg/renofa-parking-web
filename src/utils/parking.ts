@@ -62,7 +62,7 @@ export const selectPostForCalc = (game: Game, parking: Parking, posts: Post[]): 
     // 開始前と駐車率0.1以下は除外
     const duration = minutes - parking.minutesToPark;
     if (duration < 0 || ratio <= 0.1) {
-      if (duration && debugMode) {
+      if (duration < 0 && debugMode) {
         console.log(`[${parking.id}, ${minutes}, ${ratio}] -> 不採用：開始前`);
       }
       if (ratio <= 0.1 && debugMode) {
