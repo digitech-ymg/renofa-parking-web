@@ -154,9 +154,13 @@ export const createPost = async (post: Post): Promise<void> => {
 
 export const getPosts = async (key: string, gameId: string): Promise<Post[]> => {
   const ref = collection(db, "posts");
-  const q = query(ref, where("gameId", "==", gameId), orderBy("parkingMinutes")).withConverter(
-    postConverter
-  );
+  // 6時間前が駐車場会場最速なのでそれ以降に絞る
+  const q = query(
+    ref,
+    where("gameId", "==", gameId),
+    where("parkingMinutes", ">", -360),
+    orderBy("parkingMinutes")
+  ).withConverter(postConverter);
 
   const snapshot = await getDocs(q);
   const postList = snapshot.docs.map((doc) => doc.data());
