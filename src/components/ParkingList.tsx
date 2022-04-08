@@ -6,14 +6,13 @@ import { Game } from "@/types/Game";
 import { Post } from "@/types/Post";
 
 type Props = {
+  now: Date;
   game: Game;
   parkings: Parking[];
   posts: Post[];
 };
 
-const ParkingList = ({ game, parkings, posts }: Props) => {
-  const now = new Date();
-
+const ParkingList = ({ now, game, parkings, posts }: Props) => {
   return (
     <Stack spacing={2}>
       {parkings &&

@@ -11,37 +11,43 @@ import SiteDescription from "@/components/SiteDescription";
 import Game from "@/components/Game";
 import ParkingList from "@/components/ParkingList";
 import RenofaBanner from "@/components/RenofaBanner";
+import { useEffect, useState } from "react";
+
+const interval = 50000;
 
 const Top: NextPage = () => {
   const { user } = useAuthContext();
+  const [now, setNow] = useState(new Date());
 
   const { data: game, error: errorGame } = useSWR(
     user ? "mostRecentGame" : null,
     getMostRecentGame,
     {
-      refreshInterval: 50000,
+      refreshInterval: interval,
     }
   );
   const { data: parkings, error: errorParkings } = useSWR(user ? "parkings" : null, getParkings, {
-    refreshInterval: 50000,
+    refreshInterval: interval,
   });
   const { data: posts, error: errorPosts } = useSWR(
     user && game ? ["posts", game.id] : null,
     getPosts,
     {
       fallbackData: [],
-      refreshInterval: 50000,
+      refreshInterval: interval,
     }
   );
-  // const posts: Post[] = [
-  //   {
-  //     gameId: "20220329",
-  //     nickname: "hoge",
-  //     parkingId: "truck",
-  //     parkingMinutes: -33,
-  //     parkingRatio: 0.8,
-  //   },
-  // ];
+
+  // 毎分画面更新
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setNow(new Date());
+      console.log("update now.");
+    }, interval);
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [now]);
 
   return (
     <Container bgColor="white">
@@ -67,7 +73,7 @@ const Top: NextPage = () => {
           {/* parkings */}
           {!parkings && !errorParkings && <p>loading...</p>}
           {game && parkings && posts && (
-            <ParkingList game={game} parkings={parkings} posts={posts} />
+            <ParkingList now={now} game={game} parkings={parkings} posts={posts} />
           )}
           {errorParkings && <p>駐車場情報の取得に失敗しました。</p>}
         </Box>
