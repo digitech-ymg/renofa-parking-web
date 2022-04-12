@@ -22,9 +22,11 @@ const ParkingStatusButton: VFC = () => {
           <Icon as={FaComment} w={8} h={8} color="white" />
           <Box pl="3">
             <Heading as="h5" size="sm">
+              駐車場に車を停めた後
+              <br />
               駐車場の状況を教えてください
             </Heading>
-            <Text fontSize="12">このサイトに混雑具体が反映されます</Text>
+            <Text fontSize="12">このサイトの駐車率と予測に反映されます</Text>
           </Box>
         </Center>
         <ChevronRightIcon flexGrow={0} />

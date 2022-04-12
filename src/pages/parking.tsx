@@ -39,23 +39,23 @@ const Parking: NextPage = () => {
       },
       {
         head: "収容台数",
-        content: `${parking.carCapacity}台`,
+        content: `${parking.carCapacity} 台`,
       },
       {
         head: "スタジアムまでの距離",
-        content: `${parking.distanceToStadium}m`,
+        content: `${parking.distanceToStadium} m`,
       },
       {
         head: "スタジアムまでの時間",
-        content: `${parking.timeToStadium}分`,
+        content: `${parking.timeToStadium} 分`,
       },
       {
         head: "開場時間",
-        content: `${parking.hourToOpen}時間`,
+        content: `試合開始時刻の ${parking.hourToOpen}時間前`,
       },
       {
         head: "閉場時間",
-        content: `${parking.hourToClose}時間`,
+        content: `試合終了時刻の ${parking.hourToClose}時間後`,
       },
     ];
 

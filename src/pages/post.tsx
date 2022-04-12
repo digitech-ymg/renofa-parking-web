@@ -6,6 +6,7 @@ import {
   Center,
   FormControl,
   FormLabel,
+  FormHelperText,
   Input,
   SimpleGrid,
   Button,
@@ -125,6 +126,7 @@ const Post: NextPage = () => {
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
           />
+          <FormHelperText>このサイトのトップページに表示されます。</FormHelperText>
           {nicknameIsError && <FormErrorMessage>10文字以内で入力してください。</FormErrorMessage>}
         </FormControl>
       </Box>
