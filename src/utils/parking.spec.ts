@@ -34,9 +34,14 @@ const parkingWillFill: Parking = {
   routeUrl: "https://...",
   hourToOpen: 3,
   hourToClose: 2,
-  predicts: [
+  predictParkingStates: [
     { minutes: -180, ratio: 0.0 },
     { minutes: -165, ratio: 0.5 },
+    { minutes: -150, ratio: 1.0 },
+  ],
+  adoptionParkingStates: [
+    { minutes: -180, ratio: 0.0 },
+    { minutes: -165, ratio: 0.8 },
     { minutes: -150, ratio: 1.0 },
   ],
   minutesToPark: -180,
@@ -57,7 +62,11 @@ const parkingWontFill: Parking = {
   routeUrl: "https://...",
   hourToOpen: 6,
   hourToClose: 2,
-  predicts: [
+  predictParkingStates: [
+    { minutes: -150, ratio: 0.0 },
+    { minutes: 0, ratio: 0.75 },
+  ],
+  adoptionParkingStates: [
     { minutes: -150, ratio: 0.0 },
     { minutes: 0, ratio: 0.75 },
   ],
@@ -534,74 +543,74 @@ describe("predictPercent", () => {
 
   it("予測地点以前", () => {
     const now = new Date("2021-11-28T07:00:00");
-    expect(predictPercent(now, game.startAt, parkingWillFill.predicts)).toEqual(0);
+    expect(predictPercent(now, game.startAt, parkingWillFill.predictParkingStates)).toEqual(0);
   });
 
   it("予測地点1つ目ちょうどピッタリ", () => {
     const now = new Date("2021-11-28T11:00:00");
-    expect(predictPercent(now, game.startAt, parkingWillFill.predicts)).toEqual(0);
+    expect(predictPercent(now, game.startAt, parkingWillFill.predictParkingStates)).toEqual(0);
   });
 
   it("予測地点2つ目ちょうどピッタリ", () => {
     const now = new Date("2021-11-28T11:15:00");
-    expect(predictPercent(now, game.startAt, parkingWillFill.predicts)).toEqual(50);
+    expect(predictPercent(now, game.startAt, parkingWillFill.predictParkingStates)).toEqual(50);
   });
 
   it("予測地点満車直前", () => {
     const now = new Date("2021-11-28T11:29:59");
-    expect(predictPercent(now, game.startAt, parkingWillFill.predicts)).toEqual(99);
+    expect(predictPercent(now, game.startAt, parkingWillFill.predictParkingStates)).toEqual(99);
   });
 
   it("予測地点最後ちょうどピッタリ", () => {
     const now = new Date("2021-11-28T11:30:00");
-    expect(predictPercent(now, game.startAt, parkingWillFill.predicts)).toEqual(100);
+    expect(predictPercent(now, game.startAt, parkingWillFill.predictParkingStates)).toEqual(100);
   });
 
   it("予測地点の中間地点", () => {
     const now = new Date("2021-11-28T11:22:30");
-    expect(predictPercent(now, game.startAt, parkingWillFill.predicts)).toEqual(75);
+    expect(predictPercent(now, game.startAt, parkingWillFill.predictParkingStates)).toEqual(75);
   });
 
   it("予測地点最後以降（満車見込み駐車場）", () => {
     const now = new Date("2021-11-28T15:00:00");
-    expect(predictPercent(now, game.startAt, parkingWillFill.predicts)).toEqual(100);
+    expect(predictPercent(now, game.startAt, parkingWillFill.predictParkingStates)).toEqual(100);
   });
 
   it("予測地点最後以降（満車にならない駐車場）", () => {
     const now = new Date("2021-11-28T15:00:00");
-    expect(predictPercent(now, game.startAt, parkingWontFill.predicts)).toEqual(75);
+    expect(predictPercent(now, game.startAt, parkingWontFill.predictParkingStates)).toEqual(75);
   });
 });
 
 describe("predictsFillDate", () => {
   it("満車時刻あり（15分前）", () => {
     const now = new Date("2021-11-28T11:15:00");
-    expect(predictsFillDate(now, game, parkingWillFill.predicts)).toEqual(15);
+    expect(predictsFillDate(now, game, parkingWillFill.predictParkingStates)).toEqual(15);
   });
 
   it("満車時刻あり（12分33秒前は小数点の切り上げで13分前）", () => {
     const now = new Date("2021-11-28T11:17:27");
-    expect(predictsFillDate(now, game, parkingWillFill.predicts)).toEqual(13);
+    expect(predictsFillDate(now, game, parkingWillFill.predictParkingStates)).toEqual(13);
   });
 
   it("満車時刻あり（ちょうど）", () => {
     const now = new Date("2021-11-28T11:30:00");
-    expect(predictsFillDate(now, game, parkingWillFill.predicts)).toEqual(0);
+    expect(predictsFillDate(now, game, parkingWillFill.predictParkingStates)).toEqual(0);
   });
 
   it("満車時刻あり（過ぎた後）", () => {
     const now = new Date("2021-11-28T12:30:00");
-    expect(predictsFillDate(now, game, parkingWillFill.predicts)).toEqual(0);
+    expect(predictsFillDate(now, game, parkingWillFill.predictParkingStates)).toEqual(0);
   });
 
   it("満車時刻なし", () => {
     const now = new Date("2021-11-28T11:15:00");
-    expect(predictsFillDate(now, game, parkingWontFill.predicts)).toEqual(0);
+    expect(predictsFillDate(now, game, parkingWontFill.predictParkingStates)).toEqual(0);
   });
 
   it("予測なし", () => {
     const now = new Date("2021-11-28T11:15:00");
-    const parkingNoPredicts = Object.assign(parkingWillFill, { predicts: [] });
+    const parkingNoPredicts = Object.assign(parkingWillFill, { predictParkingStates: [] });
     expect(predictsFillDate(now, game, [])).toEqual(0);
   });
 });

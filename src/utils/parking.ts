@@ -1,7 +1,7 @@
 import type { Game } from "@/types/Game";
 import type { Parking, ParkingStatus } from "@/types/Parking";
 import { Post } from "@/types/Post";
-import type { Predict } from "@/types/Predict";
+import type { ParkingState } from "@/types/Parking";
 
 const debug = process.env.NEXT_PUBLIC_DEBUG;
 
@@ -42,11 +42,11 @@ export const parkingStatus = (
         return { state: "opened", percent: percent, fillMinutes: fillMinutes };
       }
     } else {
-      const percent = predictPercent(now, gameStart, parking.predicts);
+      const percent = predictPercent(now, gameStart, parking.predictParkingStates);
       if (percent >= 100) {
         return { state: "filled", percent: 100, fillMinutes: 0 };
       } else {
-        const fillMinutes = predictsFillDate(now, game, parking.predicts);
+        const fillMinutes = predictsFillDate(now, game, parking.predictParkingStates);
         return { state: "opened", percent: percent, fillMinutes: fillMinutes };
       }
     }
@@ -182,8 +182,8 @@ export const postFillMinutes = (now: Date, game: Game, parking: Parking, post: P
   return 0;
 };
 
-export const predictPercent = (now: Date, gameStart: Date, predicts: Predict[]): number => {
-  if (predicts.length === 0) {
+export const predictPercent = (now: Date, gameStart: Date, states: ParkingState[]): number => {
+  if (states.length === 0) {
     return 0;
   }
 
@@ -191,7 +191,7 @@ export const predictPercent = (now: Date, gameStart: Date, predicts: Predict[]):
 
   // 予測は時系列の昇順で並んでいる前提
   // 最後尾を越えていたら最後尾がそのまま継続しているとして、最後尾を返す
-  let predictAbove = predicts[predicts.length - 1];
+  let predictAbove = states[states.length - 1];
   let dateAbove = new Date(gameStart.getTime());
   dateAbove.setMinutes(dateAbove.getMinutes() + predictAbove.minutes);
   if (timeNow >= dateAbove.getTime()) {
@@ -199,13 +199,13 @@ export const predictPercent = (now: Date, gameStart: Date, predicts: Predict[]):
   }
 
   // 後尾2つ目から探すので必ず2点の補完になる
-  for (let i = predicts.length - 2; i >= 0; i--) {
+  for (let i = states.length - 2; i >= 0; i--) {
     let dateBelow = new Date(gameStart.getTime());
-    dateBelow.setMinutes(dateBelow.getMinutes() + predicts[i].minutes);
+    dateBelow.setMinutes(dateBelow.getMinutes() + states[i].minutes);
 
     // 過ぎた地点が下位側
     const timeBelow = dateBelow.getTime();
-    const ratioBelow = predicts[i].ratio;
+    const ratioBelow = states[i].ratio;
     if (timeNow >= timeBelow) {
       // 過ぎてない地点が上位側
       const timeAbove = dateAbove.getTime();
@@ -217,7 +217,7 @@ export const predictPercent = (now: Date, gameStart: Date, predicts: Predict[]):
       return Math.floor(ratio * 100);
     }
 
-    predictAbove = predicts[i];
+    predictAbove = states[i];
     dateAbove = dateBelow;
   }
 
@@ -225,12 +225,12 @@ export const predictPercent = (now: Date, gameStart: Date, predicts: Predict[]):
   return 0;
 };
 
-export const predictsFillDate = (now: Date, game: Game, predicts: Predict[]): number => {
+export const predictsFillDate = (now: Date, game: Game, states: ParkingState[]): number => {
   const nowStartMinutes = (game.startAt.getTime() - now.getTime()) / 60000;
 
-  for (let i = 0; i < predicts.length; i++) {
-    if (predicts[i].ratio >= 1.0) {
-      let fillMinutes = predicts[i].minutes;
+  for (let i = 0; i < states.length; i++) {
+    if (states[i].ratio >= 1.0) {
+      let fillMinutes = states[i].minutes;
       fillMinutes += nowStartMinutes;
       // 現在時間を加味して正の数なら、満車時刻より前なのでその分を返す
       // 切り上げ
