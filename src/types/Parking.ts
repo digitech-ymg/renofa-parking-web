@@ -13,8 +13,6 @@ export type Parking = {
   hourToClose: number;
   predictParkingStates: ParkingState[];
   adoptionParkingStates: ParkingState[];
-  minutesToPark: number;
-  slopeToPark: number;
   images: string[];
 };
 

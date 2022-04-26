@@ -86,7 +86,8 @@ const parkingConverter = {
       routeUrl: parking.routeUrl,
       hourToOpen: parking.hourToOpen,
       hourToClose: parking.hourToClose,
-      predicts: parking.predicts,
+      predictParkingStates: parking.predictParkingStates,
+      adoptionParkingStates: parking.adoptionParkingStates,
       images: parking.images,
     };
   },
@@ -105,9 +106,8 @@ const parkingConverter = {
       routeUrl: data.routeUrl,
       hourToOpen: data.hourToOpen,
       hourToClose: data.hourToClose,
-      predicts: data.predicts,
-      minutesToPark: data.minutesToPark,
-      slopeToPark: data.slopeToPark,
+      predictParkingStates: data.predictParkingStates,
+      adoptionParkingStates: data.adoptionParkingStates,
       images: data.images,
     };
   },
