@@ -56,6 +56,7 @@ const gameConverter = {
 };
 
 export const getMostRecentGame = async (): Promise<Game> => {
+  console.log("getMostRecentGame() called.");
   const ref = collection(db, "games");
   // 当日0時以降の直近の試合を1つ取得する（試合当日は試合が終わってもその日の終日まで対象になる）
   const now = new Date();
@@ -114,6 +115,7 @@ const parkingConverter = {
 };
 
 export const getParkings = async (): Promise<Parking[]> => {
+  console.log("getParkings() called.");
   const ref = collection(db, "parkings");
   const q = query(ref, orderBy("order")).withConverter(parkingConverter);
 
@@ -147,12 +149,14 @@ const postConverter = {
 };
 
 export const createPost = async (post: Post): Promise<void> => {
+  console.log("createPost() called.");
   const ref = doc(collection(db, "posts")).withConverter(postConverter);
 
   return await setDoc(ref, post);
 };
 
 export const getPosts = async (key: string, gameId: string): Promise<Post[]> => {
+  console.log("getPosts() called.");
   const ref = collection(db, "posts");
   // 6時間前が駐車場会場最速なのでそれ以降に絞る
   const q = query(

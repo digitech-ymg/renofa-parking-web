@@ -13,41 +13,37 @@ import ParkingList from "@/components/ParkingList";
 import RenofaBanner from "@/components/RenofaBanner";
 import { useEffect, useState } from "react";
 
-const interval = 50000;
+// 当日ほとんど変わらないものは1時間
+const intervalHour = 60 * 60 * 1000;
+// 1分間隔の周期で更新のものは50秒
+const intervalLessMinute = 50 * 1000;
 
 const Top: NextPage = () => {
   const { user } = useAuthContext();
-  const [now, setNow] = useState(new Date());
 
   const { data: game, error: errorGame } = useSWR(
     user ? "mostRecentGame" : null,
     getMostRecentGame,
     {
-      refreshInterval: interval,
+      revalidateOnFocus: false,
+      refreshInterval: intervalHour,
     }
   );
   const { data: parkings, error: errorParkings } = useSWR(user ? "parkings" : null, getParkings, {
-    refreshInterval: interval,
+    revalidateOnFocus: false,
+    refreshInterval: intervalHour,
   });
   const { data: posts, error: errorPosts } = useSWR(
     user && game ? ["posts", game.id] : null,
     getPosts,
     {
       fallbackData: [],
-      refreshInterval: interval,
+      refreshInterval: intervalLessMinute,
     }
   );
 
-  // 毎分画面更新
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setNow(new Date());
-      console.log("update now.");
-    }, interval);
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [now]);
+  const now = new Date();
+  // console.log("rendered at " + now);
 
   return (
     <Container bgColor="white">
