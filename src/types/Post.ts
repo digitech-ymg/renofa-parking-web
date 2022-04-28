@@ -4,5 +4,7 @@ export type Post = {
   parkingId: string;
   parkingRatio: number;
   parkingMinutes: number;
-  postedAt?: Date;
+  parkedAgo: number;
+  parkedAt: Date;
+  postedAt: Date;
 };

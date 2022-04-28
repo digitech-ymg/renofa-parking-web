@@ -56,6 +56,7 @@ const gameConverter = {
 };
 
 export const getMostRecentGame = async (): Promise<Game> => {
+  console.log("getMostRecentGame() called.");
   const ref = collection(db, "games");
   // 当日0時以降の直近の試合を1つ取得する（試合当日は試合が終わってもその日の終日まで対象になる）
   const now = new Date();
@@ -86,7 +87,8 @@ const parkingConverter = {
       routeUrl: parking.routeUrl,
       hourToOpen: parking.hourToOpen,
       hourToClose: parking.hourToClose,
-      predicts: parking.predicts,
+      predictParkingStates: parking.predictParkingStates,
+      adoptionParkingStates: parking.adoptionParkingStates,
       images: parking.images,
     };
   },
@@ -105,15 +107,15 @@ const parkingConverter = {
       routeUrl: data.routeUrl,
       hourToOpen: data.hourToOpen,
       hourToClose: data.hourToClose,
-      predicts: data.predicts,
-      minutesToPark: data.minutesToPark,
-      slopeToPark: data.slopeToPark,
+      predictParkingStates: data.predictParkingStates,
+      adoptionParkingStates: data.adoptionParkingStates,
       images: data.images,
     };
   },
 };
 
 export const getParkings = async (): Promise<Parking[]> => {
+  console.log("getParkings() called.");
   const ref = collection(db, "parkings");
   const q = query(ref, orderBy("order")).withConverter(parkingConverter);
 
@@ -130,7 +132,9 @@ const postConverter = {
       parkingId: post.parkingId,
       parkingRatio: post.parkingRatio,
       parkingMinutes: post.parkingMinutes,
-      postedAt: serverTimestamp(),
+      parkedAgo: post.parkedAgo,
+      parkedAt: post.parkedAt,
+      postedAt: post.postedAt,
     };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): Post {
@@ -141,18 +145,26 @@ const postConverter = {
       parkingId: data.parkingId,
       parkingRatio: data.parkingRatio,
       parkingMinutes: data.parkingMinutes,
+      parkedAgo: data.parkedAgo,
+      parkedAt: data.parkedAt,
       postedAt: data.postedAt.toDate(),
     };
   },
 };
 
 export const createPost = async (post: Post): Promise<void> => {
-  const ref = doc(collection(db, "posts")).withConverter(postConverter);
+  console.log("createPost() called.");
 
+  const dateUTC = new Date();
+  const diffJST = dateUTC.getTimezoneOffset() * 60 * 1000;
+  const id = new Date(dateUTC.getTime() - diffJST).toISOString().replace(/[^0-9]/g, "");
+
+  const ref = doc(db, "posts", id).withConverter(postConverter);
   return await setDoc(ref, post);
 };
 
 export const getPosts = async (key: string, gameId: string): Promise<Post[]> => {
+  console.log("getPosts() called.");
   const ref = collection(db, "posts");
   // 6時間前が駐車場会場最速なのでそれ以降に絞る
   const q = query(
