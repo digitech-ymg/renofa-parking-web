@@ -2,7 +2,8 @@
   "name": "renofa-parking-web",
   "private": true,
   "scripts": {
-    "dev": "export NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true && next dev",
+    "local": "export NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true && next dev",
+    "dev": "next dev",
     "build": "next build && next export",
     "start": "next start",
     "inspect": "npm-run-all -l -c inspect:*",

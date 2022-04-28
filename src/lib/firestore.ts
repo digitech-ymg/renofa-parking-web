@@ -132,7 +132,9 @@ const postConverter = {
       parkingId: post.parkingId,
       parkingRatio: post.parkingRatio,
       parkingMinutes: post.parkingMinutes,
-      postedAt: serverTimestamp(),
+      parkedAgo: post.parkedAgo,
+      parkedAt: post.parkedAt,
+      postedAt: post.postedAt,
     };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): Post {
@@ -143,6 +145,8 @@ const postConverter = {
       parkingId: data.parkingId,
       parkingRatio: data.parkingRatio,
       parkingMinutes: data.parkingMinutes,
+      parkedAgo: data.parkedAgo,
+      parkedAt: data.parkedAt,
       postedAt: data.postedAt.toDate(),
     };
   },
@@ -150,8 +154,12 @@ const postConverter = {
 
 export const createPost = async (post: Post): Promise<void> => {
   console.log("createPost() called.");
-  const ref = doc(collection(db, "posts")).withConverter(postConverter);
 
+  const dateUTC = new Date();
+  const diffJST = dateUTC.getTimezoneOffset() * 60 * 1000;
+  const id = new Date(dateUTC.getTime() - diffJST).toISOString().replace(/[^0-9]/g, "");
+
+  const ref = doc(db, "posts", id).withConverter(postConverter);
   return await setDoc(ref, post);
 };
 

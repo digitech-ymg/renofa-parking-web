@@ -85,6 +85,9 @@ const postBase = {
   nickname: "hoge",
   gameId: "20211128",
   parkingId: "truck",
+  parkedAgo: 0, // not use for test
+  parkedAt: new Date(), // not use for test
+  postedAt: new Date(), // not use for test
 };
 
 // --------------------------------------------------------
