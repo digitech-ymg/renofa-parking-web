@@ -10,7 +10,7 @@ const ParkingColorSample = () => {
 
   return (
     <Stack spacing={2}>
-      <Flex spacing={4} width="100%">
+      <Flex width="100%">
         <Spacer />
         <HStack spacing={2}>
           <Text fontSize="sm">未開場</Text>

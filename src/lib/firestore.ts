@@ -12,7 +12,6 @@ import {
   QueryDocumentSnapshot,
   DocumentData,
   Timestamp,
-  serverTimestamp,
 } from "firebase/firestore/lite";
 
 import { firebaseApp, isEmulator } from "@/lib/firebase";
@@ -31,8 +30,6 @@ const gameConverter = {
       id: game.id,
       kind: game.kind,
       section: game.section,
-      partner: game.partner,
-      thanksday: game.thanksday,
       startAt: Timestamp.fromDate(game.startAt),
       finishAt: Timestamp.fromDate(game.finishAt),
       availableParkings: game.availableParkings,
@@ -45,8 +42,6 @@ const gameConverter = {
       id: data.id,
       kind: data.kind,
       section: data.section,
-      partner: data.partner,
-      thanksday: data.thanksday,
       startAt: data.startAt.toDate(),
       finishAt: data.finishAt.toDate(),
       availableParkings: data.availableParkings,
