@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "firebase-admin": "^10.0.2",
+    "firebase-admin": "^10.1.0",
     "json2csv": "^5.0.7",
     "prompts": "^2.4.2",
     "ts-node": "^10.7.0",
