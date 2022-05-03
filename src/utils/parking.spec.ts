@@ -14,8 +14,6 @@ const game: Game = {
   id: "20211128",
   kind: "明治安田生命J2リーグ",
   section: "第1節",
-  partner: "",
-  thanksday: "",
   startAt: new Date("2021-11-28T14:00:00"),
   finishAt: new Date("2021-11-28T16:00:00"),
   opponent: "ロアッソ熊本",
