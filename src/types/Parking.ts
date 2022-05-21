@@ -33,6 +33,7 @@ const Status = {
   Opened: "opened",
   Filled: "filled",
   AfterClosed: "afterClosed",
+  SoldOut: "soldOut",
 } as const;
 type Status = typeof Status[keyof typeof Status];
 
