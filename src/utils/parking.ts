@@ -24,6 +24,9 @@ export const parkingStatus = (
   if (!game.availableParkings.includes(parking.id)) {
     // 未開放
     return { state: "disable", percent: 0, fillMinutes: 0 };
+  } else if (game.soldOutParkings.includes(parking.id)) {
+    // 完売
+    return { state: "soldOut", percent: 0, fillMinutes: 0 };
   } else if (now.getTime() < openDate.getTime()) {
     // 開場前
     return { state: "beforeOpen", percent: 0, fillMinutes: 0 };

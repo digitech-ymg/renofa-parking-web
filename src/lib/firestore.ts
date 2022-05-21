@@ -33,6 +33,7 @@ const gameConverter = {
       startAt: Timestamp.fromDate(game.startAt),
       finishAt: Timestamp.fromDate(game.finishAt),
       availableParkings: game.availableParkings,
+      soldOutParkings: game.soldOutParkings,
       opponent: game.opponent,
     };
   },
@@ -45,6 +46,7 @@ const gameConverter = {
       startAt: data.startAt.toDate(),
       finishAt: data.finishAt.toDate(),
       availableParkings: data.availableParkings,
+      soldOutParkings: data.soldOutParkings,
       opponent: data.opponent,
     };
   },

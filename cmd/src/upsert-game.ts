@@ -82,6 +82,7 @@ const questions: prompts.PromptObject[] = [
     finishAt: response.finishAt,
     opponent: response.opponent,
     availableParkings: response.availableParkings,
+    soldOutParkings: [],
   };
   createGame(gameId, game)
     .then((res) => {

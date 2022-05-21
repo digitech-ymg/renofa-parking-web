@@ -18,6 +18,7 @@ const game: Game = {
   finishAt: new Date("2021-11-28T16:00:00"),
   opponent: "ロアッソ熊本",
   availableParkings: ["paid", "ja", "truck", "riverbed"],
+  soldOutParkings: ["paid"],
 };
 
 const parkingWillFill: Parking = {
@@ -95,9 +96,25 @@ describe("parkingStatus", () => {
     const parkingDisable = Object.assign({}, parkingWillFill, { id: "panasonic" });
     test.each`
       label           | now                                | state        | percent | fillMinutes
-      ${"開場の前日"} | ${new Date("2021-11-28T12:00:00")} | ${"disable"} | ${0}    | ${0}
+      ${"開場の前日"} | ${new Date("2021-11-27T12:00:00")} | ${"disable"} | ${0}    | ${0}
+      ${"開場の当日"} | ${new Date("2021-11-28T12:00:00")} | ${"disable"} | ${0}    | ${0}
     `("$label", ({ label, now, state, percent, fillMinutes }) => {
       expect(parkingStatus(now, game, parkingDisable, emptyPosts)).toMatchObject({
+        state: state,
+        percent: percent,
+        fillMinutes: fillMinutes,
+      });
+    });
+  });
+
+  describe("完売した駐車場", () => {
+    const parkingSoldOut = Object.assign({}, parkingWillFill, { id: "paid" });
+    test.each`
+      label           | now                                | state        | percent | fillMinutes
+      ${"開場の前日"} | ${new Date("2021-11-27T12:00:00")} | ${"soldOut"} | ${0}    | ${0}
+      ${"開場の当日"} | ${new Date("2021-11-28T12:00:00")} | ${"soldOut"} | ${0}    | ${0}
+    `("$label", ({ label, now, state, percent, fillMinutes }) => {
+      expect(parkingStatus(now, game, parkingSoldOut, emptyPosts)).toMatchObject({
         state: state,
         percent: percent,
         fillMinutes: fillMinutes,

@@ -18,6 +18,7 @@ const stateBg = (status: ParkingStatus): string => {
     case "beforeOpen":
     case "opened":
     case "filled":
+    case "soldOut":
     default:
       return "white";
   }
@@ -40,6 +41,7 @@ const stateColor = (status: ParkingStatus): string => {
         return "red.400";
       }
     case "filled":
+    case "soldOut":
       return "red.400";
     default:
       return "gray.400";
@@ -58,6 +60,9 @@ const renderStateText = (status: ParkingStatus): JSX.Element => {
       break;
     case "afterClosed":
       texts.push("閉場");
+      break;
+    case "soldOut":
+      texts.push("完売");
       break;
     case "opened":
       if (status.percent == 100) {
