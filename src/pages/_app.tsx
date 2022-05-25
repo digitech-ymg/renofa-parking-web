@@ -8,6 +8,7 @@ import * as gtag from "../lib/gtag";
 
 import Header from "@/components/Header";
 import { AuthProvider } from "@/context/AuthContext";
+import { NextSeo } from "next-seo";
 
 const theme = extendTheme({
   styles: {
@@ -32,6 +33,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
     };
   }, [router.events]);
 
+  const title = "レノファ駐車場情報サイト";
+  const description = "レノファ山口のホームゲームの駐車場の状況を確認できるサイトです。";
+
   return (
     <>
       <Script
@@ -50,8 +54,27 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         `}
       </Script>
       <Head>
-        <title>レノファ駐車場情報サイト</title>
+        <title>{title}</title>
       </Head>
+      <NextSeo
+        title={title}
+        description={description}
+        openGraph={{
+          type: "website",
+          url: "https://renofa-parking.web.app/",
+          title: title,
+          description: description,
+          images: [
+            {
+              url: "https://renofa-parking.web.app/ogp.png",
+              width: 1200,
+              height: 630,
+              alt: `${title}のOPG画像`,
+            },
+          ],
+          site_name: title,
+        }}
+      />
       <AuthProvider>
         <ChakraProvider theme={theme}>
           <Header />
