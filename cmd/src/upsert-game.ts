@@ -38,13 +38,6 @@ const questions: prompts.PromptObject[] = [
     mask: "HH:mm",
   },
   {
-    name: "finishAt",
-    message: "When does the game finish at?",
-    type: "date",
-    initial: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 16, 0, 0),
-    mask: "HH:mm",
-  },
-  {
     name: "availableParkings",
     type: "multiselect",
     message: "Which parking is available?",
@@ -69,17 +62,30 @@ const questions: prompts.PromptObject[] = [
 
   console.dir(response);
 
-  const year = response.date.getFullYear();
-  const month = (response.date.getMonth() + 1).toString().padStart("2", "0");
-  const date = response.date.getDate().toString().padStart("2", "0");
-  const gameId = `${year}${month}${date}`;
+  const date = response.date;
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart("2", "0");
+  const day = date.getDate().toString().padStart("2", "0");
+  const gameId = `${year}${month}${day}`;
+
+  const start = response.startAt;
+  const startAt = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    start.getHours(),
+    start.getMinutes(),
+    0
+  );
+  const finishAt = new Date(startAt);
+  finishAt.setHours(finishAt.getHours() + 2);
 
   const game: Game = {
     id: gameId,
     kind: response.kind,
     section: response.section,
-    startAt: response.startAt,
-    finishAt: response.finishAt,
+    startAt: startAt,
+    finishAt: finishAt,
     opponent: response.opponent,
     availableParkings: response.availableParkings,
     soldOutParkings: [],
