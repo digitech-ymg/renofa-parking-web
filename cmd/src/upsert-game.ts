@@ -38,13 +38,6 @@ const questions: prompts.PromptObject[] = [
     mask: "HH:mm",
   },
   {
-    name: "finishAt",
-    message: "When does the game finish at?",
-    type: "date",
-    initial: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 16, 0, 0),
-    mask: "HH:mm",
-  },
-  {
     name: "availableParkings",
     type: "multiselect",
     message: "Which parking is available?",
@@ -84,15 +77,8 @@ const questions: prompts.PromptObject[] = [
     start.getMinutes(),
     0
   );
-  const finish = response.finishAt;
-  const finishAt = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-    finish.getHours(),
-    finish.getMinutes(),
-    0
-  );
+  const finishAt = new Date(startAt);
+  finishAt.setHours(finishAt.getHours() + 2);
 
   const game: Game = {
     id: gameId,
