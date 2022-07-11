@@ -17,7 +17,10 @@ npm i
 ## useage
 
 ```shell
-# 投稿情報をCSVで取得
+# 投稿情報CSVを全て取得
+npx ts-node src/get-all-posts.ts
+
+# 投稿情報CSVを試合IDで取得
 npx ts-node src/get-posts.ts 20220428
 
 # 試合情報の作成（対話形式）
