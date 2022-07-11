@@ -1,13 +1,9 @@
 import { Parser } from "json2csv";
-import { getPostsByGameId } from "./firestore";
+import { getAllPosts } from "./firestore";
 
 (async () => {
   try {
-    if (process.argv.length < 3) {
-      throw "require gameId: ts-node src/get-posts.ts 20220428";
-    }
-    const gameId = process.argv[2];
-    const posts = await getPostsByGameId(gameId);
+    const posts = await getAllPosts();
 
     // CSV のヘッダーを定義( label = ヘッダー項目、value = JSON のキー名)
     const fields = [

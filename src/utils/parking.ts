@@ -151,6 +151,11 @@ export const postPercent = (now: Date, parking: Parking, gameStart: Date, post: 
 
   // 傾き（2つのstateの差分、分あたりの上量駐車率）
   const minuteDuration = Math.abs(next.minutes - start.minutes);
+  // 傾きが0の場合は、時間経過の増加なし
+  // let slope = 0;
+  // if (minuteDuration > 0) {
+  //   slope = (next.ratio - start.ratio) / minuteDuration;
+  // }
   const slope = (next.ratio - start.ratio) / minuteDuration;
 
   // 経過時間（投稿地点から現在時刻までの分）

@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "get-posts": "npx ts-node src/get-posts.ts",
+    "get-all-posts": "npx ts-node src/get-all-posts.ts",
     "upsert-game": "npx ts-node src/upsert-game.ts"
   },
   "keywords": [],

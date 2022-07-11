@@ -9,7 +9,21 @@ initializeApp({
 
 const db = getFirestore();
 
-export const getPosts = async (gameId: string) => {
+export const getAllPosts = async () => {
+  const queryRef = db
+    .collection("posts")
+    .orderBy("postedAt", "desc")
+    .withConverter<Post>(postConverter);
+
+  const querySnapshot = await queryRef.get();
+  const posts = querySnapshot.docs.map((doc: QueryDocumentSnapshot) => {
+    return doc.data();
+  });
+
+  return posts;
+};
+
+export const getPostsByGameId = async (gameId: string) => {
   const queryRef = db
     .collection("posts")
     .where("gameId", "==", gameId)
