@@ -157,6 +157,9 @@ const Post: NextPage = () => {
                   {parking.name}
                 </Button>
               ))}
+            <div style={{ margin: "auto" }}>
+              <img src="/reno_01.png" style={{ height: "100px" }} />
+            </div>
             {errorParkings && <p>駐車場情報の取得に失敗しました。</p>}
           </SimpleGrid>
           {parkingIdIsError && <FormErrorMessage>どれか1つを選択してください。</FormErrorMessage>}
