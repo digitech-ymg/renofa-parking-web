@@ -1,4 +1,4 @@
-import { Stack, HStack, Text } from "@chakra-ui/react";
+import { Stack, HStack, Text, Image } from "@chakra-ui/react";
 import { FaComment } from "react-icons/fa";
 import { Icon } from "@chakra-ui/icons";
 
@@ -15,6 +15,9 @@ const ParkingStatusSharer = ({ names }: Props) => {
       </HStack>
       <Stack fontSize="sm" p={2}>
         (names && <Text>{names.map((name) => `${name}さん`).join("・")}</Text>)
+      </Stack>
+      <Stack textAlign="right">
+        <Image width="20%" marginLeft="auto" src="/img/reno_01.png" alt="レノ丸君" />
       </Stack>
     </Stack>
   );
