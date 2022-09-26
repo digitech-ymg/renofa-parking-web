@@ -1,7 +1,6 @@
 import type { NextPage } from "next";
 import { getMostRecentGame, getParkings, getPosts } from "@/lib/firestore";
 import useSWR from "swr";
-import { useAuthContext } from "@/context/AuthContext";
 
 import { Container, Box, Link } from "@chakra-ui/react";
 import ParkingColorSample from "@/components/ParkingColorSample";
@@ -11,7 +10,6 @@ import SiteDescription from "@/components/SiteDescription";
 import Game from "@/components/Game";
 import ParkingList from "@/components/ParkingList";
 import RenofaBanner from "@/components/RenofaBanner";
-import { useEffect, useState } from "react";
 
 // 当日ほとんど変わらないものは1時間
 const intervalHour = 60 * 60 * 1000;
@@ -19,31 +17,20 @@ const intervalHour = 60 * 60 * 1000;
 const intervalLessMinute = 50 * 1000;
 
 const Top: NextPage = () => {
-  const { user } = useAuthContext();
-
-  const { data: game, error: errorGame } = useSWR(
-    user ? "mostRecentGame" : null,
-    getMostRecentGame,
-    {
-      revalidateOnFocus: false,
-      refreshInterval: intervalHour,
-    }
-  );
-  const { data: parkings, error: errorParkings } = useSWR(user ? "parkings" : null, getParkings, {
+  const { data: game, error: errorGame } = useSWR("mostRecentGame", getMostRecentGame, {
     revalidateOnFocus: false,
     refreshInterval: intervalHour,
   });
-  const { data: posts, error: errorPosts } = useSWR(
-    user && game ? ["posts", game.id] : null,
-    getPosts,
-    {
-      fallbackData: [],
-      refreshInterval: intervalLessMinute,
-    }
-  );
+  const { data: parkings, error: errorParkings } = useSWR("parkings", getParkings, {
+    revalidateOnFocus: false,
+    refreshInterval: intervalHour,
+  });
+  const { data: posts, error: errorPosts } = useSWR(game ? ["posts", game.id] : null, getPosts, {
+    fallbackData: [],
+    refreshInterval: intervalLessMinute,
+  });
 
   const now = new Date();
-  // console.log("rendered at " + now);
 
   return (
     <Container bgColor="white">

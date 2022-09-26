@@ -1,42 +1,46 @@
-import { createContext, useEffect, useState, useContext } from "react";
-import { getAuth, connectAuthEmulator, signInAnonymously } from "@firebase/auth";
-import { firebaseApp, isEmulator } from "@/lib/firebase";
+import { createContext, useEffect, useState, useContext, ReactNode } from "react";
+import { onAuthStateChanged } from "@firebase/auth";
 import { User } from "@/types/User";
+import { doc, getDoc } from "@firebase/firestore";
+import { db } from "@/lib/firestore";
+import { auth } from "@/lib/authentication";
+import { setDoc } from "@firebase/firestore";
 
-const auth = getAuth(firebaseApp);
-if (isEmulator()) {
-  connectAuthEmulator(auth, "http://localhost:9099");
-}
+type UserContextType = User | null | undefined;
 
-type AuthContextProps = {
-  user: User | null | undefined;
-};
+const AuthContext = createContext<UserContextType>(undefined);
 
-const AuthContext = createContext<AuthContextProps>({ user: undefined });
-
-export const AuthProvider: React.FC = ({ children }) => {
-  const [user, setUser] = useState<User | null | undefined>(undefined);
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<UserContextType>();
 
   useEffect(() => {
-    if (user) {
-      return;
-    }
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const ref = doc(db, `users/${firebaseUser.uid}`);
+        const snap = await getDoc(ref);
 
-    signInAnonymously(getAuth(firebaseApp))
-      .then((userCred) => {
-        if (userCred) {
-          setUser({
-            uid: userCred.user.uid,
-            providerId: userCred.user.providerId,
-          });
+        if (snap.exists()) {
+          const appUser = (await getDoc(ref)).data() as User;
+          setUser(appUser);
+        } else {
+          const appUser: User = {
+            id: firebaseUser.uid,
+            // 初回登校時に直接入力してもらう（過去と同じニックネームの入力を期待する）
+            nickname: "",
+            photoURL: firebaseUser.photoURL!,
+            createdAt: new Date(),
+          };
+          setDoc(ref, appUser).then(() => setUser(appUser));
         }
-      })
-      .catch((e) => {
-        console.error("failed auth: " + e);
-      });
-  });
+      } else {
+        setUser(null);
+      }
+    });
 
-  return <AuthContext.Provider value={{ user: user }}>{children}</AuthContext.Provider>;
+    return () => unsubscribe();
+  }, []);
+
+  return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
 };
 
 export const useAuthContext = () => useContext(AuthContext);

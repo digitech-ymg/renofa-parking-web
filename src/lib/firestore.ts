@@ -12,14 +12,15 @@ import {
   QueryDocumentSnapshot,
   DocumentData,
   Timestamp,
-} from "firebase/firestore/lite";
+} from "firebase/firestore";
 
 import { firebaseApp, isEmulator } from "@/lib/firebase";
 import { Parking } from "@/types/Parking";
 import { Game } from "@/types/Game";
 import { Post } from "@/types/Post";
+import { User } from "@/types/User";
 
-const db = getFirestore(firebaseApp);
+export const db = getFirestore(firebaseApp);
 if (isEmulator()) {
   connectFirestoreEmulator(db, "localhost", 8080);
 }
@@ -53,7 +54,6 @@ const gameConverter = {
 };
 
 export const getMostRecentGame = async (): Promise<Game> => {
-  console.log("getMostRecentGame() called.");
   const ref = collection(db, "games");
   // 当日0時以降の直近の試合を1つ取得する（試合当日は試合が終わってもその日の終日まで対象になる）
   const now = new Date();
@@ -112,7 +112,6 @@ const parkingConverter = {
 };
 
 export const getParkings = async (): Promise<Parking[]> => {
-  console.log("getParkings() called.");
   const ref = collection(db, "parkings");
   const q = query(ref, orderBy("order")).withConverter(parkingConverter);
 
@@ -132,6 +131,7 @@ const postConverter = {
       parkedAgo: post.parkedAgo,
       parkedAt: post.parkedAt,
       postedAt: post.postedAt,
+      userId: post.userId,
     };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): Post {
@@ -145,13 +145,12 @@ const postConverter = {
       parkedAgo: data.parkedAgo,
       parkedAt: data.parkedAt,
       postedAt: data.postedAt.toDate(),
+      userId: data.userId,
     };
   },
 };
 
 export const createPost = async (post: Post): Promise<void> => {
-  console.log("createPost() called.");
-
   const dateUTC = new Date();
   const diffJST = dateUTC.getTimezoneOffset() * 60 * 1000;
   const id = new Date(dateUTC.getTime() - diffJST).toISOString().replace(/[^0-9]/g, "");
@@ -161,7 +160,6 @@ export const createPost = async (post: Post): Promise<void> => {
 };
 
 export const getPosts = async (key: string, gameId: string): Promise<Post[]> => {
-  console.log("getPosts() called.");
   const ref = collection(db, "posts");
   // 6時間前が駐車場会場最速なのでそれ以降に絞る
   const q = query(
@@ -174,4 +172,29 @@ export const getPosts = async (key: string, gameId: string): Promise<Post[]> => 
   const snapshot = await getDocs(q);
   const postList = snapshot.docs.map((doc) => doc.data());
   return postList;
+};
+
+const userConverter = {
+  toFirestore(user: User): DocumentData {
+    return {
+      id: user.id,
+      nickname: user.nickname,
+      photoURL: user.photoURL,
+      createdAt: Timestamp.fromDate(user.createdAt),
+    };
+  },
+  fromFirestore(snapshot: QueryDocumentSnapshot): User {
+    const data = snapshot.data()!;
+    return {
+      id: data.id,
+      nickname: data.nickname,
+      photoURL: data.photoURL,
+      createdAt: data.createdAt.toDate(),
+    };
+  },
+};
+
+export const updateUser = async (user: User): Promise<void> => {
+  const ref = doc(db, "users", user.id).withConverter(userConverter);
+  return await setDoc(ref, user);
 };

@@ -1,4 +1,6 @@
 export type User = {
-  uid: string;
-  providerId: string;
+  id: string;
+  nickname: string;
+  photoURL: string;
+  createdAt: Date;
 };

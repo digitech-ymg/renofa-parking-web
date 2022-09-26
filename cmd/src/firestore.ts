@@ -1,5 +1,6 @@
 import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { DocumentData, getFirestore, QueryDocumentSnapshot } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
 import { Game } from "../../src/types/Game";
 import { Post } from "../../src/types/Post";
 
@@ -8,6 +9,7 @@ initializeApp({
 });
 
 const db = getFirestore();
+const auth = getAuth();
 
 export const getAllPosts = async () => {
   const queryRef = db
@@ -68,4 +70,12 @@ const postConverter = {
 
 export const createGame = async (gameId: string, game: Game) => {
   return await db.collection("games").doc(gameId).set(game);
+};
+
+export const getAuthUsers = async () => {
+  return await auth.listUsers(1000);
+};
+
+export const deleteAuthUsers = async (uids: string[]) => {
+  return await auth.deleteUsers(uids);
 };

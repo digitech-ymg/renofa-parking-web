@@ -1,18 +1,51 @@
 import type { VFC } from "react";
-import { Center, Heading, Link } from "@chakra-ui/react";
+import {
+  Container,
+  Box,
+  HStack,
+  Text,
+  Link,
+  Spacer,
+  Avatar,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+} from "@chakra-ui/react";
 
 import Renofa from "public/renofa.svg";
+import { useAuthContext } from "@/context/AuthContext";
+import { logout } from "@/lib/authentication";
 
 const Header: VFC = () => {
+  const user = useAuthContext();
+
   return (
-    <Link href="/">
-      <Center bg="gray.100" h="4.5rem" color="black">
-        <Renofa widht={30} height={40} />
-        <Heading as="h5" size="sm" pl="3">
-          駐車場情報サイト
-        </Heading>
-      </Center>
-    </Link>
+    <Box bg="gray.100" color="black">
+      <Container alignItems="center">
+        <HStack color="black" h="4.5rem" my-auto="true">
+          <Link href="/">
+            <HStack gap="2">
+              <Renofa widht={30} height={40} />
+              <Text size="sm" fontWeight="bold">
+                駐車場情報サイト
+              </Text>
+            </HStack>
+          </Link>
+          <Spacer />
+          {user && (
+            <Menu>
+              <MenuButton>
+                <Avatar src={user.photoURL} name={user.nickname} size="md" />
+              </MenuButton>
+              <MenuList>
+                <MenuItem onClick={logout}>ログアウト</MenuItem>
+              </MenuList>
+            </Menu>
+          )}
+        </HStack>
+      </Container>
+    </Box>
   );
 };
 
