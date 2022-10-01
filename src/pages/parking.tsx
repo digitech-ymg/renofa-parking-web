@@ -11,7 +11,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import useSWR from "swr";
 
 const Parking: NextPage = () => {
-  const { user } = useAuthContext();
+  const user = useAuthContext();
 
   const [parking, setParking] = useState<Parking>();
   const router = useRouter();

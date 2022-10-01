@@ -87,6 +87,7 @@ const postBase = {
   parkedAgo: 0, // not use for test
   parkedAt: new Date(), // not use for test
   postedAt: new Date(), // not use for test
+  userId: "dummy", // not use for test
 };
 
 // --------------------------------------------------------

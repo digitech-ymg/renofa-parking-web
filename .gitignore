@@ -44,3 +44,7 @@ ui-debug.log
 
 # firebase local emulator
 /data/auth_export/accounts.json
+
+env.sh
+renofa-parking.json
+renofa-parking-dev.json
