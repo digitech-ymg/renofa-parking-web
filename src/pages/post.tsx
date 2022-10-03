@@ -15,6 +15,7 @@ import {
   Box,
   FormErrorMessage,
   CircularProgress,
+  Image,
 } from "@chakra-ui/react";
 import { FaCarSide } from "react-icons/fa";
 import { Icon } from "@chakra-ui/icons";
@@ -164,6 +165,9 @@ const Post: NextPage = () => {
                       {parking.name}
                     </Button>
                   ))}
+                <div>
+                  <Image src="/reno_01.png" alt="レノ丸君" height="100" margin="auto" />
+                </div>
                 {errorParkings && <p>駐車場情報の取得に失敗しました。</p>}
               </SimpleGrid>
               {parkingIdIsError && (
@@ -203,9 +207,6 @@ const Post: NextPage = () => {
                     </VStack>
                   </Button>
                 ))}
-                <div style={{ margin: "auto" }}>
-                  <img src="/reno_01.png" style={{ height: "100px" }} />
-                </div>
                 {errorParkings && <p>駐車場情報の取得に失敗しました。</p>}
               </SimpleGrid>
               {parkingRatioIsError && (
