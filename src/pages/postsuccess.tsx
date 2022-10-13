@@ -1,5 +1,15 @@
 import type { NextPage } from "next";
-import { Container, Heading, Text, HStack, Box, Stack, Button, Link } from "@chakra-ui/react";
+import {
+  Container,
+  Heading,
+  Text,
+  HStack,
+  Box,
+  Stack,
+  Button,
+  Link,
+  Image,
+} from "@chakra-ui/react";
 import Iframe from "react-iframe";
 import { Icon } from "@chakra-ui/icons";
 import { CheckCircleIcon } from "@chakra-ui/icons";
@@ -9,8 +19,18 @@ const Postsuccess: NextPage = () => {
     <Container py={8} bgColor="white" px={0}>
       <Box border="4px" borderColor="green.400" rounded={8} mx={4} mb={4} p={4}>
         <HStack color="green.400" spacing={4}>
-          <Icon as={CheckCircleIcon} w="48px" h="48px" />
-          <Box>
+          <Box width="25%">
+            <Icon as={CheckCircleIcon} w="48px" h="48px" marginBottom={3} marginLeft={2} />
+            <Image
+              width="100%"
+              objectFit="cover"
+              src="/reno_05.png"
+              alt="レノ丸"
+              marginLeft={1}
+              marginRight={0}
+            />
+          </Box>
+          <Box margin={0}>
             <Heading as="h1" mb={2} fontSize="xl">
               投稿成功
             </Heading>

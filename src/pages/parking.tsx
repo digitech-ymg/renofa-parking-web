@@ -93,7 +93,7 @@ const Parking: NextPage = () => {
         {parking && (
           <>
             <Center h="64px">
-              <Image width="7%" objectFit="cover" src="/reno_02.png" alt="レノ丸" />
+              <Image width="7%" marginRight={2} objectFit="cover" src="/reno_02.png" alt="レノ丸" />
               <Heading as="h1" size="sm">
                 {parking.name}
               </Heading>
