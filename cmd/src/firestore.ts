@@ -51,6 +51,7 @@ const postConverter = {
       parkedAgo: post.parkedAgo,
       parkedAt: post.parkedAt,
       postedAt: post.postedAt,
+      userId: post.userId,
     };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): Post {
@@ -64,6 +65,7 @@ const postConverter = {
       parkedAgo: data.parkedAgo,
       parkedAt: data.parkedAt.toDate(),
       postedAt: data.postedAt.toDate(),
+      userId: data.userId,
     };
   },
 };
