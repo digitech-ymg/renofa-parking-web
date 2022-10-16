@@ -11,7 +11,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import useSWR from "swr";
 
 const Parking: NextPage = () => {
-  const { user } = useAuthContext();
+  const user = useAuthContext();
 
   const [parking, setParking] = useState<Parking>();
   const router = useRouter();
@@ -93,6 +93,7 @@ const Parking: NextPage = () => {
         {parking && (
           <>
             <Center h="64px">
+              <Image width="7%" marginRight={2} objectFit="cover" src="/reno_02.png" alt="レノ丸" />
               <Heading as="h1" size="sm">
                 {parking.name}
               </Heading>

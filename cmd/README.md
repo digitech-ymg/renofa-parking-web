@@ -25,4 +25,7 @@ npx ts-node src/get-posts.ts 20220428
 
 # 試合情報の作成（対話形式）
 npx ts-node src/upsert-game.ts
+
+# 認証ユーザーの全削除
+npx ts-node src/delete-auth-users.ts
 ```

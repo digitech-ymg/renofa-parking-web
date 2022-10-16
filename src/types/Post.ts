@@ -7,4 +7,5 @@ export type Post = {
   parkedAgo: number;
   parkedAt: Date;
   postedAt: Date;
+  userId: string;
 };
