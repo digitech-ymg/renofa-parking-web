@@ -25,6 +25,21 @@ export const getAllPosts = async () => {
   return posts;
 };
 
+export const getPostsGroupByNickname = async (nickname: string) => {
+  const queryRef = db
+    .collection("posts")
+    .where("nickname", "==", nickname)
+    .orderBy("postedAt", "desc")
+    .withConverter<Post>(postConverter);
+
+  const querySnapshot = await queryRef.get();
+  const posts = querySnapshot.docs.map((doc: QueryDocumentSnapshot) => {
+    return doc.data();
+  });
+
+  return posts;
+};
+
 export const getPostsByGameId = async (gameId: string) => {
   const queryRef = db
     .collection("posts")
