@@ -1,5 +1,5 @@
 import prompts from "prompts";
-import { createGame } from "./firestore";
+import { updateGame } from "./firestore";
 import { Game } from "../../src/types/Game";
 
 const today = new Date();
@@ -89,8 +89,12 @@ const questions: prompts.PromptObject[] = [
     opponent: response.opponent,
     availableParkings: response.availableParkings,
     soldOutParkings: [],
+    attendance: 0,
+    result: "",
+    goalScore: 0,
+    goalAgainst: 0,
   };
-  createGame(gameId, game)
+  updateGame(gameId, game)
     .then((res) => {
       console.log("succeeded");
     })

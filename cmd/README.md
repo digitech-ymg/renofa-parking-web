@@ -23,8 +23,9 @@ npx ts-node src/get-all-posts.ts
 # 投稿情報CSVを試合IDで取得
 npx ts-node src/get-posts.ts 20220428
 
-# 試合情報の作成（対話形式）
-npx ts-node src/upsert-game.ts
+# 試合情報の作成/更新（対話形式）
+npx ts-node src/create-game.ts
+npx ts-node src/update-game.ts
 
 # 認証ユーザーの全削除
 npx ts-node src/delete-auth-users.ts
