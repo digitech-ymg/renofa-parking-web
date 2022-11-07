@@ -89,7 +89,7 @@ const games: Game[] = [
   },
 ];
 
-const user1_posts: Post[] = [
+const user1Posts: Post[] = [
   {
     nickname: "aaa",
     gameId: "20211125",
@@ -158,7 +158,7 @@ const user1_posts: Post[] = [
   },
 ];
 
-const user2_posts: Post[] = [
+const user2Posts: Post[] = [
   {
     nickname: "aaa",
     gameId: "20211125",
@@ -194,7 +194,7 @@ const user2_posts: Post[] = [
   },
 ];
 
-const user3_posts: Post[] = [
+const user3Posts: Post[] = [
   {
     nickname: "aaa",
     gameId: "20211127",
@@ -230,7 +230,7 @@ const user3_posts: Post[] = [
   },
 ];
 
-const user4_posts: Post[] = [
+const user4Posts: Post[] = [
   {
     nickname: "aaa",
     gameId: "20211128",
@@ -266,7 +266,7 @@ const user4_posts: Post[] = [
   },
 ];
 
-const user5_posts: Post[] = [
+const user5Posts: Post[] = [
   {
     nickname: "aaa",
     gameId: "20211125",
@@ -291,7 +291,7 @@ const user5_posts: Post[] = [
   },
 ];
 
-const user6_posts: Post[] = [
+const user6Posts: Post[] = [
   {
     nickname: "aaa",
     gameId: "20211125",
@@ -316,7 +316,7 @@ const user6_posts: Post[] = [
   },
 ];
 
-const user7_posts: Post[] = [
+const user7Posts: Post[] = [
   {
     nickname: "aaa",
     gameId: "20211125",
@@ -341,7 +341,7 @@ const user7_posts: Post[] = [
   },
 ];
 
-const user8_posts: Post[] = [
+const user8Posts: Post[] = [
   {
     nickname: "aaa",
     gameId: "20211125",
@@ -366,7 +366,7 @@ const user8_posts: Post[] = [
   },
 ];
 
-const user9_posts: Post[] = [
+const user9Posts: Post[] = [
   {
     nickname: "aaa",
     gameId: "20211125",
@@ -380,47 +380,47 @@ const user9_posts: Post[] = [
   },
 ];
 
-const user10_posts: Post[] = [];
+const user10Posts: Post[] = [];
 
 //test
 describe("ユーザー称号", () => {
-  it("3: 超絶コアサポーター", () => {
-    expect(judgeUserTitle(games, user1_posts)).toEqual(3);
+  it("0: 超絶コアサポーター", () => {
+    expect(judgeUserTitle(games, user1Posts)).toEqual(0);
   });
 
-  it("4: ありがとう勝ち運サポーター", () => {
-    expect(judgeUserTitle(games, user2_posts)).toEqual(4);
+  it("1: ありがとう勝ち運サポーター", () => {
+    expect(judgeUserTitle(games, user2Posts)).toEqual(1);
   });
 
-  it("5: 負けない事が大事サポーター", () => {
-    expect(judgeUserTitle(games, user3_posts)).toEqual(5);
+  it("2: 負けない事が大事サポーター", () => {
+    expect(judgeUserTitle(games, user3Posts)).toEqual(2);
   });
 
-  it("6: 涙の数だけ強くなるサポーター", () => {
-    expect(judgeUserTitle(games, user4_posts)).toEqual(6);
+  it("3: 涙の数だけ強くなるサポーター", () => {
+    expect(judgeUserTitle(games, user4Posts)).toEqual(3);
   });
 
-  it("7: 有料優良サポーター", () => {
-    expect(judgeUserTitle(games, user5_posts)).toEqual(7);
+  it("4: 有料優良サポーター", () => {
+    expect(judgeUserTitle(games, user5Posts)).toEqual(4);
   });
 
-  it("8: 近いところが好きサポーター", () => {
-    expect(judgeUserTitle(games, user6_posts)).toEqual(8);
+  it("5: 近いところが好きサポーター", () => {
+    expect(judgeUserTitle(games, user6Posts)).toEqual(5);
   });
 
-  it("9: 橋を渡ってくるサポーター", () => {
-    expect(judgeUserTitle(games, user7_posts)).toEqual(9);
+  it("6: 橋を渡ってくるサポーター", () => {
+    expect(judgeUserTitle(games, user7Posts)).toEqual(6);
   });
 
-  it("10: トラック協会ありがとうサポーター", () => {
-    expect(judgeUserTitle(games, user8_posts)).toEqual(10);
+  it("7: トラック協会ありがとうサポーター", () => {
+    expect(judgeUserTitle(games, user8Posts)).toEqual(7);
   });
 
-  it("11: 駐車場協力始めましたサポーター", () => {
-    expect(judgeUserTitle(games, user9_posts)).toEqual(11);
+  it("8: 駐車場協力始めましたサポーター", () => {
+    expect(judgeUserTitle(games, user9Posts)).toEqual(8);
   });
 
-  it("12: 期待の新人サポーター", () => {
-    expect(judgeUserTitle(games, user10_posts)).toEqual(12);
+  it("9: 期待の新人サポーター", () => {
+    expect(judgeUserTitle(games, user10Posts)).toEqual(9);
   });
 });

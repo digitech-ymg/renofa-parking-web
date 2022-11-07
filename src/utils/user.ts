@@ -1,131 +1,90 @@
 import type { Game } from "@/types/Game";
 import type { Post } from "@/types/Post";
+import {
+  TITLE_ID_PERFECT,
+  TITLE_ID_MORE_GAME_WIN,
+  TITLE_ID_MORE_GAME_DRAW,
+  TITLE_ID_MORE_GAME_LOSE,
+  TITLE_ID_MORE_PARKING_PAID,
+  TITLE_ID_MORE_PARKING_JA,
+  TITLE_ID_MORE_PARKING_RIVERBED,
+  TITLE_ID_MORE_PARKING_TRUCK,
+  TITLE_ID_POST_ONCE,
+  TITLE_ID_POST_NONE,
+} from "@/constants/user";
 
-export const judgeUserTitle = (games: Game[], user_posts: Post[]): number => {
+export const judgeUserTitle = (games: Game[], posts: Post[]): number => {
   //投稿回数1回
-  if (user_posts.length === 1) {
-    return 11;
+  if (posts.length === 1) {
+    return TITLE_ID_POST_ONCE;
   }
 
   //投稿回数0回
-  if (user_posts.length === 0) {
-    return 12;
+  if (posts.length === 0) {
+    return TITLE_ID_POST_NONE;
   }
 
   //全ての試合で投稿した
-  if (games.every((game) => isPostedInGame(game, user_posts))) {
-    return 3;
+  //同一シーズンの期間内で取得されたgamesとpostsという前提です
+  if (games.length === posts.length) {
+    return TITLE_ID_PERFECT;
   }
 
   //ホームゲーム半分以上に投稿している
-  if (games.length / 2 <= user_posts.length) {
-    let win_times = 0;
-    let draw_times = 0;
-    let lose_times = 0;
+  if (games.length / 2 <= posts.length) {
+    const userGameIds = posts.map((post) => post.gameId);
 
-    user_posts.forEach((post) => {
-      const game = getGameByPost(games, post);
+    const winTimes = games.filter((game) => {
+      return game.result === "win" && userGameIds.includes(game.id);
+    }).length;
 
-      switch (game.result) {
-        case "win":
-          win_times++;
-          break;
-        case "draw":
-          draw_times++;
-          break;
-        case "lose":
-          lose_times++;
-          break;
+    const drawTimes = games.filter((game) => {
+      return game.result === "draw" && userGameIds.includes(game.id);
+    }).length;
 
-        default:
-          console.error("game result: ", game.result, " is not defined");
-          break;
-      }
-    });
+    const loseTimes = games.filter((game) => {
+      return game.result === "lose" && userGameIds.includes(game.id);
+    }).length;
 
     //winが最も多い
-    if (Math.max(win_times, draw_times, lose_times) === win_times) {
-      return 4;
+    if (Math.max(winTimes, drawTimes, loseTimes) === winTimes) {
+      return TITLE_ID_MORE_GAME_WIN;
     }
     //drawが最も多い
-    if (Math.max(win_times, draw_times, lose_times) === draw_times) {
-      return 5;
+    if (Math.max(winTimes, drawTimes, loseTimes) === drawTimes) {
+      return TITLE_ID_MORE_GAME_DRAW;
     }
     //loseが最も多い
-    if (Math.max(win_times, draw_times, lose_times) === lose_times) {
-      return 6;
+    if (Math.max(winTimes, drawTimes, loseTimes) === loseTimes) {
+      return TITLE_ID_MORE_GAME_LOSE;
     }
   }
 
   //ホームゲーム半分未満投稿
   else {
     //それぞれの駐車場に駐めた回数
-    let paid_times = 0;
-    let ja_times = 0;
-    let riverbed_times = 0;
-    let truck_times = 0;
-
-    user_posts.forEach((post) => {
-      switch (post.parkingId) {
-        case "paid":
-          paid_times++;
-          break;
-        case "ja":
-          ja_times++;
-          break;
-        case "riverbed":
-          riverbed_times++;
-          break;
-        case "truck":
-          truck_times++;
-          break;
-
-        default:
-          console.error("parkingId: ", post.parkingId, " is not defined");
-          break;
-      }
-    });
+    const paidTimes = posts.filter((post) => post.parkingId === "paid").length;
+    const jaTimes = posts.filter((post) => post.parkingId === "ja").length;
+    const riverbedTimes = posts.filter((post) => post.parkingId === "riverbed").length;
+    const truckTimes = posts.filter((post) => post.parkingId === "truck").length;
 
     //paidが最も多い
-    if (Math.max(paid_times, ja_times, riverbed_times, truck_times) === paid_times) {
-      return 7;
+    if (Math.max(paidTimes, jaTimes, riverbedTimes, truckTimes) === paidTimes) {
+      return TITLE_ID_MORE_PARKING_PAID;
     }
     //jaが〃
-    if (Math.max(paid_times, ja_times, riverbed_times, truck_times) === ja_times) {
-      return 8;
+    if (Math.max(paidTimes, jaTimes, riverbedTimes, truckTimes) === jaTimes) {
+      return TITLE_ID_MORE_PARKING_JA;
     }
     //riverbedが〃
-    if (Math.max(paid_times, ja_times, riverbed_times, truck_times) === riverbed_times) {
-      return 9;
+    if (Math.max(paidTimes, jaTimes, riverbedTimes, truckTimes) === riverbedTimes) {
+      return TITLE_ID_MORE_PARKING_RIVERBED;
     }
     //truckが〃
-    if (Math.max(paid_times, ja_times, riverbed_times, truck_times) === truck_times) {
-      return 10;
+    if (Math.max(paidTimes, jaTimes, riverbedTimes, truckTimes) === truckTimes) {
+      return TITLE_ID_MORE_PARKING_TRUCK;
     }
   }
 
   return NaN; //TODO: デフォルトのreturn は何？
 };
-
-function getGameByPost(games: Game[], post: Post) {
-  for (let i = 0; i < games.length; i++) {
-    if (games[i].id === post.gameId) {
-      return games[i];
-    }
-  }
-
-  return {
-    result: "",
-  };
-}
-
-//そのゲームでユーザーが投稿しているか
-function isPostedInGame(game: Game, user_posts: Post[]): Boolean {
-  for (let i = 0; i < user_posts.length; i++) {
-    if (game.id === user_posts[i].gameId) {
-      return true;
-    }
-  }
-
-  return false;
-}
