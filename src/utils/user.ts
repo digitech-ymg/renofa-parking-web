@@ -13,7 +13,7 @@ import {
   TITLE_ID_POST_NONE,
 } from "@/constants/user";
 
-export const judgeUserTitle = (games: Game[], posts: Post[]): number => {
+export const judgeUserTitle = (games: Game[], posts: Post[]): number | null => {
   //投稿回数1回
   if (posts.length === 1) {
     return TITLE_ID_POST_ONCE;
@@ -86,5 +86,5 @@ export const judgeUserTitle = (games: Game[], posts: Post[]): number => {
     }
   }
 
-  return NaN; //TODO: デフォルトのreturn は何？
+  return null; //TODO: デフォルトのreturn は何？
 };
