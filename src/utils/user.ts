@@ -86,5 +86,5 @@ export const judgeUserTitle = (games: Game[], posts: Post[]): number | null => {
     }
   }
 
-  return null; //TODO: デフォルトのreturn は何？
+  return null;
 };
