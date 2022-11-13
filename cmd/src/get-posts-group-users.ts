@@ -20,28 +20,22 @@ const questions: prompts.PromptObject[] = [
     initial: new Date(end.getFullYear(), end.getMonth(), end.getDate()),
     mask: "YYYY-MM-DD",
   },
-  {
-    name: "nickname",
-    message: "Who's data you want?",
-    type: "text",
-    initial: "nickname",
-  },
 ];
 
 (async () => {
   try {
     const response = await prompts(questions);
-    const nickname = response.nickname;
-    const posts = await getPostsGroupByNickname(nickname);
+    const end = response.end;
+    const beggining = response.beggining;
+
+    const gameId = process.argv[2];
+    const posts = await getPostsGroupByNickname(gameId);
 
     // CSV のヘッダーを定義( label = ヘッダー項目、value = JSON のキー名)
     const fields = [
       { label: "gameId", value: "gameId" },
       { label: "nickname", value: "nickname" },
       { label: "parkingId", value: "parkingId" },
-      { label: "parkingMinutes", value: "parkingMinutes" },
-      { label: "parkingRatio", value: "parkingRatio" },
-      { label: "parkedAgo", value: "parkedAgo" },
       { label: "parkedAt", value: "parkedAt" },
       { label: "postedAt", value: "postedAt" },
     ];

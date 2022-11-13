@@ -25,10 +25,11 @@ export const getAllPosts = async () => {
   return posts;
 };
 
-export const getPostsGroupByNickname = async (nickname: string) => {
+export const getPostsGroupByNickname = async (gameId: string) => {
   const queryRef = db
     .collection("posts")
-    .where("nickname", "==", nickname)
+    .where("gameId", "==", gameId)
+    .orderBy("nickname", "desc")
     .orderBy("postedAt", "desc")
     .withConverter<Post>(postConverter);
 
