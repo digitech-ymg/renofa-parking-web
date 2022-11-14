@@ -68,6 +68,27 @@ const games: Game[] = [
 
 //test
 describe("ユーザー称号", () => {
+  it("null", () => {
+    expect(
+      judgeUserTitle(null, [
+        genPost(GAMEID_WIN1, "paid"),
+        genPost(GAMEID_WIN2, "paid"),
+        genPost(GAMEID_DRAW1, "paid"),
+        genPost(GAMEID_DRAW2, "paid"),
+        genPost(GAMEID_LOSE1, "paid"),
+        genPost(GAMEID_LOSE2, "paid"),
+      ])
+    ).toEqual(null);
+  });
+
+  it("null", () => {
+    expect(judgeUserTitle(games, null)).toEqual(null);
+  });
+
+  it("null", () => {
+    expect(judgeUserTitle(null, null)).toEqual(null);
+  });
+
   it("超絶コアサポーター", () => {
     expect(
       judgeUserTitle(games, [
