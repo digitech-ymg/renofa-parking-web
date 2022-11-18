@@ -3,4 +3,7 @@ export type User = {
   nickname: string;
   photoURL: string;
   createdAt: Date;
+  title: string;
+  titleDescription: string;
+  postTimes: number;
 };
