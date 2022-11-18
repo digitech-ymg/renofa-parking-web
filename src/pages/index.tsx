@@ -35,6 +35,9 @@ const Top: NextPage = () => {
   return (
     <Container bgColor="white">
       <Box mt={4} mb={4}>
+        <Link href="/mypage">マイページへ</Link>
+      </Box>
+      <Box mt={4} mb={4}>
         <Link href="/about">
           <SiteDescription />
         </Link>
