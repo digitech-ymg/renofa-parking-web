@@ -16,9 +16,11 @@ import {
 import Renofa from "public/renofa.svg";
 import { useAuthContext } from "@/context/AuthContext";
 import { logout } from "@/lib/authentication";
+import { useRouter } from "next/router";
 
 const Header: VFC = () => {
   const user = useAuthContext();
+  const router = useRouter();
 
   return (
     <Box bg="gray.100" color="black">
@@ -39,6 +41,7 @@ const Header: VFC = () => {
                 <Avatar src={user.photoURL} name={user.nickname} size="md" />
               </MenuButton>
               <MenuList>
+                <MenuItem onClick={() => router.push("/mypage")}>マイページ</MenuItem>
                 <MenuItem onClick={logout}>ログアウト</MenuItem>
               </MenuList>
             </Menu>
