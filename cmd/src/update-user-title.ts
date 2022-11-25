@@ -3,7 +3,7 @@ import type { Game } from "../../src/types/Game";
 import type { User } from "../../src/types/User";
 // import { Parser } from "json2csv";
 import { updateUser } from "../../src/lib/firestore";
-import { getAllPosts, getGame } from "./firestore";
+import { getAllPosts, getGame, getAuthUsers } from "./firestore";
 import { judgeUserTitle } from "../../src/utils/user";
 import { titles } from "../../src/constants/titles";
 import { titleDescriptions } from "../../src/constants/titleDescriptions";
@@ -11,6 +11,7 @@ import { titleDescriptions } from "../../src/constants/titleDescriptions";
 //誰も投稿していないとゲームが存在しないことになる？
 (async function () {
   const allPosts: Post[] = await getAllPosts();
+  const authUsers = await getAuthUsers();
 
   const usersPosts: any = {};
   const allGames = await getAllGamesByAllPosts(allPosts);
@@ -31,16 +32,11 @@ import { titleDescriptions } from "../../src/constants/titleDescriptions";
     const titleDescription: string = titleDescriptions[titleId];
     const postTimes = usersPosts[i].length;
 
-    //既存のuserが取得できていない
-    const user = {
-      // id: string,
-      // photoURL: string,
-      // createdAt: Date,
-      nickname: nickname,
-      title: title,
-      titleDescription: titleDescription,
-      postTimes: postTimes,
-    };
+    const user = getUserByNickname(authUsers, nickname);
+    user.nickname = nickname;
+    user.title = title;
+    user.titleDescription = titleDescription;
+    user.postTimes = postTimes;
 
     updateUser(user);
   }
@@ -69,4 +65,12 @@ async function getAllGamesByAllPosts(allPosts: Post[]) {
   }
 
   return allGames;
+}
+
+function getUserByNickname(users: User[], nickname: string): any {
+  for (let i = 0; i < users.length; i++) {
+    if (users[i].nickname === nickname) {
+      return users[i];
+    }
+  }
 }
