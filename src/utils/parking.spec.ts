@@ -19,6 +19,10 @@ const game: Game = {
   opponent: "ロアッソ熊本",
   availableParkings: ["paid", "ja", "truck", "riverbed"],
   soldOutParkings: ["paid"],
+  attendance: 0,
+  result: "",
+  goalScore: 0,
+  goalAgainst: 0,
 };
 
 const parkingWillFill: Parking = {

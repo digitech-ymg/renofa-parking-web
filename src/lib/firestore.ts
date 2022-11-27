@@ -36,6 +36,10 @@ const gameConverter = {
       availableParkings: game.availableParkings,
       soldOutParkings: game.soldOutParkings,
       opponent: game.opponent,
+      attendance: game.attendance,
+      result: game.result,
+      goalScore: game.goalScore,
+      goalAgainst: game.goalAgainst,
     };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): Game {
@@ -49,6 +53,10 @@ const gameConverter = {
       availableParkings: data.availableParkings,
       soldOutParkings: data.soldOutParkings,
       opponent: data.opponent,
+      attendance: data.attendance,
+      result: data.result,
+      goalScore: data.goalScore,
+      goalAgainst: data.goalAgainst,
     };
   },
 };
