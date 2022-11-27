@@ -1,6 +1,7 @@
 import prompts from "prompts";
 import { Parser } from "json2csv";
 import { getPostsByDate } from "./firestore";
+import { UserPostTime } from "../../src/types/User";
 
 const today = new Date();
 
@@ -31,17 +32,25 @@ const questions: prompts.PromptObject[] = [
     console.log("end: " + end);
     const posts = await getPostsByDate(beginning, end);
 
-    // CSV のヘッダーを定義( label = ヘッダー項目、value = JSON のキー名)
-    const fields = [
-      { label: "gameId", value: "gameId" },
-      { label: "nickname", value: "nickname" },
-      { label: "parkingId", value: "parkingId" },
-      { label: "parkedAt", value: "parkedAt" },
-      { label: "postedAt", value: "postedAt" },
-    ];
-    const json2csvParser = new Parser({ fields });
-    const csv = json2csvParser.parse(posts);
-    console.log(csv);
+    // ニックネームと投稿回数のマップに置き換え
+    const userPostTimes = new Array<UserPostTime>();
+    posts.forEach((post) => {
+      const nickname = post.nickname;
+      console.log("nickname: " + nickname);
+      // 新規ニックネームのみ集計したものを追加していく
+      if (!userPostTimes.find((p) => p.nickname === nickname)) {
+        console.log("in: " + nickname);
+        userPostTimes.push({
+          nickname,
+          postTime: posts.filter((p) => p.nickname == nickname).length,
+        });
+      }
+    });
+    // ランキングですぐ使えるように多い順にソートしておきます
+    userPostTimes.sort((a, b) => b.postTime - a.postTime);
+
+    // JSON出力
+    console.log(JSON.stringify(userPostTimes));
   } catch (err) {
     console.error("error: " + err);
   }
