@@ -12,14 +12,34 @@ import {
 } from "@chakra-ui/react";
 import { Icon } from "@chakra-ui/icons";
 import { StarIcon, ArrowRightIcon } from "@chakra-ui/icons";
-
-//仮のデータ
-const title = "期待の新人サポーター";
-const titleDescription = "投稿数が0件の方に送られる称号です";
-const userName = "◯◯△△";
-const postTimes = 0;
+import { useAuthContext } from "@/context/AuthContext";
+import { useState } from "react";
 
 const Mypage: NextPage = () => {
+  const user = {
+    nickname: "aaa",
+    title: "default title",
+    titleDescription: "default titleDescription",
+  }; //仮user
+  // const user: any = useAuthContext();
+  const nickname = user.nickname;
+
+  const title = user.title;
+  const titleDescription = user.titleDescription;
+  const [postTimes, setPostTimes] = useState(0);
+
+  fetch("../postTimesData.json")
+    .then((response) => response.text())
+    .then((data) => {
+      // console.log(data);
+      const postTimesData = JSON.parse(data);
+      setPostTimes(
+        postTimesData.find((data: any) => {
+          return data.nickname == nickname;
+        }).postTimes
+      );
+    });
+
   return (
     <Container py={4} bgColor="white" px={0}>
       <Box px={4} mb={4}>
@@ -38,7 +58,7 @@ const Mypage: NextPage = () => {
             <Text mb={2} textAlign="center">
               {titleDescription}
             </Text>
-            <Text fontSize="4xl">{userName}さん</Text>
+            <Text fontSize="4xl">{nickname}さん</Text>
           </Box>
         </HStack>
       </Box>
