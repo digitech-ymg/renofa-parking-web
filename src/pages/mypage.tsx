@@ -18,14 +18,12 @@ import { useState } from "react";
 const Mypage: NextPage = () => {
   const user = {
     nickname: "aaa",
-    title: "default title",
-    titleDescription: "default titleDescription",
   }; //仮user
   // const user: any = useAuthContext();
   const nickname = user.nickname;
 
-  const title = user.title;
-  const titleDescription = user.titleDescription;
+  const [title, setTitle] = useState("default title");
+  const [titleDescription, setTitleDescription] = useState("default titleDescription");
   const [postTimes, setPostTimes] = useState(0);
 
   fetch("../postTimesData.json")
@@ -33,11 +31,13 @@ const Mypage: NextPage = () => {
     .then((data) => {
       // console.log(data);
       const postTimesData = JSON.parse(data);
-      setPostTimes(
-        postTimesData.find((data: any) => {
-          return data.nickname == nickname;
-        }).postTimes
-      );
+      const userData = postTimesData.find((data: any) => {
+        return data.nickname == nickname;
+      });
+
+      setTitle(userData.title);
+      setTitleDescription(userData.titleDescription);
+      setPostTimes(userData.postTimes);
     });
 
   return (

@@ -1,14 +1,14 @@
 [
   {
     "nickname": "aaa",
-    "postTimes": 1
+    "title": "期待の新人サポーター",
+    "titleDescription": "投稿数が0件の方",
+    "postTimes": 0
   },
   {
     "nickname": "bbb",
-    "postTimes": 2
-  },
-  {
-    "nickname": "ccc",
-    "postTimes": 3
+    "title": "駐車場協力始めましたサポーター",
+    "titleDescription": "投稿数が1件の方",
+    "postTimes": 1
   }
 ]
