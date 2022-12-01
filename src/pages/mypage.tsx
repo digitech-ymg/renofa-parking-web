@@ -22,22 +22,22 @@ const Mypage: NextPage = () => {
   // const user: any = useAuthContext();
   const nickname = user.nickname;
 
-  const [title, setTitle] = useState("default title");
-  const [titleDescription, setTitleDescription] = useState("default titleDescription");
+  const [title, setTitle] = useState("期待の新人サポーター");
+  const [titleDescription, setTitleDescription] = useState("投稿数が0件の方に贈られる称号です");
   const [postTimes, setPostTimes] = useState(0);
 
-  fetch("../postTimesData.json")
+  fetch("../postTimesDataObject.json")
     .then((response) => response.text())
     .then((data) => {
       // console.log(data);
       const postTimesData = JSON.parse(data);
-      const userData = postTimesData.find((data: any) => {
-        return data.nickname == nickname;
-      });
+      const userData = postTimesData[nickname];
 
-      setTitle(userData.title);
-      setTitleDescription(userData.titleDescription);
-      setPostTimes(userData.postTimes);
+      if (userData != undefined) {
+        setTitle(userData.title);
+        setTitleDescription(userData.titleDescription);
+        setPostTimes(userData.postTimes);
+      }
     });
 
   return (
