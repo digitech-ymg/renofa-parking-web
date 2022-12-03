@@ -16,10 +16,10 @@ import { useAuthContext } from "@/context/AuthContext";
 import { useState } from "react";
 
 const Mypage: NextPage = () => {
-  const user = {
-    nickname: "aaa",
-  }; //仮user
-  // const user: any = useAuthContext();
+  // const user = {
+  //   nickname: "aaa",
+  // }; //仮user
+  const user: any = useAuthContext();
   const nickname = user.nickname;
 
   const [title, setTitle] = useState("期待の新人サポーター");
