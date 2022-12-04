@@ -4,3 +4,8 @@ export type User = {
   photoURL: string;
   createdAt: Date;
 };
+
+export type UserPostTime = {
+  nickname: string;
+  postTime: number;
+};
