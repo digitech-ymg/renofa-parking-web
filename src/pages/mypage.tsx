@@ -131,7 +131,12 @@ const Mypage = ({ mypageInfos }: Props) => {
       {/* 未認証済ならログイン画面 */}
       {user === null && (
         <>
-          <Box mb={10}>
+          <Box mt={16} mb={4}>
+            <Text mt={4}>
+              マイページは投稿回数と称号を確認することができます。ぜひご利用ください！
+            </Text>
+          </Box>
+          <Box mb={4}>
             <Button
               colorScheme="twitter"
               color="black"
