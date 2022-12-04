@@ -1,4 +1,6 @@
-export const userPostTimes2022 = [
+import { UserPostTime } from "@/types/User";
+
+export const userPostTimes2022: UserPostTime[] = [
   { nickname: "K山", postTime: 12 },
   { nickname: "ゆーい", postTime: 11 },
   { nickname: "MICHIO", postTime: 8 },
