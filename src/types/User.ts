@@ -9,3 +9,10 @@ export type UserPostTime = {
   nickname: string;
   postTime: number;
 };
+
+export type MypageInfo = {
+  nickname: string;
+  postTimes: number;
+  title: string;
+  titleDescription: string;
+};

@@ -7,6 +7,7 @@ import ParkingColorSample from "@/components/ParkingColorSample";
 import ParkingStatusSharer from "@/components/ParkingStatusSharer";
 import ParkingStateButton from "@/components/ParkingStatusButton";
 import SiteDescription from "@/components/SiteDescription";
+import GoMyPage from "@/components/GoMyPage";
 import Game from "@/components/Game";
 import ParkingList from "@/components/ParkingList";
 import RenofaBanner from "@/components/RenofaBanner";
@@ -40,10 +41,16 @@ const Top: NextPage = () => {
         </Link>
       </Box>
       <Box mt={4} mb={4}>
+        <Link href="/mypage">
+          <GoMyPage />
+        </Link>
+      </Box>
+      {/* オフシーズンなので一時的に隠します、DBの試合情報の日取りを見て自動化予定 */}
+      {/* <Box mt={4} mb={4}>
         <Link href="/post">
           <ParkingStateButton />
         </Link>
-      </Box>
+      </Box> */}
       <Box bg="gray.100" p={4}>
         <Box experimental_spaceY={4}>
           {/* game */}

@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const appUser: User = {
             id: firebaseUser.uid,
             // 初回登校時に直接入力してもらう（過去と同じニックネームの入力を期待する）
-            nickname: "",
+            nickname: firebaseUser.displayName || "",
             photoURL: firebaseUser.photoURL!,
             createdAt: new Date(),
           };
