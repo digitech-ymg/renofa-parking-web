@@ -14,6 +14,9 @@ const SummaryContent: VFC = () => {
           皆様、ご協力ありがとうございました。今後とも、引き続きよろしくお願いいたします。
         </Text>
       </Stack>
+      <Text mt={8} mb={2} fontSize="md" textAlign="center">
+        2022シーズンの投稿回数が多い方々
+      </Text>
       <Stack spacing={2} bgColor="orange.200" padding={3}>
         {UserPostTimes.filter((UserPostTimes) => UserPostTimes.postTime >= 6).map(
           (userPostTime, index) => (
