@@ -1,4 +1,4 @@
-import { Heading, Text, Box, Container, Stack, HStack, Flex } from "@chakra-ui/react";
+import { Text, Container, Stack, Flex, Spacer } from "@chakra-ui/react";
 import { VFC } from "react";
 import { userPostTimes2022 } from "@/data/ranking";
 
