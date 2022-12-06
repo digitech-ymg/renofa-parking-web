@@ -23,31 +23,19 @@ const SummaryContent: VFC = () => {
             <Flex
               key={index}
               minH={14}
-              px={4}
+              px={8}
+              direction="row"
               borderRadius={4}
-              justify="center"
+              justify="between"
+              alignItems="center"
               bgColor="orange.50"
+              fontSize="sm"
+              color={index == 0 ? "red" : "black"}
+              fontWeight={index <= 1 ? "extrabold" : "medium"}
             >
-              <HStack>
-                {index == 0 && (
-                  <Heading as="h5" size="sm" marginRight={5} color="red" fontWeight="extrabold">
-                    {userPostTime.nickname} さん&emsp;
-                    {userPostTime.postTime} 回
-                  </Heading>
-                )}
-                {index == 1 && (
-                  <Heading as="h5" size="sm" marginRight={5} fontWeight="extrabold">
-                    {userPostTime.nickname} さん&emsp;
-                    {userPostTime.postTime} 回
-                  </Heading>
-                )}
-                {index > 1 && (
-                  <Heading as="h5" size="sm" marginRight={5} fontWeight="medium">
-                    {userPostTime.nickname} さん&emsp;
-                    {userPostTime.postTime} 回
-                  </Heading>
-                )}
-              </HStack>
+              <Text>{userPostTime.nickname} さん&emsp;</Text>
+              <Spacer />
+              <Text>{userPostTime.postTime} 回</Text>
             </Flex>
           )
         )}
