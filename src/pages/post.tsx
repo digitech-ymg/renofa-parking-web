@@ -274,12 +274,6 @@ const Post: NextPage = () => {
                       userId: user.id,
                     }),
                   ];
-                  // ニックネームに変更があるときは、User更新もする
-                  // マイページ的なものができたら、ここで個別編集するのはやめた方がいい
-                  if (user.nickname != nickname) {
-                    user.nickname = nickname;
-                    promises.push(updateUser(user));
-                  }
 
                   Promise.all(promises)
                     .then(() => {
