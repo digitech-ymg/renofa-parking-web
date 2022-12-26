@@ -1,10 +1,8 @@
 import { createContext, useEffect, useState, useContext, ReactNode } from "react";
 import { onAuthStateChanged } from "@firebase/auth";
 import { User } from "@/types/User";
-import { doc, getDoc } from "@firebase/firestore";
-import { db } from "@/lib/firestore";
+import { getUser, updateUser } from "@/lib/firestore";
 import { auth } from "@/lib/authentication";
-import { setDoc } from "@firebase/firestore";
 
 type UserContextType = User | null | undefined;
 
@@ -16,21 +14,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        const ref = doc(db, `users/${firebaseUser.uid}`);
-        const snap = await getDoc(ref);
+        let appUser = await getUser(firebaseUser.uid);
 
-        if (snap.exists()) {
-          const appUser = (await getDoc(ref)).data() as User;
+        if (appUser) {
           setUser(appUser);
         } else {
-          const appUser: User = {
+          appUser = {
             id: firebaseUser.uid,
-            // 初回登校時に直接入力してもらう（過去と同じニックネームの入力を期待する）
-            nickname: "",
+            nickname: firebaseUser.displayName || "(未設定)",
             photoURL: firebaseUser.photoURL!,
             createdAt: new Date(),
           };
-          setDoc(ref, appUser).then(() => setUser(appUser));
+          updateUser(appUser).then(() => setUser(appUser));
         }
       } else {
         setUser(null);

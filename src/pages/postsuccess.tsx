@@ -19,17 +19,7 @@ const Postsuccess: NextPage = () => {
     <Container py={8} bgColor="white" px={0}>
       <Box border="4px" borderColor="green.400" rounded={8} mx={4} mb={4} p={4}>
         <HStack color="green.400" spacing={4}>
-          <Box width="25%">
-            <Icon as={CheckCircleIcon} w="48px" h="48px" marginBottom={3} marginLeft={2} />
-            <Image
-              width="100%"
-              objectFit="cover"
-              src="/reno_05.png"
-              alt="レノ丸"
-              marginLeft={1}
-              marginRight={0}
-            />
-          </Box>
+          <Image width="30%" objectFit="cover" src="/reno_05.png" alt="レノ丸" marginLeft={1} />
           <Box margin={0}>
             <Heading as="h1" mb={2} fontSize="xl">
               投稿成功

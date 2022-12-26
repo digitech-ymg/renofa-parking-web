@@ -1,0 +1,10 @@
+export const TITLE_ID_PERFECT = 0;
+export const TITLE_ID_MORE_GAME_WIN = 1;
+export const TITLE_ID_MORE_GAME_DRAW = 2;
+export const TITLE_ID_MORE_GAME_LOSE = 3;
+export const TITLE_ID_MORE_PARKING_PAID = 4;
+export const TITLE_ID_MORE_PARKING_JA = 5;
+export const TITLE_ID_MORE_PARKING_RIVERBED = 6;
+export const TITLE_ID_MORE_PARKING_TRUCK = 7;
+export const TITLE_ID_POST_ONCE = 8;
+export const TITLE_ID_POST_NONE = 9;

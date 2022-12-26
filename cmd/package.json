@@ -7,8 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "get-posts": "npx ts-node src/get-posts.ts",
     "get-all-posts": "npx ts-node src/get-all-posts.ts",
-    "upsert-game": "npx ts-node src/upsert-game.ts",
-    "delete-auth-users": "npx ts-node src/delete-auth-users.ts"
+    "create-game": "npx ts-node src/create-game.ts",
+    "update-game": "npx ts-node src/update-game.ts",
+    "delete-auth-users": "npx ts-node src/delete-auth-users.ts",
+    "get-posts-group-users": "npx ts-node src/get-posts-group-users.ts"
   },
   "keywords": [],
   "author": "",

@@ -7,4 +7,8 @@ export type Game = {
   opponent: string;
   availableParkings: string[];
   soldOutParkings: string[];
+  attendance: number;
+  result: string;
+  goalScore: number;
+  goalAgainst: number;
 };

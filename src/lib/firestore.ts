@@ -4,6 +4,7 @@ import {
   collection,
   doc,
   getDocs,
+  getDoc,
   setDoc,
   query,
   orderBy,
@@ -36,6 +37,10 @@ const gameConverter = {
       availableParkings: game.availableParkings,
       soldOutParkings: game.soldOutParkings,
       opponent: game.opponent,
+      attendance: game.attendance,
+      result: game.result,
+      goalScore: game.goalScore,
+      goalAgainst: game.goalAgainst,
     };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): Game {
@@ -49,6 +54,10 @@ const gameConverter = {
       availableParkings: data.availableParkings,
       soldOutParkings: data.soldOutParkings,
       opponent: data.opponent,
+      attendance: data.attendance,
+      result: data.result,
+      goalScore: data.goalScore,
+      goalAgainst: data.goalAgainst,
     };
   },
 };
@@ -194,7 +203,14 @@ const userConverter = {
   },
 };
 
-export const updateUser = async (user: User): Promise<void> => {
+export const getUser = async (id: string): Promise<User> => {
+  const ref = doc(db, `users/${id}`).withConverter(userConverter);
+  const snapshot = await getDoc(ref);
+  return snapshot.data() as User;
+};
+
+export const updateUser = async (user: User): Promise<User> => {
   const ref = doc(db, "users", user.id).withConverter(userConverter);
-  return await setDoc(ref, user);
+  await setDoc(ref, user);
+  return Promise.resolve(user);
 };
