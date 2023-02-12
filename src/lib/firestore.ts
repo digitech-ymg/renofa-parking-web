@@ -13,6 +13,9 @@ import {
   QueryDocumentSnapshot,
   DocumentData,
   Timestamp,
+  DocumentReference,
+  WriteBatch,
+  deleteDoc,
 } from "firebase/firestore";
 
 import { firebaseApp, isEmulator } from "@/lib/firebase";
@@ -159,6 +162,11 @@ const postConverter = {
   },
 };
 
+//これはコード作成過程の残骸。有用かと思ったので残してあります。
+export const deletepost = async (id: string): Promise<void> => {
+  deleteDoc(doc(db, "posts", id));
+};
+
 export const createPost = async (post: Post): Promise<void> => {
   const dateUTC = new Date();
   const diffJST = dateUTC.getTimezoneOffset() * 60 * 1000;
@@ -166,6 +174,29 @@ export const createPost = async (post: Post): Promise<void> => {
 
   const ref = doc(db, "posts", id).withConverter(postConverter);
   return await setDoc(ref, post);
+};
+
+export const Postsdelete = async (
+  userId: string,
+  gameId: string,
+  parkingId: string
+): Promise<void> => {
+  const ref = collection(db, "posts");
+  //userID,試合情報,駐車場データが一致しているものに絞る。
+  const q = query(
+    ref,
+    where("gameId", "==", gameId),
+    where("userId", "==", userId),
+    where("parkingId", "==", parkingId),
+    where("parkingMinutes", ">", -360)
+  ).withConverter(postConverter);
+
+  const snapshot = await getDocs(q);
+  //取得したデータからdocumentIdを取得し、文字データ化
+  const post = snapshot.docs.map<string>((doc) => doc.id);
+  const deletepost = post[0];
+  //指定した投稿を削除。
+  deleteDoc(doc(db, "posts", deletepost));
 };
 
 export const getPosts = async (key: string, gameId: string): Promise<Post[]> => {
