@@ -7,25 +7,18 @@ import Iframe from "react-iframe";
 import { Parking, ParkingInfo } from "@/types/Parking";
 import { useRouter } from "next/router";
 import { getParkings } from "@/lib/firestore";
-import { useAuthContext } from "@/context/AuthContext";
 import useSWR from "swr";
 
 const Parking: NextPage = () => {
-  const user = useAuthContext();
-
   const [parking, setParking] = useState<Parking>();
   const router = useRouter();
 
-  const { data, error } = useSWR<Parking[]>(
-    user ? ["parkings", router.query.parking] : null,
-    getParkings,
-    {
-      onSuccess: (data) => {
-        const selectedParking = data.filter((parking) => parking.id === router.query.parking)[0];
-        setParking(selectedParking);
-      },
-    }
-  );
+  const { data, error } = useSWR<Parking[]>("parkings", getParkings, {
+    onSuccess: (data) => {
+      const selectedParking = data.filter((parking) => parking.id === router.query.parking)[0];
+      setParking(selectedParking);
+    },
+  });
 
   const renderParkingTable = (parking: Parking) => {
     const infos: ParkingInfo[] = [
