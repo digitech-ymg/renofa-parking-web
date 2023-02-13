@@ -2,22 +2,25 @@ import type { NextPage } from "next";
 import { Container } from "@chakra-ui/layout";
 import { Box, Stack, Image, Heading, Center } from "@chakra-ui/react";
 import { Table, Tbody, Tr, Th, Td } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Iframe from "react-iframe";
 import { Parking, ParkingInfo } from "@/types/Parking";
 import { useRouter } from "next/router";
 import { getParkings } from "@/lib/firestore";
-import useSWR from "swr";
 
 const Parking: NextPage = () => {
-  const [parking, setParking] = useState<Parking>();
+  const [parking, setParking] = useState<Parking | undefined | null>(undefined);
   const router = useRouter();
 
-  const { data, error } = useSWR<Parking[]>("parkings", getParkings, {
-    onSuccess: (data) => {
-      const selectedParking = data.filter((parking) => parking.id === router.query.parking)[0];
-      setParking(selectedParking);
-    },
+  useEffect(() => {
+    getParkings()
+      .then((parkings) => {
+        const selectedParking = parkings.filter((p) => p.id === router.query.parking)[0];
+        setParking(selectedParking);
+      })
+      .catch((err) => {
+        setParking(null);
+      });
   });
 
   const renderParkingTable = (parking: Parking) => {
@@ -76,7 +79,7 @@ const Parking: NextPage = () => {
     );
   };
 
-  if (error) {
+  if (parking === null) {
     return <>データの取得に失敗しました。</>;
   }
 
