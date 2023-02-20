@@ -29,6 +29,7 @@ jobs:
           NEXT_PUBLIC_FIREBASE_APP_ID: "${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID_DEV }}"
           NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: "${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID_DEV }}"
           NEXT_PUBLIC_DEBUG: "${{ secrets.NEXT_PUBLIC_DEBUG }}"
+          NODE_OPTIONS: "--openssl-legacy-provider"
         run: yarn && yarn build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
