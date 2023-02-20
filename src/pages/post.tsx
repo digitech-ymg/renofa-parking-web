@@ -19,13 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { FaCarSide } from "react-icons/fa";
 import { Icon } from "@chakra-ui/icons";
-import {
-  createPost,
-  getMostRecentGame,
-  getParkings,
-  updateUser,
-  Postsdelete,
-} from "@/lib/firestore";
+import { createPost, getMostRecentGame, getParkings, deletePost } from "@/lib/firestore";
 import { Post } from "@/types/Post";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -260,29 +254,26 @@ const Post: NextPage = () => {
                 isDisabled={
                   nicknameIsError || parkingIdIsError || parkingRatioIsError || parkedAgoIsError
                 }
-                onClick={() => {
+                onClick={async () => {
                   const postedAt = new Date();
                   const parkedAt = new Date(postedAt.getTime() + 60000 * parkedAgo);
-                  //　試合開始時間に対して何分前か（現在時間と「いつ停めた」設問から導く
+                  // 試合開始時間に対して何分前か（現在時間と「いつ停めた」設問から導く
                   const minutes =
                     Math.floor((postedAt.getTime() - game.startAt.getTime()) / 60000) + parkedAgo;
-                  //重複投稿防止にuserID,試合情報,駐車場データが一致しているものを削除
-                  Postsdelete(user.id, game.id, parkingId);
-                  const promises: Promise<void>[] = [
-                    createPost({
-                      nickname: nickname,
-                      gameId: game.id,
-                      parkingId: parkingId,
-                      parkingRatio: parkingRatio,
-                      parkingMinutes: minutes,
-                      parkedAgo: parkedAgo,
-                      parkedAt: parkedAt,
-                      postedAt: postedAt,
-                      userId: user.id,
-                    }),
-                  ];
+                  // 重複投稿防止にuserID,試合情報,駐車場データが一致しているものを削除
+                  await deletePost(user.id, game.id, parkingId);
 
-                  Promise.all(promises)
+                  return createPost({
+                    nickname: nickname,
+                    gameId: game.id,
+                    parkingId: parkingId,
+                    parkingRatio: parkingRatio,
+                    parkingMinutes: minutes,
+                    parkedAgo: parkedAgo,
+                    parkedAt: parkedAt,
+                    postedAt: postedAt,
+                    userId: user.id,
+                  })
                     .then(() => {
                       router.push("/postsuccess");
                     })

@@ -162,11 +162,6 @@ const postConverter = {
   },
 };
 
-//これはコード作成過程の残骸。有用かと思ったので残してあります。
-export const deletepost = async (id: string): Promise<void> => {
-  deleteDoc(doc(db, "posts", id));
-};
-
 export const createPost = async (post: Post): Promise<void> => {
   const dateUTC = new Date();
   const diffJST = dateUTC.getTimezoneOffset() * 60 * 1000;
@@ -176,27 +171,29 @@ export const createPost = async (post: Post): Promise<void> => {
   return await setDoc(ref, post);
 };
 
-export const Postsdelete = async (
+export const deletePost = async (
   userId: string,
   gameId: string,
   parkingId: string
 ): Promise<void> => {
-  const ref = collection(db, "posts");
-  //userID,試合情報,駐車場データが一致しているものに絞る。
+  const qRef = collection(db, "posts");
   const q = query(
-    ref,
+    qRef,
     where("gameId", "==", gameId),
     where("userId", "==", userId),
-    where("parkingId", "==", parkingId),
-    where("parkingMinutes", ">", -360)
-  ).withConverter(postConverter);
-
+    where("parkingId", "==", parkingId)
+  );
   const snapshot = await getDocs(q);
-  //取得したデータからdocumentIdを取得し、文字データ化
-  const post = snapshot.docs.map<string>((doc) => doc.id);
-  const deletepost = post[0];
-  //指定した投稿を削除。
-  deleteDoc(doc(db, "posts", deletepost));
+  const idList = snapshot.docs.map((doc) => doc.id);
+
+  // 削除対象無し
+  if (idList.length === 0) {
+    return Promise.resolve();
+  }
+
+  // 削除実行、先頭の一件（複数にならない前提）
+  const ref = doc(db, `posts/${idList[0]}`);
+  return deleteDoc(ref);
 };
 
 export const getPosts = async (key: string, gameId: string): Promise<Post[]> => {
