@@ -41,37 +41,38 @@ const Top: NextPage = () => {
           <SiteDescription />
         </Link>
       </Box>
-      <Box mt={4} mb={4}>
+      {/* TODO: 直近の試合が一定期間内ではない時に表示する */}
+      {/* <Box mt={4} mb={4}>
         <Link href="/mypage">
           <GoMyPage />
         </Link>
-      </Box>
-      {/* オフシーズンなので一時的に隠します、DBの試合情報の日取りを見て自動化予定 */}
-      {/* <Box mt={4} mb={4}>
+      </Box> */}
+      <Box mt={4} mb={4}>
         <Link href="/post">
           <ParkingStateButton />
         </Link>
-      </Box> */}
+      </Box>
       <Box bg="gray.100" p={4}>
         <Box experimental_spaceY={4}>
-          <SummaryContent />
+          {/* TODO: 直近の試合が一定期間内ではない時に表示する */}
+          {/* <SummaryContent /> */}
 
           {/* game */}
-          {/*!game && !errorGame && <p>loading...</p>}
+          {!game && !errorGame && <p>loading...</p>}
           {game && <Game game={game} />}
           {errorGame && <p>試合情報の取得に失敗しました。</p>}
 
-          <ParkingColorSample />*/}
+          <ParkingColorSample />
           {/* parkings */}
-          {/* !parkings && !errorParkings && <p>loading...</p>}
+          {!parkings && !errorParkings && <p>loading...</p>}
           {game && parkings && posts && (
             <ParkingList now={now} game={game} parkings={parkings} posts={posts} />
           )}
-          {errorParkings && <p>駐車場情報の取得に失敗しました。</p>*/}
+          {errorParkings && <p>駐車場情報の取得に失敗しました。</p>}
         </Box>
       </Box>
       <Box mt={4} mb={4}>
-        {/*posts && <ParkingStatusSharer names={posts?.map((post) => post.nickname)} />*/}
+        {posts && <ParkingStatusSharer names={posts?.map((post) => post.nickname)} />}
       </Box>
       <Box mt={4} mb={4}>
         <Link href="https://www.renofa.com/" isExternal>
