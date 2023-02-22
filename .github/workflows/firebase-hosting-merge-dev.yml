@@ -11,7 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: development
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: ".node-version"
       - name: build
         env:
           NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: "${{ secrets.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID_DEV }}"
@@ -23,6 +26,7 @@ jobs:
           NEXT_PUBLIC_FIREBASE_APP_ID: "${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID_DEV }}"
           NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: "${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID_DEV }}"
           NEXT_PUBLIC_DEBUG: "${{ secrets.NEXT_PUBLIC_DEBUG }}"
+          NODE_OPTIONS: "--openssl-legacy-provider"
         run: yarn && yarn build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
