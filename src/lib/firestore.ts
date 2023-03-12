@@ -13,6 +13,9 @@ import {
   QueryDocumentSnapshot,
   DocumentData,
   Timestamp,
+  DocumentReference,
+  WriteBatch,
+  deleteDoc,
 } from "firebase/firestore";
 
 import { firebaseApp, isEmulator } from "@/lib/firebase";
@@ -166,6 +169,31 @@ export const createPost = async (post: Post): Promise<void> => {
 
   const ref = doc(db, "posts", id).withConverter(postConverter);
   return await setDoc(ref, post);
+};
+
+export const deletePost = async (
+  userId: string,
+  gameId: string,
+  parkingId: string
+): Promise<void> => {
+  const qRef = collection(db, "posts");
+  const q = query(
+    qRef,
+    where("gameId", "==", gameId),
+    where("userId", "==", userId),
+    where("parkingId", "==", parkingId)
+  );
+  const snapshot = await getDocs(q);
+  const idList = snapshot.docs.map((doc) => doc.id);
+
+  // 削除対象無し
+  if (idList.length === 0) {
+    return Promise.resolve();
+  }
+
+  // 削除実行、先頭の一件（複数にならない前提）
+  const ref = doc(db, `posts/${idList[0]}`);
+  return deleteDoc(ref);
 };
 
 export const getPosts = async (key: string, gameId: string): Promise<Post[]> => {
