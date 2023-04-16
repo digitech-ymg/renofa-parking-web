@@ -13,8 +13,6 @@ import {
   QueryDocumentSnapshot,
   DocumentData,
   Timestamp,
-  DocumentReference,
-  WriteBatch,
   deleteDoc,
 } from "firebase/firestore";
 

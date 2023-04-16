@@ -8,6 +8,7 @@ import {
 import { getAuth } from "firebase-admin/auth";
 import { Game } from "../../src/types/Game";
 import { Post } from "../../src/types/Post";
+import { User } from "../../src/types/User";
 
 initializeApp({
   credential: applicationDefault(),
@@ -16,7 +17,7 @@ initializeApp({
 const db = getFirestore();
 const auth = getAuth();
 
-export const getAllPosts = async () => {
+export const getAllPosts = async (): Promise<Post[]> => {
   const queryRef = db
     .collection("posts")
     .orderBy("postedAt", "desc")
@@ -24,13 +25,13 @@ export const getAllPosts = async () => {
 
   const querySnapshot = await queryRef.get();
   const posts = querySnapshot.docs.map((doc: QueryDocumentSnapshot) => {
-    return doc.data();
+    return doc.data() as Post;
   });
 
   return posts;
 };
 
-export const getPostsByDate = async (beggining: Date, end: Date) => {
+export const getPostsByDate = async (beggining: Date, end: Date): Promise<Post[]> => {
   const queryRef = db
     .collection("posts")
     .where("postedAt", ">=", beggining)
@@ -39,13 +40,13 @@ export const getPostsByDate = async (beggining: Date, end: Date) => {
 
   const querySnapshot = await queryRef.get();
   const posts = querySnapshot.docs.map((doc: QueryDocumentSnapshot) => {
-    return doc.data();
+    return doc.data() as Post;
   });
 
   return posts;
 };
 
-export const getGamesByDate = async (beggining: Date, end: Date) => {
+export const getGamesByDate = async (beggining: Date, end: Date): Promise<Game[]> => {
   const queryRef = db
     .collection("games")
     .where("startAt", ">=", beggining)
@@ -54,13 +55,13 @@ export const getGamesByDate = async (beggining: Date, end: Date) => {
 
   const querySnapshot = await queryRef.get();
   const games = querySnapshot.docs.map((doc: QueryDocumentSnapshot) => {
-    return doc.data();
+    return doc.data() as Game;
   });
 
   return games;
 };
 
-export const getPostsByGameId = async (gameId: string) => {
+export const getPostsByGameId = async (gameId: string): Promise<Post[]> => {
   const queryRef = db
     .collection("posts")
     .where("gameId", "==", gameId)
@@ -69,7 +70,7 @@ export const getPostsByGameId = async (gameId: string) => {
 
   const querySnapshot = await queryRef.get();
   const posts = querySnapshot.docs.map((doc: QueryDocumentSnapshot) => {
-    return doc.data();
+    return doc.data() as Post;
   });
 
   return posts;
@@ -147,6 +148,47 @@ const gameConverter = {
       result: data.result,
       goalScore: data.goalScore,
       goalAgainst: data.goalAgainst,
+    };
+  },
+};
+
+export const getUsers = async (): Promise<User[]> => {
+  const queryRef = db.collection("users").withConverter(userConverter);
+
+  const querySnapshot = await queryRef.get();
+  const users = querySnapshot.docs.map((doc: QueryDocumentSnapshot) => {
+    return doc.data() as User;
+  });
+
+  return users;
+};
+
+export const updateUser = async (userId: string, user: User) => {
+  return await db.collection("users").doc(userId).set(user);
+};
+
+const userConverter = {
+  toFirestore(user: User): DocumentData {
+    return {
+      id: user.id,
+      nickname: user.nickname,
+      photoURL: user.photoURL,
+      createdAt: Timestamp.fromDate(user.createdAt),
+      title: user.title,
+      titleDescription: user.titleDescription,
+      postTimes: user.postTimes,
+    };
+  },
+  fromFirestore(snapshot: QueryDocumentSnapshot): User {
+    const data = snapshot.data()!;
+    return {
+      id: data.id,
+      nickname: data.nickname,
+      photoURL: data.photoURL,
+      createdAt: data.createdAt.toDate(),
+      title: data.title,
+      titleDescription: data.titleDescription,
+      postTimes: data.postTimes,
     };
   },
 };
