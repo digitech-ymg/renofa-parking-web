@@ -67,8 +67,8 @@ const games: Game[] = [
 ];
 
 //test
-describe("ユーザー称号", () => {
-  it("null", () => {
+describe("judgeUserTitle", () => {
+  it("games null", () => {
     expect(
       judgeUserTitle(null, [
         genPost(GAMEID_WIN1, "paid"),
@@ -81,11 +81,11 @@ describe("ユーザー称号", () => {
     ).toEqual(null);
   });
 
-  it("null", () => {
+  it("posts null", () => {
     expect(judgeUserTitle(games, null)).toEqual(null);
   });
 
-  it("null", () => {
+  it("games posts null", () => {
     expect(judgeUserTitle(null, null)).toEqual(null);
   });
 
