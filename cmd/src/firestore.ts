@@ -45,6 +45,21 @@ export const getPostsByDate = async (beggining: Date, end: Date) => {
   return posts;
 };
 
+export const getGamesByDate = async (beggining: Date, end: Date) => {
+  const queryRef = db
+    .collection("games")
+    .where("startAt", ">=", beggining)
+    .where("startAt", "<", end)
+    .withConverter(gameConverter);
+
+  const querySnapshot = await queryRef.get();
+  const games = querySnapshot.docs.map((doc: QueryDocumentSnapshot) => {
+    return doc.data();
+  });
+
+  return games;
+};
+
 export const getPostsByGameId = async (gameId: string) => {
   const queryRef = db
     .collection("posts")

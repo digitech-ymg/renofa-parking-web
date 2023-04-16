@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { getMostRecentGame, getParkings, getPosts } from "@/lib/firestore";
+import { getMostRecentGame, getParkings, getPosts, isOffSeason } from "@/lib/firestore";
 import useSWR from "swr";
 
 import { Container, Box, Link } from "@chakra-ui/react";
@@ -30,6 +30,10 @@ const Top: NextPage = () => {
   const { data: posts, error: errorPosts } = useSWR(game ? ["posts", game.id] : null, getPosts, {
     fallbackData: [],
     refreshInterval: intervalLessMinute,
+  });
+  const { data: offSeason, error: errorOffSeason } = useSWR("offSeason", isOffSeason, {
+    revalidateOnFocus: false,
+    refreshInterval: intervalHour,
   });
 
   const now = new Date();
