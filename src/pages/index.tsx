@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
-import { getMostRecentGame, getParkings, getPosts, isOffSeason } from "@/lib/firestore";
+import { getMostRecentGame, getParkings, getPosts } from "@/lib/firestore";
+import { isOffSeason } from "@/utils/game";
 import useSWR from "swr";
 
 import { Container, Box, Link } from "@chakra-ui/react";
@@ -12,6 +13,7 @@ import Game from "@/components/Game";
 import ParkingList from "@/components/ParkingList";
 import RenofaBanner from "@/components/RenofaBanner";
 import SummaryContent from "@/components/SummaryContent";
+import { useEffect, useState } from "react";
 
 // 当日ほとんど変わらないものは1時間
 const intervalHour = 60 * 60 * 1000;
@@ -31,10 +33,19 @@ const Top: NextPage = () => {
     fallbackData: [],
     refreshInterval: intervalLessMinute,
   });
-  const { data: offSeason, error: errorOffSeason } = useSWR("offSeason", isOffSeason, {
-    revalidateOnFocus: false,
-    refreshInterval: intervalHour,
-  });
+  // オフシーズン変数Props（確定前はundefinedで何も表示させない）
+  const [offSeason, setOffSeason] = useState<boolean | undefined>(undefined);
+
+  // game更新時にオフシーズン変数更新
+  useEffect(() => {
+    if (game) {
+      // オフ判定
+      setOffSeason(isOffSeason(game.startAt, new Date()));
+    } else {
+      // 試合がない＝オフ
+      setOffSeason(false);
+    }
+  }, [game]);
 
   const now = new Date();
 
@@ -55,7 +66,7 @@ const Top: NextPage = () => {
           <SummaryContent />
         </>
       )}
-      {!offSeason && (
+      {offSeason === false && (
         <>
           <Box mt={4} mb={4}>
             <Link href="/post">
