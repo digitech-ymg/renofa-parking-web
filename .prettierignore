@@ -42,3 +42,6 @@ ui-debug.log
 
 # firebase emulator folders
 /data
+
+# under functions
+functions/lib
