@@ -1,9 +1,6 @@
-export const isOffSeason = (date1: Date, date2: Date): boolean => {
-  const diff = Math.abs(date2.getTime() - date1.getTime());
+export const isOffSeason = (today: Date, nextGameDay: Date): boolean => {
+  const diff = nextGameDay.getTime() - today.getTime();
   const diffInDays = diff / (1000 * 60 * 60 * 24);
 
-  if (diffInDays >= 30) {
-    return true;
-  }
-  return false;
+  return diffInDays < 0 || 30 <= diffInDays;
 };
