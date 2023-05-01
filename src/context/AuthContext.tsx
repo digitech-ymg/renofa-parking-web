@@ -24,6 +24,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             nickname: firebaseUser.displayName || "(未設定)",
             photoURL: firebaseUser.photoURL!,
             createdAt: new Date(),
+            title: "",
+            titleDescription: "",
+            postTimes: 0,
           };
           updateUser(appUser).then(() => setUser(appUser));
         }
