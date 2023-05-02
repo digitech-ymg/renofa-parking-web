@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
-import { getMostRecentGame, getParkings, getPosts, isOffSeason } from "@/lib/firestore";
+import { getMostRecentGame, getParkings, getPosts } from "@/lib/firestore";
+import { isOffSeason } from "@/utils/game";
 import useSWR from "swr";
 
 import { Container, Box, Link } from "@chakra-ui/react";
@@ -12,6 +13,7 @@ import Game from "@/components/Game";
 import ParkingList from "@/components/ParkingList";
 import RenofaBanner from "@/components/RenofaBanner";
 import SummaryContent from "@/components/SummaryContent";
+import { useEffect, useState } from "react";
 
 // 当日ほとんど変わらないものは1時間
 const intervalHour = 60 * 60 * 1000;
@@ -31,10 +33,19 @@ const Top: NextPage = () => {
     fallbackData: [],
     refreshInterval: intervalLessMinute,
   });
-  const { data: offSeason, error: errorOffSeason } = useSWR("offSeason", isOffSeason, {
-    revalidateOnFocus: false,
-    refreshInterval: intervalHour,
-  });
+  // オフシーズン変数Props（確定前はundefinedで何も表示させない）
+  const [offSeason, setOffSeason] = useState<boolean | undefined>(undefined);
+
+  // game更新時にオフシーズン変数更新
+  useEffect(() => {
+    if (game) {
+      // オフ判定
+      setOffSeason(isOffSeason(game.startAt, new Date()));
+    } else {
+      // 試合がない＝オフ
+      setOffSeason(false);
+    }
+  }, [game]);
 
   const now = new Date();
 
@@ -45,39 +56,43 @@ const Top: NextPage = () => {
           <SiteDescription />
         </Link>
       </Box>
-      {/* TODO: 直近の試合が一定期間内ではない時に表示する */}
-      {/* <Box mt={4} mb={4}>
-        <Link href="/mypage">
-          <GoMyPage />
-        </Link>
-      </Box> */}
-      <Box mt={4} mb={4}>
-        <Link href="/post">
-          <ParkingStateButton />
-        </Link>
-      </Box>
-      <Box bg="gray.100" p={4}>
-        <Box experimental_spaceY={4}>
-          {/* TODO: 直近の試合が一定期間内ではない時に表示する */}
-          {/* <SummaryContent /> */}
-
-          {/* game */}
-          {!game && !errorGame && <p>loading...</p>}
-          {game && <Game game={game} />}
-          {errorGame && <p>試合情報の取得に失敗しました。</p>}
-
-          <ParkingColorSample />
-          {/* parkings */}
-          {!parkings && !errorParkings && <p>loading...</p>}
-          {game && parkings && posts && (
-            <ParkingList now={now} game={game} parkings={parkings} posts={posts} />
-          )}
-          {errorParkings && <p>駐車場情報の取得に失敗しました。</p>}
-        </Box>
-      </Box>
-      <Box mt={4} mb={4}>
-        {posts && <ParkingStatusSharer names={posts?.map((post) => post.nickname)} />}
-      </Box>
+      {offSeason && (
+        <>
+          <Box mt={4} mb={4}>
+            <Link href="/mypage">
+              <GoMyPage />
+            </Link>
+          </Box>
+          <SummaryContent />
+        </>
+      )}
+      {offSeason === false && (
+        <>
+          <Box mt={4} mb={4}>
+            <Link href="/post">
+              <ParkingStateButton />
+            </Link>
+          </Box>
+          <Box bg="gray.100" p={4}>
+            <Box experimental_spaceY={4}>
+              {/* game */}
+              {!game && !errorGame && <p>loading...</p>}
+              {game && <Game game={game} />}
+              {errorGame && <p>試合情報の取得に失敗しました。</p>}
+              <ParkingColorSample />
+              {/* parkings */}
+              {!parkings && !errorParkings && <p>loading...</p>}
+              {game && parkings && posts && (
+                <ParkingList now={now} game={game} parkings={parkings} posts={posts} />
+              )}
+              {errorParkings && <p>駐車場情報の取得に失敗しました。</p>}
+            </Box>
+          </Box>
+          <Box mt={4} mb={4}>
+            {posts && <ParkingStatusSharer names={posts?.map((post) => post.nickname)} />}
+          </Box>
+        </>
+      )}
       <Box mt={4} mb={4}>
         <Link href="https://www.renofa.com/" isExternal>
           <RenofaBanner />
