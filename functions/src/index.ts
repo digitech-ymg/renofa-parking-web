@@ -19,9 +19,15 @@ export const updateUserTitle = functions.pubsub
 
 const exec = async (): Promise<any> => {
   try {
+    // 今日試合があって21時にバッチ起動して更新するタイミング
     const game = await getTodayGame();
-    if (game) {
-      functions.logger.info(`today game id: ${game.id}`);
+    // 2月1日が年間を通してリセットするタイミング
+    // シーズン前半の日程が登録されている＆全ユーザーの投稿数が0件なので、全ユーザーが初期状態に更新される
+    const now = new Date();
+    const isResetDay = now.getMonth() === 1 && now.getDate() === 1;
+
+    if (game || isResetDay) {
+      functions.logger.info("today has game or reset day:");
 
       const now = new Date();
       const from = new Date(now.getFullYear(), 0, 1);
