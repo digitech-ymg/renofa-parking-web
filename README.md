@@ -82,3 +82,21 @@ make up
 ## コミットメッセージ（検討中）
 
 [gitmoji](https://gitmoji.dev/)に準じて絵文字 prefix をつけたコミットメッセージを書くことを推奨（[cli](https://github.com/carloscuesta/gitmoji)もある）
+
+## バッチ処理
+
+functions 配下がバッチ処理に関するコードです。
+firebase の functions を定期実行で稼働させてます。
+手動でデプロイしてます。
+
+開発環境へのデプロイ
+
+```shell
+firebase deploy --only functions --project=renofa-parking-dev
+```
+
+本番環境へのデプロイ
+
+```shell
+firebase deploy --only functions --project=renofa-parking
+```
