@@ -40,7 +40,7 @@ const Top: NextPage = () => {
   useEffect(() => {
     if (game) {
       // オフ判定
-      setOffSeason(isOffSeason(game.startAt, new Date()));
+      setOffSeason(isOffSeason(new Date(), game.startAt));
     } else {
       // 試合がない＝オフ
       setOffSeason(false);
