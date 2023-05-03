@@ -326,6 +326,9 @@ const Post: NextPage = () => {
             >
               <Text>Twitterで認証する</Text>
             </Button>
+            <Text fontSize="sm" color="red">
+              現在、新規ユーザーの認証ができません。対処が完了するまでお待ちください。
+            </Text>
           </Box>
           <Box mb={10}>
             <Link href="/">
