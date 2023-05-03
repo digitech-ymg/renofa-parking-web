@@ -25,7 +25,6 @@ import { useEditableControls } from "@chakra-ui/editable";
 import { CheckIcon, CloseIcon, EditIcon, Icon } from "@chakra-ui/icons";
 import { StarIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import { useAuthContext } from "@/context/AuthContext";
-import { MypageInfo } from "@/types/User";
 import { login } from "@/lib/authentication";
 import { useRouter } from "next/router";
 import { updateUser } from "@/lib/firestore";
@@ -74,14 +73,10 @@ const Mypage = () => {
             <Center flex="1">
               <Box margin={0} w="100%" textAlign="center">
                 <Heading mb={2} fontSize="20px" textAlign="center">
-                  {/* TODO: バッチ集計ができるまで集計中として伏せておく */}
-                  {/* {mypageInfo.title} */}
-                  準備中です
+                  {user.title}
                 </Heading>
                 <Text mb={2} fontSize="10px">
-                  {/* TODO: バッチ集計ができるまで集計中として伏せておく */}
-                  {/* {mypageInfo.titleDescription} */}
-                  準備中です
+                  {user.titleDescription}
                 </Text>
                 <Editable
                   textAlign="right"
@@ -126,9 +121,7 @@ const Mypage = () => {
               <Icon as={StarIcon} margin="5px" color="orange.400"></Icon>今シーズン投稿回数
             </Text>
             <Text textAlign="right" fontSize="24px" mr={8} letterSpacing={2}>
-              {/* TODO: バッチ集計ができるまで集計中として伏せておく */}
-              {/* {mypageInfo.postTimes}回 */}
-              準備中です
+              {user.postTimes}回
             </Text>
           </Box>
 
@@ -182,6 +175,9 @@ const Mypage = () => {
             >
               <Text>Twitterで認証する</Text>
             </Button>
+            <Text fontSize="sm" color="red">
+              現在、新規ユーザーの認証ができません。対処が完了するまでお待ちください。
+            </Text>
           </Box>
           <Box mb={10}>
             <Link href="/">

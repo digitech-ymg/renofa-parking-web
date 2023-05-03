@@ -13,16 +13,14 @@ import {
   QueryDocumentSnapshot,
   DocumentData,
   Timestamp,
-  DocumentReference,
-  WriteBatch,
   deleteDoc,
 } from "firebase/firestore";
 
-import { firebaseApp, isEmulator } from "@/lib/firebase";
-import { Parking } from "@/types/Parking";
-import { Game } from "@/types/Game";
-import { Post } from "@/types/Post";
-import { User } from "@/types/User";
+import { firebaseApp, isEmulator } from "./firebase";
+import type { Parking } from "../types/Parking";
+import { Game } from "../types/Game";
+import { Post } from "../types/Post";
+import { User } from "../types/User";
 
 export const db = getFirestore(firebaseApp);
 if (isEmulator()) {
@@ -79,6 +77,56 @@ export const getMostRecentGame = async (): Promise<Game> => {
     throw new Error("game not found");
   }
   return parkingSnapshot.docs[0].data();
+};
+
+export const getPreviousGame = async (): Promise<Game> => {
+  const ref = collection(db, "games");
+  // 当日0時以前の直近の試合を1つ取得する
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const q = query(
+    ref,
+    where("startAt", "<", today),
+    limit(1),
+    orderBy("startAt", "desc")
+  ).withConverter(gameConverter);
+
+  const parkingSnapshot = await getDocs(q);
+
+  if (parkingSnapshot.docs.length === 0) {
+    throw new Error("game not found");
+  }
+  return parkingSnapshot.docs[0].data();
+};
+
+export const getNextGame = async (): Promise<Game> => {
+  const ref = collection(db, "games");
+  // 当日0時以降の直近の試合を1つ取得する（試合当日は試合が終わってもその日の終日まで対象になる）
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const q = query(ref, where("startAt", ">=", today), limit(1)).withConverter(gameConverter);
+
+  const parkingSnapshot = await getDocs(q);
+
+  if (parkingSnapshot.docs.length === 0) {
+    throw new Error("game not found");
+  }
+  return parkingSnapshot.docs[0].data();
+};
+
+export const isOffSeason = async (): Promise<Boolean> => {
+  const previousGame = await getPreviousGame();
+  const nextGame = await getNextGame();
+
+  const diff = nextGame.startAt.getTime() - previousGame.startAt.getTime();
+  const diffInDays = diff / (1000 * 60 * 60 * 24);
+
+  if (diffInDays >= 30) {
+    return true;
+  }
+  return false;
 };
 
 const parkingConverter = {
@@ -227,6 +275,9 @@ const userConverter = {
       nickname: data.nickname,
       photoURL: data.photoURL,
       createdAt: data.createdAt.toDate(),
+      title: data.title,
+      titleDescription: data.titleDescription,
+      postTimes: data.postTimes,
     };
   },
 };
