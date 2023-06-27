@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { useAuthContext } from "@/context/AuthContext";
 import { login } from "@/lib/authentication";
+import { loadNickname, saveNickname } from "@/lib/storage";
 
 const nicknameMax = 20;
 
@@ -101,11 +102,9 @@ const Post: NextPage = () => {
   const [loginError, setLoginError] = useState("");
 
   useEffect(() => {
-    // 認証済みならニックネームを入れてあげる
-    if (user) {
-      setNickname(user.nickname);
-    }
-  }, [user]);
+    // 過去に投稿していたら入れてあげる
+    loadNickname().then((nickname) => setNickname(nickname));
+  }, []);
 
   return (
     <Container py={8} bgColor="white">
@@ -255,31 +254,39 @@ const Post: NextPage = () => {
                   nicknameIsError || parkingIdIsError || parkingRatioIsError || parkedAgoIsError
                 }
                 onClick={async () => {
+                  await saveNickname(nickname);
+
                   const postedAt = new Date();
                   const parkedAt = new Date(postedAt.getTime() + 60000 * parkedAgo);
                   // 試合開始時間に対して何分前か（現在時間と「いつ停めた」設問から導く
                   const minutes =
                     Math.floor((postedAt.getTime() - game.startAt.getTime()) / 60000) + parkedAgo;
-                  // 重複投稿防止にuserID,試合情報,駐車場データが一致しているものを削除
-                  await deletePost(user.id, game.id, parkingId);
 
-                  return createPost({
-                    nickname: nickname,
-                    gameId: game.id,
-                    parkingId: parkingId,
-                    parkingRatio: parkingRatio,
-                    parkingMinutes: minutes,
-                    parkedAgo: parkedAgo,
-                    parkedAt: parkedAt,
-                    postedAt: postedAt,
-                    userId: user.id,
-                  })
-                    .then(() => {
-                      router.push("/postsuccess");
+                  if (user.user) {
+                    // 重複投稿防止にuserID,試合情報,駐車場データが一致しているものを削除
+                    await deletePost(user.user.id, game.id, parkingId);
+
+                    return createPost({
+                      nickname: nickname,
+                      gameId: game.id,
+                      parkingId: parkingId,
+                      parkingRatio: parkingRatio,
+                      parkingMinutes: minutes,
+                      parkedAgo: parkedAgo,
+                      parkedAt: parkedAt,
+                      postedAt: postedAt,
+                      userId: user.user.id,
                     })
-                    .catch((e) => {
-                      router.push("/posterror");
-                    });
+                      .then(() => {
+                        router.push("/postsuccess");
+                      })
+                      .catch((e) => {
+                        router.push("/posterror");
+                      });
+                  } else {
+                    // 認証してないならば、投稿せずエラー
+                    router.push("/posterror");
+                  }
                 }}
               >
                 送信する

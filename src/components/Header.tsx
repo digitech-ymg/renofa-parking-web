@@ -1,27 +1,9 @@
 import type { VFC } from "react";
-import {
-  Container,
-  Box,
-  HStack,
-  Text,
-  Link,
-  Spacer,
-  Avatar,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-} from "@chakra-ui/react";
+import { Container, Box, HStack, Text, Link } from "@chakra-ui/react";
 
 import Renofa from "public/renofa.svg";
-import { useAuthContext } from "@/context/AuthContext";
-import { logout } from "@/lib/authentication";
-import { useRouter } from "next/router";
 
 const Header: VFC = () => {
-  const user = useAuthContext();
-  const router = useRouter();
-
   return (
     <Box bg="gray.100" color="black">
       <Container alignItems="center">
@@ -34,18 +16,6 @@ const Header: VFC = () => {
               </Text>
             </HStack>
           </Link>
-          <Spacer />
-          {user && (
-            <Menu>
-              <MenuButton>
-                <Avatar src={user.photoURL} name={user.nickname} size="md" />
-              </MenuButton>
-              <MenuList>
-                <MenuItem onClick={() => router.push("/mypage")}>マイページ</MenuItem>
-                <MenuItem onClick={logout}>ログアウト</MenuItem>
-              </MenuList>
-            </Menu>
-          )}
         </HStack>
       </Container>
     </Box>

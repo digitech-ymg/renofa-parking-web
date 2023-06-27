@@ -1,18 +1,6 @@
 import type { NextPage } from "next";
-import {
-  Container,
-  Heading,
-  Text,
-  HStack,
-  Box,
-  Stack,
-  Button,
-  Link,
-  Image,
-} from "@chakra-ui/react";
+import { Container, Heading, Text, HStack, Box, Button, Link, Image } from "@chakra-ui/react";
 import Iframe from "react-iframe";
-import { Icon } from "@chakra-ui/icons";
-import { CheckCircleIcon } from "@chakra-ui/icons";
 
 const Postsuccess: NextPage = () => {
   return (
