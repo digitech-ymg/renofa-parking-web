@@ -1,44 +1,36 @@
 import { createContext, useEffect, useState, useContext, ReactNode } from "react";
-import { onAuthStateChanged } from "@firebase/auth";
+import { signInAnonymously } from "@firebase/auth";
 import { User } from "@/types/User";
-import { getUser, updateUser } from "@/lib/firestore";
 import { auth } from "@/lib/authentication";
 
-type UserContextType = User | null | undefined;
-
-const AuthContext = createContext<UserContextType>(undefined);
+type AuthContextProps = {
+  user: User | null | undefined;
+};
+const AuthContext = createContext<AuthContextProps>({ user: undefined });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<UserContextType>();
+  const [user, setUser] = useState<User | null | undefined>(undefined);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        let appUser = await getUser(firebaseUser.uid);
+    if (user) {
+      return;
+    }
 
-        if (appUser) {
-          setUser(appUser);
-        } else {
-          appUser = {
-            id: firebaseUser.uid,
-            nickname: firebaseUser.displayName || "(未設定)",
-            photoURL: firebaseUser.photoURL!,
-            createdAt: new Date(),
-            title: "",
-            titleDescription: "",
-            postTimes: 0,
-          };
-          updateUser(appUser).then(() => setUser(appUser));
+    signInAnonymously(auth)
+      .then((userCred) => {
+        if (userCred) {
+          setUser({
+            id: userCred.user.uid,
+            providerId: userCred.user.providerId,
+          });
         }
-      } else {
-        setUser(null);
-      }
-    });
+      })
+      .catch((e) => {
+        console.error("failed auth: " + e);
+      });
+  }, [user]);
 
-    return () => unsubscribe();
-  }, []);
-
-  return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user: user }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuthContext = () => useContext(AuthContext);

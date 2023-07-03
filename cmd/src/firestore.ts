@@ -8,7 +8,6 @@ import {
 import { getAuth } from "firebase-admin/auth";
 import { Game } from "../../src/types/Game";
 import { Post } from "../../src/types/Post";
-import { User } from "../../src/types/User";
 
 initializeApp({
   credential: applicationDefault(),
@@ -148,47 +147,6 @@ const gameConverter = {
       result: data.result,
       goalScore: data.goalScore,
       goalAgainst: data.goalAgainst,
-    };
-  },
-};
-
-export const getUsers = async (): Promise<User[]> => {
-  const queryRef = db.collection("users").withConverter(userConverter);
-
-  const querySnapshot = await queryRef.get();
-  const users = querySnapshot.docs.map((doc: QueryDocumentSnapshot) => {
-    return doc.data() as User;
-  });
-
-  return users;
-};
-
-export const updateUser = async (userId: string, user: User) => {
-  return await db.collection("users").doc(userId).set(user);
-};
-
-const userConverter = {
-  toFirestore(user: User): DocumentData {
-    return {
-      id: user.id,
-      nickname: user.nickname,
-      photoURL: user.photoURL,
-      createdAt: Timestamp.fromDate(user.createdAt),
-      title: user.title,
-      titleDescription: user.titleDescription,
-      postTimes: user.postTimes,
-    };
-  },
-  fromFirestore(snapshot: QueryDocumentSnapshot): User {
-    const data = snapshot.data()!;
-    return {
-      id: data.id,
-      nickname: data.nickname,
-      photoURL: data.photoURL,
-      createdAt: data.createdAt.toDate(),
-      title: data.title,
-      titleDescription: data.titleDescription,
-      postTimes: data.postTimes,
     };
   },
 };

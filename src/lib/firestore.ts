@@ -21,6 +21,7 @@ import type { Parking } from "../types/Parking";
 import { Game } from "../types/Game";
 import { Post } from "../types/Post";
 import { User } from "../types/User";
+import { Information } from "@/types/Information";
 
 export const db = getFirestore(firebaseApp);
 if (isEmulator()) {
@@ -259,37 +260,35 @@ export const getPosts = async (key: string, gameId: string): Promise<Post[]> => 
   return postList;
 };
 
-const userConverter = {
-  toFirestore(user: User): DocumentData {
+const informationConverter = {
+  toFirestore(info: Information): DocumentData {
     return {
-      id: user.id,
-      nickname: user.nickname,
-      photoURL: user.photoURL,
-      createdAt: Timestamp.fromDate(user.createdAt),
+      id: info.id,
+      showFinishAt: info.showFinishAt,
+      text: info.text,
     };
   },
-  fromFirestore(snapshot: QueryDocumentSnapshot): User {
+  fromFirestore(snapshot: QueryDocumentSnapshot): Information {
     const data = snapshot.data()!;
     return {
       id: data.id,
-      nickname: data.nickname,
-      photoURL: data.photoURL,
-      createdAt: data.createdAt.toDate(),
-      title: data.title,
-      titleDescription: data.titleDescription,
-      postTimes: data.postTimes,
+      showFinishAt: data.showFinishAt.toDate(),
+      text: data.text,
     };
   },
 };
 
-export const getUser = async (id: string): Promise<User> => {
-  const ref = doc(db, `users/${id}`).withConverter(userConverter);
-  const snapshot = await getDoc(ref);
-  return snapshot.data() as User;
-};
+// export const getShowableInformations = async (now: Date): Promise<Information[]> => {
+export const getShowableInformations = async (): Promise<Information[]> => {
+  const now = new Date();
+  console.log(`now: ${now.toLocaleString()}`);
 
-export const updateUser = async (user: User): Promise<User> => {
-  const ref = doc(db, "users", user.id).withConverter(userConverter);
-  await setDoc(ref, user);
-  return Promise.resolve(user);
+  const ref = collection(db, "informations");
+  const q = query(ref, where("showFinishAt", ">", now), orderBy("showFinishAt")).withConverter(
+    informationConverter
+  );
+
+  const snapshot = await getDocs(q);
+  const infoList = snapshot.docs.map((doc) => doc.data());
+  return infoList;
 };

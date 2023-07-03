@@ -25,6 +25,33 @@ const game: Game = {
   goalAgainst: 0,
 };
 
+const gameWithAdjustment: Game = {
+  id: "20211128",
+  kind: "明治安田生命J2リーグ",
+  section: "第1節",
+  startAt: new Date("2021-11-28T14:00:00"),
+  finishAt: new Date("2021-11-28T16:00:00"),
+  opponent: "ロアッソ熊本",
+  availableParkings: ["paid", "ja", "truck", "riverbed"],
+  soldOutParkings: ["paid"],
+  parkingOpenAdjustments: [
+    {
+      // JA駐車場の3時間前開場が1時間前開場になるケース
+      parkingId: "ja",
+      minutes: 120,
+    },
+    {
+      // トラック協会の6時間前開場が5時間半前開場になるケース
+      parkingId: "truck",
+      minutes: 30,
+    },
+  ],
+  attendance: 0,
+  result: "",
+  goalScore: 0,
+  goalAgainst: 0,
+};
+
 const parkingWillFill: Parking = {
   id: "ja",
   name: "ja山口",
@@ -137,9 +164,27 @@ describe("parkingStatus", () => {
       ${"満車予測地点ぴったり"} | ${new Date("2021-11-28T11:30:00")} | ${"filled"}      | ${100}  | ${0}
       ${"満車予測地点以降"}     | ${new Date("2021-11-28T13:00:00")} | ${"filled"}      | ${100}  | ${0}
       ${"閉場の直後"}           | ${new Date("2021-11-28T18:00:00")} | ${"afterClosed"} | ${0}    | ${0}
-      ${"満車予測地点以降"}     | ${new Date("2021-11-28T13:00:00")} | ${"filled"}      | ${100}  | ${0}
     `("$label", ({ label, now, state, percent, fillMinutes }) => {
       expect(parkingStatus(now, game, parkingWillFill, emptyPosts)).toMatchObject({
+        state: state,
+        percent: percent,
+        fillMinutes: fillMinutes,
+      });
+    });
+  });
+
+  describe("投稿なし/満車の予測データあり駐車場（駐車場開場調整時）", () => {
+    test.each`
+      label                     | now                                | state            | percent | fillMinutes
+      ${"開場の前日"}           | ${new Date("2021-11-27T00:00:00")} | ${"beforeOpen"}  | ${0}    | ${0}
+      ${"開場の直前"}           | ${new Date("2021-11-28T12:59:59")} | ${"beforeOpen"}  | ${0}    | ${0}
+      ${"開場の直後"}           | ${new Date("2021-11-28T13:00:00")} | ${"opened"}      | ${0}    | ${30}
+      ${"開場の駐車率中間"}     | ${new Date("2021-11-28T13:15:00")} | ${"opened"}      | ${80}   | ${15}
+      ${"満車予測地点ぴったり"} | ${new Date("2021-11-28T13:30:00")} | ${"filled"}      | ${100}  | ${0}
+      ${"満車予測地点以降"}     | ${new Date("2021-11-28T13:50:00")} | ${"filled"}      | ${100}  | ${0}
+      ${"閉場の直後"}           | ${new Date("2021-11-28T18:00:00")} | ${"afterClosed"} | ${0}    | ${0}
+    `("$label", ({ label, now, state, percent, fillMinutes }) => {
+      expect(parkingStatus(now, gameWithAdjustment, parkingWillFill, emptyPosts)).toMatchObject({
         state: state,
         percent: percent,
         fillMinutes: fillMinutes,
@@ -154,6 +199,20 @@ describe("parkingStatus", () => {
       ${"最後の予測点時間以降"}     | ${new Date("2021-11-28T13:30:00")} | ${"opened"} | ${90}   | ${0}
     `("$label", ({ label, now, state, percent, fillMinutes }) => {
       expect(parkingStatus(now, game, parkingWontFill, emptyPosts)).toMatchObject({
+        state: state,
+        percent: percent,
+        fillMinutes: fillMinutes,
+      });
+    });
+  });
+
+  describe("投稿なし/満車の予測データなし駐車場（駐車場開場調整時）", () => {
+    test.each`
+      label                         | now                                | state       | percent | fillMinutes
+      ${"最後の予測点時間ぴったり"} | ${new Date("2021-11-28T13:30:00")} | ${"opened"} | ${90}   | ${0}
+      ${"最後の予測点時間以降"}     | ${new Date("2021-11-28T13:40:00")} | ${"opened"} | ${90}   | ${0}
+    `("$label", ({ label, now, state, percent, fillMinutes }) => {
+      expect(parkingStatus(now, gameWithAdjustment, parkingWontFill, emptyPosts)).toMatchObject({
         state: state,
         percent: percent,
         fillMinutes: fillMinutes,
@@ -197,6 +256,29 @@ describe("parkingStatus", () => {
     `("$label", ({ label, minutes, ratio, now, state, percent, fillMinutes }) => {
       expect(
         parkingStatus(now, game, parkingWillFill, [
+          Object.assign({}, postBase, { parkingMinutes: minutes, parkingRatio: ratio }),
+        ])
+      ).toMatchObject({
+        state: state,
+        percent: percent,
+        fillMinutes: fillMinutes,
+      });
+    });
+  });
+
+  describe("投稿あり/満車の予測データあり駐車場（駐車場開場調整時）", () => {
+    test.each`
+      label                      | minutes | ratio  | now                                | state       | percent | fillMinutes
+      ${"0.8投稿の投稿直後"}     | ${-50}  | ${0.8} | ${new Date("2021-11-28T13:10:00")} | ${"opened"} | ${80}   | ${15}
+      ${"0.8投稿の投稿10分後"}   | ${-50}  | ${0.8} | ${new Date("2021-11-28T13:20:00")} | ${"opened"} | ${93}   | ${5}
+      ${"0.8投稿の満車時間直後"} | ${-50}  | ${0.8} | ${new Date("2021-11-28T13:25:00")} | ${"filled"} | ${100}  | ${0}
+      ${"0.8投稿の試合開始直後"} | ${-50}  | ${0.8} | ${new Date("2021-11-28T14:00:00")} | ${"filled"} | ${100}  | ${0}
+      ${"0.8投稿の投稿直後"}     | ${-50}  | ${0.8} | ${new Date("2021-11-28T13:10:00")} | ${"opened"} | ${80}   | ${15}
+      ${"1.0投稿の直後"}         | ${-40}  | ${1.0} | ${new Date("2021-11-28T13:20:00")} | ${"filled"} | ${100}  | ${0}
+      ${"1.0投稿の20分後"}       | ${-40}  | ${1.0} | ${new Date("2021-11-28T13:40:00")} | ${"filled"} | ${100}  | ${0}
+    `("$label", ({ label, minutes, ratio, now, state, percent, fillMinutes }) => {
+      expect(
+        parkingStatus(now, gameWithAdjustment, parkingWillFill, [
           Object.assign({}, postBase, { parkingMinutes: minutes, parkingRatio: ratio }),
         ])
       ).toMatchObject({
@@ -401,6 +483,24 @@ describe("postFillMinutes", () => {
     });
   });
 
+  describe("満車の予測データなし駐車場（開場調整値あり）", () => {
+    test.each`
+      label                | postMinutes | postRatio | now                                | expected
+      ${"満車投稿直後"}    | ${-60}      | ${1.0}    | ${new Date("2021-11-28T13:30:00")} | ${0}
+      ${"0.8投稿直後満"}   | ${-120}     | ${0.8}    | ${new Date("2021-11-28T12:00:00")} | ${0}
+      ${"0.8投稿から10分"} | ${-120}     | ${0.8}    | ${new Date("2021-11-28T12:10:00")} | ${0}
+    `("$label", ({ label, now, postMinutes, postRatio, expected }) => {
+      expect(
+        postFillMinutes(
+          now,
+          game,
+          parkingWontFill,
+          Object.assign({}, postBase, { parkingRatio: postRatio, parkingMinutes: postMinutes })
+        )
+      ).toEqual(expected);
+    });
+  });
+
   describe("満車の予測データあり駐車場", () => {
     test.each`
       label                      | postMinutes | postRatio | now                                | expected
@@ -428,6 +528,34 @@ describe("postFillMinutes", () => {
       ).toEqual(expected);
     });
   });
+
+  describe("満車の予測データあり駐車場（開場調整値あり）", () => {
+    test.each`
+      label                      | postMinutes | postRatio | now                                 | expected
+      ${"満車投稿直後"}          | ${-40}      | ${1.0}    | ${new Date("2021-11-28T13:25:00")}  | ${0}
+      ${"満車投稿から30分"}      | ${-40}      | ${1.0}    | ${new Date("2021-11-28T13:55:00")}  | ${0}
+      ${"0.5投稿直後満"}         | ${-60}      | ${0.5}    | ${new Date("2021-11-28T13:00:00")}  | ${25}
+      ${"0.5投稿から5分"}        | ${-60}      | ${0.5}    | ${new Date("2021-11-28T13:05:00")}  | ${20}
+      ${"0.5投稿から満車時刻"}   | ${-60}      | ${0.5}    | ${new Date("2021-11-28T13:25:00")}  | ${0}
+      ${"0.5投稿から満車後30分"} | ${-60}      | ${0.5}    | ${new Date("2021-11-28T14s:55:00")} | ${0}
+      ${"0.8投稿直後満"}         | ${-50}      | ${0.8}    | ${new Date("2021-11-28T13:10:00")}  | ${15}
+      ${"0.8投稿から10分"}       | ${-50}      | ${0.8}    | ${new Date("2021-11-28T13:15:00")}  | ${10}
+      ${"0.8投稿から満車時刻"}   | ${-50}      | ${0.8}    | ${new Date("2021-11-28T13:25:00")}  | ${0}
+      ${"0.8投稿から満車後60分"} | ${-50}      | ${0.8}    | ${new Date("2021-11-28T14:25:00")}  | ${0}
+    `("$label", ({ label, now, postMinutes, postRatio, expected }) => {
+      expect(
+        postFillMinutes(
+          now,
+          gameWithAdjustment,
+          parkingWillFill,
+          Object.assign({}, postBase, {
+            parkingRatio: postRatio,
+            parkingMinutes: postMinutes,
+          })
+        )
+      ).toEqual(expected);
+    });
+  });
 });
 
 // --------------------------------------------------------
@@ -438,7 +566,7 @@ describe("predictPercent", () => {
       label         | now                                | expected
       ${"予測なし"} | ${new Date("2021-11-28T11:15:00")} | ${0}
     `("$label", ({ label, now, expected }) => {
-      expect(predictPercent(now, game.startAt, [])).toEqual(expected);
+      expect(predictPercent(now, game.startAt, [], 0)).toEqual(expected);
     });
   });
 
@@ -447,9 +575,20 @@ describe("predictPercent", () => {
       label                 | now                                | expected
       ${"予測地点最後以降"} | ${new Date("2021-11-28T15:00:00")} | ${90}
     `("$label", ({ label, now, expected }) => {
-      expect(predictPercent(now, game.startAt, parkingWontFill.predictParkingStates)).toEqual(
+      expect(predictPercent(now, game.startAt, parkingWontFill.predictParkingStates, 0)).toEqual(
         expected
       );
+    });
+  });
+
+  describe("満車の予測データなし駐車場（開場調整値あり）", () => {
+    test.each`
+      label                 | now                                | adjustMinutes | expected
+      ${"予測地点最後以降"} | ${new Date("2021-11-28T15:00:00")} | ${30}         | ${90}
+    `("$label", ({ label, now, adjustMinutes, expected }) => {
+      expect(
+        predictPercent(now, game.startAt, parkingWontFill.predictParkingStates, adjustMinutes)
+      ).toEqual(expected);
     });
   });
 
@@ -463,9 +602,25 @@ describe("predictPercent", () => {
       ${"予測地点の中間地点"}            | ${new Date("2021-11-28T11:22:30")} | ${90}
       ${"予測地点最後以降"}              | ${new Date("2021-11-28T15:00:00")} | ${100}
     `("$label", ({ label, now, expected }) => {
-      expect(predictPercent(now, game.startAt, parkingWillFill.predictParkingStates)).toEqual(
+      expect(predictPercent(now, game.startAt, parkingWillFill.predictParkingStates, 0)).toEqual(
         expected
       );
+    });
+  });
+
+  describe("満車の予測データあり駐車場（開場調整値あり）", () => {
+    test.each`
+      label                              | now                                | adjustMinutes | expected
+      ${"予測地点以前"}                  | ${new Date("2021-11-28T07:00:00")} | ${120}        | ${0}
+      ${"予測地点1つ目ちょうどピッタリ"} | ${new Date("2021-11-28T13:00:00")} | ${120}        | ${0}
+      ${"予測地点2つ目ちょうどピッタリ"} | ${new Date("2021-11-28T13:05:00")} | ${120}        | ${50}
+      ${"予測地点最後ちょうどピッタリ"}  | ${new Date("2021-11-28T13:30:00")} | ${120}        | ${100}
+      ${"予測地点の中間地点"}            | ${new Date("2021-11-28T13:22:30")} | ${120}        | ${90}
+      ${"予測地点最後以降"}              | ${new Date("2021-11-28T15:00:00")} | ${120}        | ${100}
+    `("$label", ({ label, now, adjustMinutes, expected }) => {
+      expect(
+        predictPercent(now, game.startAt, parkingWillFill.predictParkingStates, adjustMinutes)
+      ).toEqual(expected);
     });
   });
 });
@@ -475,41 +630,72 @@ describe("predictPercent", () => {
 describe("predictsFillMinutes", () => {
   describe("予測データなし", () => {
     test.each`
-      label         | now                                | expected
-      ${"予測なし"} | ${new Date("2021-11-28T11:15:00")} | ${0}
-    `("$label", ({ label, now, expected }) => {
-      expect(predictsFillMinutes(now, game, [])).toEqual(expected);
+      label         | now                                | adjustMinutes | expected
+      ${"予測なし"} | ${new Date("2021-11-28T11:15:00")} | ${0}          | ${0}
+    `("$label", ({ label, now, adjustMinutes, expected }) => {
+      expect(predictsFillMinutes(now, game, [], adjustMinutes)).toEqual(expected);
     });
   });
 
   describe("満車の予測データなし駐車場", () => {
     test.each`
-      label         | now                                | expected
-      ${"会場前"}   | ${new Date("2021-11-28T07:55:00")} | ${0}
-      ${"会場直後"} | ${new Date("2021-11-28T08:00:00")} | ${0}
-      ${"会場中"}   | ${new Date("2021-11-28T11:15:00")} | ${0}
-      ${"閉場直後"} | ${new Date("2021-11-28T18:00:00")} | ${0}
-    `("$label", ({ label, now, expected }) => {
-      expect(predictsFillMinutes(now, game, parkingWontFill.predictParkingStates)).toEqual(
-        expected
-      );
+      label         | now                                | adjustMinutes | expected
+      ${"会場前"}   | ${new Date("2021-11-28T07:55:00")} | ${0}          | ${0}
+      ${"会場直後"} | ${new Date("2021-11-28T08:00:00")} | ${0}          | ${0}
+      ${"会場中"}   | ${new Date("2021-11-28T11:15:00")} | ${0}          | ${0}
+      ${"閉場直後"} | ${new Date("2021-11-28T18:00:00")} | ${0}          | ${0}
+    `("$label", ({ label, now, adjustMinutes, expected }) => {
+      expect(
+        predictsFillMinutes(now, game, parkingWontFill.predictParkingStates, adjustMinutes)
+      ).toEqual(expected);
+    });
+  });
+
+  describe("満車の予測データなし駐車場（開場調整値あり）", () => {
+    test.each`
+      label         | now                                | adjustMinutes | expected
+      ${"会場前"}   | ${new Date("2021-11-28T08:25:00")} | ${30}         | ${0}
+      ${"会場直後"} | ${new Date("2021-11-28T08:30:00")} | ${30}         | ${0}
+      ${"会場中"}   | ${new Date("2021-11-28T11:45:00")} | ${30}         | ${0}
+      ${"閉場直後"} | ${new Date("2021-11-28T18:00:00")} | ${30}         | ${0}
+    `("$label", ({ label, now, adjustMinutes, expected }) => {
+      expect(
+        predictsFillMinutes(now, game, parkingWontFill.predictParkingStates, adjustMinutes)
+      ).toEqual(expected);
     });
   });
 
   describe("満車の予測データあり駐車場", () => {
     test.each`
-      label                   | now                                | expected
-      ${"開場前"}             | ${new Date("2021-11-28T10:00:00")} | ${0}
-      ${"開場直後"}           | ${new Date("2021-11-28T11:00:00")} | ${30}
-      ${"満車時刻15分前"}     | ${new Date("2021-11-28T11:15:00")} | ${15}
-      ${"満車時刻12分33秒前"} | ${new Date("2021-11-28T11:17:27")} | ${13}
-      ${"満車時刻ちょうど）"} | ${new Date("2021-11-28T11:30:00")} | ${0}
-      ${"満車時刻過ぎた後"}   | ${new Date("2021-11-28T12:30:00")} | ${0}
-      ${"閉場直後"}           | ${new Date("2021-11-28T18:00:00")} | ${0}
-    `("$label", ({ label, now, expected }) => {
-      expect(predictsFillMinutes(now, game, parkingWillFill.predictParkingStates)).toEqual(
-        expected
-      );
+      label                   | now                                | adjustMinutes | expected
+      ${"開場前"}             | ${new Date("2021-11-28T10:00:00")} | ${0}          | ${0}
+      ${"開場直後"}           | ${new Date("2021-11-28T11:00:00")} | ${0}          | ${30}
+      ${"満車時刻15分前"}     | ${new Date("2021-11-28T11:15:00")} | ${0}          | ${15}
+      ${"満車時刻12分33秒前"} | ${new Date("2021-11-28T11:17:27")} | ${0}          | ${13}
+      ${"満車時刻ちょうど）"} | ${new Date("2021-11-28T11:30:00")} | ${0}          | ${0}
+      ${"満車時刻過ぎた後"}   | ${new Date("2021-11-28T12:30:00")} | ${0}          | ${0}
+      ${"閉場直後"}           | ${new Date("2021-11-28T18:00:00")} | ${0}          | ${0}
+    `("$label", ({ label, now, adjustMinutes, expected }) => {
+      expect(
+        predictsFillMinutes(now, game, parkingWillFill.predictParkingStates, adjustMinutes)
+      ).toEqual(expected);
+    });
+  });
+
+  describe("満車の予測データあり駐車場（開場調整値あり）", () => {
+    test.each`
+      label                   | now                                | adjustMinutes | expected
+      ${"開場前"}             | ${new Date("2021-11-28T12:00:00")} | ${120}        | ${0}
+      ${"開場直後"}           | ${new Date("2021-11-28T13:00:00")} | ${120}        | ${30}
+      ${"満車時刻15分前"}     | ${new Date("2021-11-28T13:15:00")} | ${120}        | ${15}
+      ${"満車時刻12分33秒前"} | ${new Date("2021-11-28T13:17:27")} | ${120}        | ${13}
+      ${"満車時刻ちょうど）"} | ${new Date("2021-11-28T13:30:00")} | ${120}        | ${0}
+      ${"満車時刻過ぎた後"}   | ${new Date("2021-11-28T14:30:00")} | ${120}        | ${0}
+      ${"閉場直後"}           | ${new Date("2021-11-28T18:00:00")} | ${120}        | ${0}
+    `("$label", ({ label, now, adjustMinutes, expected }) => {
+      expect(
+        predictsFillMinutes(now, game, parkingWillFill.predictParkingStates, adjustMinutes)
+      ).toEqual(expected);
     });
   });
 });

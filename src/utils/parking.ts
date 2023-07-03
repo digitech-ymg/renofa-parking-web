@@ -18,6 +18,16 @@ export const parkingStatus = (
   const openDate = new Date(game.startAt.getTime());
   openDate.setHours(openDate.getHours() - parking.hourToOpen);
 
+  // 調整地があれば加味する
+  let adjustMinutes = 0;
+  if (game.parkingOpenAdjustments) {
+    const adjust = game.parkingOpenAdjustments.find((adjust) => adjust.parkingId === parking.id);
+    if (adjust) {
+      adjustMinutes = adjust.minutes;
+      openDate.setMinutes(openDate.getMinutes() + adjustMinutes);
+    }
+  }
+
   const closeDate = new Date(game.finishAt.getTime());
   closeDate.setHours(closeDate.getHours() + parking.hourToClose);
 
@@ -45,11 +55,16 @@ export const parkingStatus = (
         return { state: "opened", percent: percent, fillMinutes: fillMinutes };
       }
     } else {
-      const percent = predictPercent(now, gameStart, parking.predictParkingStates);
+      const percent = predictPercent(now, gameStart, parking.predictParkingStates, adjustMinutes);
       if (percent >= 100) {
         return { state: "filled", percent: 100, fillMinutes: 0 };
       } else {
-        const fillMinutes = predictsFillMinutes(now, game, parking.predictParkingStates);
+        const fillMinutes = predictsFillMinutes(
+          now,
+          game,
+          parking.predictParkingStates,
+          adjustMinutes
+        );
         return { state: "opened", percent: percent, fillMinutes: fillMinutes };
       }
     }
@@ -187,8 +202,17 @@ export const postFillMinutes = (now: Date, game: Game, parking: Parking, post: P
     return 0;
   }
 
+  // 開場調整値
+  let adjustMinutes = 0;
+  if (game.parkingOpenAdjustments) {
+    const adjustment = game.parkingOpenAdjustments.find((a) => a.parkingId === parking.id);
+    if (adjustment) {
+      adjustMinutes = adjustment.minutes;
+    }
+  }
+
   // 事前予測データの満車時刻が無ければ計算しない
-  let predictMinutes = predictsFillMinutes(now, game, parking.predictParkingStates);
+  let predictMinutes = predictsFillMinutes(now, game, parking.predictParkingStates, adjustMinutes);
   if (predictMinutes === 0) {
     return 0;
   }
@@ -201,7 +225,7 @@ export const postFillMinutes = (now: Date, game: Game, parking: Parking, post: P
     return 0;
   }
 
-  predictMinutes -= predictSame.minutes - post.parkingMinutes;
+  predictMinutes -= predictSame.minutes + adjustMinutes - post.parkingMinutes;
   // 負の数は0にする
   if (predictMinutes < 0) {
     predictMinutes = 0;
@@ -210,7 +234,12 @@ export const postFillMinutes = (now: Date, game: Game, parking: Parking, post: P
   return predictMinutes;
 };
 
-export const predictPercent = (now: Date, gameStart: Date, states: ParkingState[]): number => {
+export const predictPercent = (
+  now: Date,
+  gameStart: Date,
+  states: ParkingState[],
+  adjustMinutes: number
+): number => {
   if (states.length === 0) {
     return 0;
   }
@@ -221,7 +250,7 @@ export const predictPercent = (now: Date, gameStart: Date, states: ParkingState[
   // 最後尾を越えていたら最後尾がそのまま継続しているとして、最後尾を返す
   let predictAbove = states[states.length - 1];
   let dateAbove = new Date(gameStart.getTime());
-  dateAbove.setMinutes(dateAbove.getMinutes() + predictAbove.minutes);
+  dateAbove.setMinutes(dateAbove.getMinutes() + predictAbove.minutes + adjustMinutes);
   if (timeNow >= dateAbove.getTime()) {
     return predictAbove.ratio * 100;
   }
@@ -229,7 +258,7 @@ export const predictPercent = (now: Date, gameStart: Date, states: ParkingState[
   // 後尾2つ目から探すので必ず2点の補完になる
   for (let i = states.length - 2; i >= 0; i--) {
     let dateBelow = new Date(gameStart.getTime());
-    dateBelow.setMinutes(dateBelow.getMinutes() + states[i].minutes);
+    dateBelow.setMinutes(dateBelow.getMinutes() + states[i].minutes + adjustMinutes);
 
     // 過ぎた地点が下位側
     const timeBelow = dateBelow.getTime();
@@ -253,8 +282,14 @@ export const predictPercent = (now: Date, gameStart: Date, states: ParkingState[
   return 0;
 };
 
-export const predictsFillMinutes = (now: Date, game: Game, states: ParkingState[]): number => {
-  const nowStartMinutes = (game.startAt.getTime() - now.getTime()) / 60000;
+export const predictsFillMinutes = (
+  now: Date,
+  game: Game,
+  states: ParkingState[],
+  adjustMinutes: number
+): number => {
+  const nowStartMinutes =
+    (game.startAt.getTime() + adjustMinutes * 60 * 1000 - now.getTime()) / 60000;
 
   // ratio0値があって、それより前は試合開始前なので0を返す
   for (let i = 0; i < states.length; i++) {
