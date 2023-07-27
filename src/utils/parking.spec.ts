@@ -445,7 +445,7 @@ describe("selectPostForCalc", () => {
 // --------------------------------------------------------
 
 describe("postPercent", () => {
-  describe("満車の予測データなし駐車場（データありも内包）", () => {
+  describe("満車の予測データなし駐車場", () => {
     test.each`
       label                         | postMinutes | postRatio | now                                | expected
       ${"0.5投稿の直後"}            | ${-180}     | ${0.5}    | ${new Date("2021-11-28T11:00:00")} | ${50}
@@ -460,8 +460,54 @@ describe("postPercent", () => {
       expect(
         postPercent(
           now,
+          game,
           parkingWontFill,
-          game.startAt,
+          Object.assign({}, postBase, { parkingRatio: postRatio, parkingMinutes: postMinutes })
+        )
+      ).toEqual(expected);
+    });
+  });
+
+  describe("満車の予測データなし駐車場（開場調整値マイナス）", () => {
+    test.each`
+      label                         | postMinutes | postRatio | now                                | expected
+      ${"0.5投稿の直後"}            | ${-210}     | ${0.5}    | ${new Date("2021-11-28T10:30:00")} | ${50}
+      ${"0.5投稿の10分後"}          | ${-210}     | ${0.5}    | ${new Date("2021-11-28T10:40:00")} | ${60}
+      ${"0.5投稿の試合開始直後"}    | ${-210}     | ${0.5}    | ${new Date("2021-11-28T14:00:00")} | ${80}
+      ${"0.5投稿の試合開始30分後"}  | ${-210}     | ${0.5}    | ${new Date("2021-11-28T14:30:00")} | ${80}
+      ${"満車投稿の直後"}           | ${-120}     | ${1.0}    | ${new Date("2021-11-28T12:00:00")} | ${100}
+      ${"満車投稿の10分後"}         | ${-120}     | ${1.0}    | ${new Date("2021-11-28T12:10:00")} | ${100}
+      ${"満車投稿の試合開始直後"}   | ${-120}     | ${1.0}    | ${new Date("2021-11-28T14:00:00")} | ${100}
+      ${"満車投稿の試合開始30分後"} | ${-120}     | ${1.0}    | ${new Date("2021-11-28T14:30:00")} | ${100}
+    `("$label", ({ label, now, postMinutes, postRatio, expected }) => {
+      expect(
+        postPercent(
+          now,
+          gameWithAdjustmentMinus,
+          parkingWontFill,
+          Object.assign({}, postBase, { parkingRatio: postRatio, parkingMinutes: postMinutes })
+        )
+      ).toEqual(expected);
+    });
+  });
+
+  describe("満車の予測データなし駐車場（開場調整値プラス）", () => {
+    test.each`
+      label                         | postMinutes | postRatio | now                                | expected
+      ${"0.5投稿の直後"}            | ${-150}     | ${0.5}    | ${new Date("2021-11-28T11:30:00")} | ${50}
+      ${"0.5投稿の10分後"}          | ${-150}     | ${0.5}    | ${new Date("2021-11-28T11:40:00")} | ${60}
+      ${"0.5投稿の試合開始直後"}    | ${-150}     | ${0.5}    | ${new Date("2021-11-28T14:00:00")} | ${80}
+      ${"0.5投稿の試合開始30分後"}  | ${-150}     | ${0.5}    | ${new Date("2021-11-28T14:30:00")} | ${80}
+      ${"満車投稿の直後"}           | ${-60}      | ${1.0}    | ${new Date("2021-11-28T13:00:00")} | ${100}
+      ${"満車投稿の10分後"}         | ${-60}      | ${1.0}    | ${new Date("2021-11-28T13:10:00")} | ${100}
+      ${"満車投稿の試合開始直後"}   | ${-60}      | ${1.0}    | ${new Date("2021-11-28T14:00:00")} | ${100}
+      ${"満車投稿の試合開始30分後"} | ${-60}      | ${1.0}    | ${new Date("2021-11-28T14:30:00")} | ${100}
+    `("$label", ({ label, now, postMinutes, postRatio, expected }) => {
+      expect(
+        postPercent(
+          now,
+          gameWithAdjustmentPlus,
+          parkingWontFill,
           Object.assign({}, postBase, { parkingRatio: postRatio, parkingMinutes: postMinutes })
         )
       ).toEqual(expected);
