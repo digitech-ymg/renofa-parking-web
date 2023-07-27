@@ -301,28 +301,28 @@ describe("parkingStatus", () => {
 
 describe("selectPostForCalc", () => {
   it("投稿なし", () => {
-    expect(selectPostForCalc(game, parkingWontFill, [])).toEqual(null);
+    expect(selectPostForCalc(parkingWontFill, [])).toEqual(null);
   });
 
   it("駐車開始点以前", () => {
     const posts: Post[] = [
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -400 }),
     ];
-    expect(selectPostForCalc(game, parkingWontFill, posts)).toEqual(null);
+    expect(selectPostForCalc(parkingWontFill, posts)).toEqual(null);
   });
 
   it("[0.1(不採用)]", () => {
     const posts: Post[] = [
       Object.assign({}, postBase, { parkingRatio: 0.1, parkingMinutes: -300 }),
     ];
-    expect(selectPostForCalc(game, parkingWontFill, posts)).toEqual(null);
+    expect(selectPostForCalc(parkingWontFill, posts)).toEqual(null);
   });
 
   it("[0.5(不正)]", () => {
     const posts: Post[] = [
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -211 }),
     ];
-    expect(selectPostForCalc(game, parkingWontFill, posts)).toEqual(null);
+    expect(selectPostForCalc(parkingWontFill, posts)).toEqual(null);
   });
 
   it("[0.5(不正), 0.5(採用)]", () => {
@@ -330,7 +330,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -211 }),
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 }),
     ];
-    expect(selectPostForCalc(game, parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 })
     );
   });
@@ -339,7 +339,7 @@ describe("selectPostForCalc", () => {
     const posts: Post[] = [
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 }),
     ];
-    expect(selectPostForCalc(game, parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 })
     );
   });
@@ -349,7 +349,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.1, parkingMinutes: -300 }),
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 }),
     ];
-    expect(selectPostForCalc(game, parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 })
     );
   });
@@ -360,7 +360,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 }),
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -190 }),
     ];
-    expect(selectPostForCalc(game, parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 })
     );
   });
@@ -370,7 +370,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 }),
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -190 }),
     ];
-    expect(selectPostForCalc(game, parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 })
     );
   });
@@ -380,7 +380,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 }),
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 }),
     ];
-    expect(selectPostForCalc(game, parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 })
     );
   });
@@ -391,7 +391,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 }),
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -170 }),
     ];
-    expect(selectPostForCalc(game, parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 })
     );
   });
@@ -402,7 +402,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 }),
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -170 }),
     ];
-    expect(selectPostForCalc(game, parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 })
     );
   });
@@ -413,7 +413,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 }),
       Object.assign({}, postBase, { parkingRatio: 1.0, parkingMinutes: -120 }),
     ];
-    expect(selectPostForCalc(game, parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 1.0, parkingMinutes: -120 })
     );
   });
@@ -425,7 +425,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 1.0, parkingMinutes: -120 }),
       Object.assign({}, postBase, { parkingRatio: 1.0, parkingMinutes: -100 }),
     ];
-    expect(selectPostForCalc(game, parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 1.0, parkingMinutes: -120 })
     );
   });
@@ -436,7 +436,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 }),
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 }),
     ];
-    expect(selectPostForCalc(game, parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 })
     );
   });

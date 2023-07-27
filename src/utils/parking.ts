@@ -45,7 +45,7 @@ export const parkingStatus = (
     return { state: "afterClosed", percent: 0, fillMinutes: 0 };
   } else {
     const gameStart = new Date(game.startAt.getTime());
-    const post = selectPostForCalc(game, parking, posts);
+    const post = selectPostForCalc(parking, posts);
     if (post) {
       const percent = postPercent(now, game, parking, post);
       if (percent >= 100) {
@@ -71,7 +71,7 @@ export const parkingStatus = (
   }
 };
 
-export const selectPostForCalc = (game: Game, parking: Parking, posts: Post[]): Post | null => {
+export const selectPostForCalc = (parking: Parking, posts: Post[]): Post | null => {
   let post: Post | null = null;
 
   const debugMode = isDebug();
