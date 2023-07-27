@@ -490,7 +490,25 @@ describe("postFillMinutes", () => {
     });
   });
 
-  describe("満車の予測データなし駐車場（開場調整値あり）", () => {
+  describe("満車の予測データなし駐車場（開場調整値マイナス）", () => {
+    test.each`
+      label                | postMinutes | postRatio | now                                | expected
+      ${"満車投稿直後"}    | ${-120}     | ${1.0}    | ${new Date("2021-11-28T12:30:00")} | ${0}
+      ${"0.8投稿直後満"}   | ${-180}     | ${0.8}    | ${new Date("2021-11-28T11:00:00")} | ${0}
+      ${"0.8投稿から10分"} | ${-180}     | ${0.8}    | ${new Date("2021-11-28T11:10:00")} | ${0}
+    `("$label", ({ label, now, postMinutes, postRatio, expected }) => {
+      expect(
+        postFillMinutes(
+          now,
+          gameWithAdjustmentMinus,
+          parkingWontFill,
+          Object.assign({}, postBase, { parkingRatio: postRatio, parkingMinutes: postMinutes })
+        )
+      ).toEqual(expected);
+    });
+  });
+
+  describe("満車の予測データなし駐車場（開場調整値プラス）", () => {
     test.each`
       label                | postMinutes | postRatio | now                                | expected
       ${"満車投稿直後"}    | ${-60}      | ${1.0}    | ${new Date("2021-11-28T13:30:00")} | ${0}
@@ -500,7 +518,7 @@ describe("postFillMinutes", () => {
       expect(
         postFillMinutes(
           now,
-          game,
+          gameWithAdjustmentPlus,
           parkingWontFill,
           Object.assign({}, postBase, { parkingRatio: postRatio, parkingMinutes: postMinutes })
         )
@@ -536,7 +554,35 @@ describe("postFillMinutes", () => {
     });
   });
 
-  describe("満車の予測データあり駐車場（開場調整値あり）", () => {
+  describe("満車の予測データあり駐車場（開場調整値マイナス）", () => {
+    test.each`
+      label                      | postMinutes | postRatio | now                                | expected
+      ${"満車投稿直後"}          | ${-190}     | ${1.0}    | ${new Date("2021-11-28T10:55:00")} | ${0}
+      ${"満車投稿から30分"}      | ${-190}     | ${1.0}    | ${new Date("2021-11-28T11:25:00")} | ${0}
+      ${"0.5投稿直後満"}         | ${-210}     | ${0.5}    | ${new Date("2021-11-28T10:30:00")} | ${25}
+      ${"0.5投稿から5分"}        | ${-210}     | ${0.5}    | ${new Date("2021-11-28T10:35:00")} | ${20}
+      ${"0.5投稿から満車時刻"}   | ${-210}     | ${0.5}    | ${new Date("2021-11-28T10:55:00")} | ${0}
+      ${"0.5投稿から満車後30分"} | ${-210}     | ${0.5}    | ${new Date("2021-11-28T12:25:00")} | ${0}
+      ${"0.8投稿直後満"}         | ${-200}     | ${0.8}    | ${new Date("2021-11-28T10:40:00")} | ${15}
+      ${"0.8投稿から10分"}       | ${-200}     | ${0.8}    | ${new Date("2021-11-28T10:45:00")} | ${10}
+      ${"0.8投稿から満車時刻"}   | ${-200}     | ${0.8}    | ${new Date("2021-11-28T10:55:00")} | ${0}
+      ${"0.8投稿から満車後60分"} | ${-200}     | ${0.8}    | ${new Date("2021-11-28T11:55:00")} | ${0}
+    `("$label", ({ label, now, postMinutes, postRatio, expected }) => {
+      expect(
+        postFillMinutes(
+          now,
+          gameWithAdjustmentMinus,
+          parkingWillFill,
+          Object.assign({}, postBase, {
+            parkingRatio: postRatio,
+            parkingMinutes: postMinutes,
+          })
+        )
+      ).toEqual(expected);
+    });
+  });
+
+  describe("満車の予測データあり駐車場（開場調整値プラス）", () => {
     test.each`
       label                      | postMinutes | postRatio | now                                 | expected
       ${"満車投稿直後"}          | ${-40}      | ${1.0}    | ${new Date("2021-11-28T13:25:00")}  | ${0}
