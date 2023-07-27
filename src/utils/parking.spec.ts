@@ -588,13 +588,34 @@ describe("predictPercent", () => {
     });
   });
 
-  describe("満車の予測データなし駐車場（開場調整値あり）", () => {
+  describe("満車の予測データなし駐車場（開場調整値マイナス）", () => {
+    test.each`
+      label                 | now                                | adjustMinutes | expected
+      ${"予測地点最後以降"} | ${new Date("2021-11-28T15:00:00")} | ${-30}        | ${90}
+    `("$label", ({ label, now, adjustMinutes, expected }) => {
+      expect(
+        predictPercent(
+          now,
+          gameWithAdjustmentMinus.startAt,
+          parkingWontFill.predictParkingStates,
+          adjustMinutes
+        )
+      ).toEqual(expected);
+    });
+  });
+
+  describe("満車の予測データなし駐車場（開場調整値プラス）", () => {
     test.each`
       label                 | now                                | adjustMinutes | expected
       ${"予測地点最後以降"} | ${new Date("2021-11-28T15:00:00")} | ${30}         | ${90}
     `("$label", ({ label, now, adjustMinutes, expected }) => {
       expect(
-        predictPercent(now, game.startAt, parkingWontFill.predictParkingStates, adjustMinutes)
+        predictPercent(
+          now,
+          gameWithAdjustmentPlus.startAt,
+          parkingWontFill.predictParkingStates,
+          adjustMinutes
+        )
       ).toEqual(expected);
     });
   });
@@ -615,7 +636,28 @@ describe("predictPercent", () => {
     });
   });
 
-  describe("満車の予測データあり駐車場（開場調整値あり）", () => {
+  describe("満車の予測データあり駐車場（開場調整値マイナス）", () => {
+    test.each`
+      label                              | now                                | adjustMinutes | expected
+      ${"予測地点以前"}                  | ${new Date("2021-11-28T07:00:00")} | ${-30}        | ${0}
+      ${"予測地点1つ目ちょうどピッタリ"} | ${new Date("2021-11-28T10:30:00")} | ${-30}        | ${0}
+      ${"予測地点2つ目ちょうどピッタリ"} | ${new Date("2021-11-28T10:35:00")} | ${-30}        | ${50}
+      ${"予測地点最後ちょうどピッタリ"}  | ${new Date("2021-11-28T11:00:00")} | ${-30}        | ${100}
+      ${"予測地点の中間地点"}            | ${new Date("2021-11-28T10:52:30")} | ${-30}        | ${90}
+      ${"予測地点最後以降"}              | ${new Date("2021-11-28T14:30:00")} | ${-30}        | ${100}
+    `("$label", ({ label, now, adjustMinutes, expected }) => {
+      expect(
+        predictPercent(
+          now,
+          gameWithAdjustmentMinus.startAt,
+          parkingWillFill.predictParkingStates,
+          adjustMinutes
+        )
+      ).toEqual(expected);
+    });
+  });
+
+  describe("満車の予測データあり駐車場（開場調整値プラス）", () => {
     test.each`
       label                              | now                                | adjustMinutes | expected
       ${"予測地点以前"}                  | ${new Date("2021-11-28T07:00:00")} | ${120}        | ${0}
@@ -626,7 +668,12 @@ describe("predictPercent", () => {
       ${"予測地点最後以降"}              | ${new Date("2021-11-28T15:00:00")} | ${120}        | ${100}
     `("$label", ({ label, now, adjustMinutes, expected }) => {
       expect(
-        predictPercent(now, game.startAt, parkingWillFill.predictParkingStates, adjustMinutes)
+        predictPercent(
+          now,
+          gameWithAdjustmentPlus.startAt,
+          parkingWillFill.predictParkingStates,
+          adjustMinutes
+        )
       ).toEqual(expected);
     });
   });
