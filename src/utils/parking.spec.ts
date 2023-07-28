@@ -35,7 +35,7 @@ const gameWithAdjustmentMinus: Game = Object.assign({}, game, {
     {
       // トラック協会のの開場時間が6時間前から6時間半前になるケース
       parkingId: "truck",
-      minutes: 30,
+      minutes: -30,
     },
   ],
 });
@@ -176,7 +176,28 @@ describe("parkingStatus", () => {
     });
   });
 
-  describe("投稿なし/満車の予測データあり駐車場（駐車場開場調整時）", () => {
+  describe("投稿なし/満車の予測データあり駐車場（駐車場開場調整マイナス）", () => {
+    test.each`
+      label                     | now                                | state            | percent | fillMinutes
+      ${"開場の前日"}           | ${new Date("2021-11-27T00:00:00")} | ${"beforeOpen"}  | ${0}    | ${0}
+      ${"開場の直前"}           | ${new Date("2021-11-28T10:29:59")} | ${"beforeOpen"}  | ${0}    | ${0}
+      ${"開場の直後"}           | ${new Date("2021-11-28T10:30:00")} | ${"opened"}      | ${0}    | ${30}
+      ${"開場の駐車率中間"}     | ${new Date("2021-11-28T10:45:00")} | ${"opened"}      | ${80}   | ${15}
+      ${"満車予測地点ぴったり"} | ${new Date("2021-11-28T11:00:00")} | ${"filled"}      | ${100}  | ${0}
+      ${"満車予測地点以降"}     | ${new Date("2021-11-28T12:30:00")} | ${"filled"}      | ${100}  | ${0}
+      ${"閉場の直後"}           | ${new Date("2021-11-28T18:00:00")} | ${"afterClosed"} | ${0}    | ${0}
+    `("$label", ({ label, now, state, percent, fillMinutes }) => {
+      expect(
+        parkingStatus(now, gameWithAdjustmentMinus, parkingWillFill, emptyPosts)
+      ).toMatchObject({
+        state: state,
+        percent: percent,
+        fillMinutes: fillMinutes,
+      });
+    });
+  });
+
+  describe("投稿なし/満車の予測データあり駐車場（駐車場開場調整プラス）", () => {
     test.each`
       label                     | now                                | state            | percent | fillMinutes
       ${"開場の前日"}           | ${new Date("2021-11-27T00:00:00")} | ${"beforeOpen"}  | ${0}    | ${0}
@@ -211,7 +232,23 @@ describe("parkingStatus", () => {
     });
   });
 
-  describe("投稿なし/満車の予測データなし駐車場（駐車場開場調整時）", () => {
+  describe("投稿なし/満車の予測データなし駐車場（駐車場開場調整マイナス）", () => {
+    test.each`
+      label                         | now                                | state       | percent | fillMinutes
+      ${"最後の予測点時間ぴったり"} | ${new Date("2021-11-28T12:30:00")} | ${"opened"} | ${90}   | ${0}
+      ${"最後の予測点時間以降"}     | ${new Date("2021-11-28T12:40:00")} | ${"opened"} | ${90}   | ${0}
+    `("$label", ({ label, now, state, percent, fillMinutes }) => {
+      expect(
+        parkingStatus(now, gameWithAdjustmentMinus, parkingWontFill, emptyPosts)
+      ).toMatchObject({
+        state: state,
+        percent: percent,
+        fillMinutes: fillMinutes,
+      });
+    });
+  });
+
+  describe("投稿なし/満車の予測データなし駐車場（駐車場開場調整プラス）", () => {
     test.each`
       label                         | now                                | state       | percent | fillMinutes
       ${"最後の予測点時間ぴったり"} | ${new Date("2021-11-28T13:30:00")} | ${"opened"} | ${90}   | ${0}
@@ -257,7 +294,6 @@ describe("parkingStatus", () => {
       ${"0.8投稿の投稿10分後"}   | ${-170} | ${0.8} | ${new Date("2021-11-28T11:20:00")} | ${"opened"} | ${93}   | ${5}
       ${"0.8投稿の満車時間直後"} | ${-170} | ${0.8} | ${new Date("2021-11-28T11:25:00")} | ${"filled"} | ${100}  | ${0}
       ${"0.8投稿の試合開始直後"} | ${-170} | ${0.8} | ${new Date("2021-11-28T14:00:00")} | ${"filled"} | ${100}  | ${0}
-      ${"0.8投稿の投稿直後"}     | ${-170} | ${0.8} | ${new Date("2021-11-28T11:10:00")} | ${"opened"} | ${80}   | ${15}
       ${"1.0投稿の直後"}         | ${-160} | ${1.0} | ${new Date("2021-11-28T11:20:00")} | ${"filled"} | ${100}  | ${0}
       ${"1.0投稿の20分後"}       | ${-160} | ${1.0} | ${new Date("2021-11-28T11:40:00")} | ${"filled"} | ${100}  | ${0}
     `("$label", ({ label, minutes, ratio, now, state, percent, fillMinutes }) => {
@@ -273,14 +309,35 @@ describe("parkingStatus", () => {
     });
   });
 
-  describe("投稿あり/満車の予測データあり駐車場（駐車場開場調整時）", () => {
+  describe("投稿あり/満車の予測データあり駐車場（駐車場開場調整マイナス）", () => {
+    test.each`
+      label                      | minutes | ratio  | now                                | state       | percent | fillMinutes
+      ${"0.8投稿の投稿直後"}     | ${-200} | ${0.8} | ${new Date("2021-11-28T10:40:00")} | ${"opened"} | ${80}   | ${15}
+      ${"0.8投稿の投稿10分後"}   | ${-200} | ${0.8} | ${new Date("2021-11-28T10:50:00")} | ${"opened"} | ${93}   | ${5}
+      ${"0.8投稿の満車時間直後"} | ${-200} | ${0.8} | ${new Date("2021-11-28T10:55:00")} | ${"filled"} | ${100}  | ${0}
+      ${"0.8投稿の試合開始直後"} | ${-200} | ${0.8} | ${new Date("2021-11-28T14:00:00")} | ${"filled"} | ${100}  | ${0}
+      ${"1.0投稿の直後"}         | ${-190} | ${1.0} | ${new Date("2021-11-28T10:50:00")} | ${"filled"} | ${100}  | ${0}
+      ${"1.0投稿の20分後"}       | ${-190} | ${1.0} | ${new Date("2021-11-28T11:10:00")} | ${"filled"} | ${100}  | ${0}
+    `("$label", ({ label, minutes, ratio, now, state, percent, fillMinutes }) => {
+      expect(
+        parkingStatus(now, gameWithAdjustmentMinus, parkingWillFill, [
+          Object.assign({}, postBase, { parkingMinutes: minutes, parkingRatio: ratio }),
+        ])
+      ).toMatchObject({
+        state: state,
+        percent: percent,
+        fillMinutes: fillMinutes,
+      });
+    });
+  });
+
+  describe("投稿あり/満車の予測データあり駐車場（駐車場開場調整プラス）", () => {
     test.each`
       label                      | minutes | ratio  | now                                | state       | percent | fillMinutes
       ${"0.8投稿の投稿直後"}     | ${-50}  | ${0.8} | ${new Date("2021-11-28T13:10:00")} | ${"opened"} | ${80}   | ${15}
       ${"0.8投稿の投稿10分後"}   | ${-50}  | ${0.8} | ${new Date("2021-11-28T13:20:00")} | ${"opened"} | ${93}   | ${5}
       ${"0.8投稿の満車時間直後"} | ${-50}  | ${0.8} | ${new Date("2021-11-28T13:25:00")} | ${"filled"} | ${100}  | ${0}
       ${"0.8投稿の試合開始直後"} | ${-50}  | ${0.8} | ${new Date("2021-11-28T14:00:00")} | ${"filled"} | ${100}  | ${0}
-      ${"0.8投稿の投稿直後"}     | ${-50}  | ${0.8} | ${new Date("2021-11-28T13:10:00")} | ${"opened"} | ${80}   | ${15}
       ${"1.0投稿の直後"}         | ${-40}  | ${1.0} | ${new Date("2021-11-28T13:20:00")} | ${"filled"} | ${100}  | ${0}
       ${"1.0投稿の20分後"}       | ${-40}  | ${1.0} | ${new Date("2021-11-28T13:40:00")} | ${"filled"} | ${100}  | ${0}
     `("$label", ({ label, minutes, ratio, now, state, percent, fillMinutes }) => {
@@ -301,28 +358,28 @@ describe("parkingStatus", () => {
 
 describe("selectPostForCalc", () => {
   it("投稿なし", () => {
-    expect(selectPostForCalc(parkingWontFill, [])).toEqual(null);
+    expect(selectPostForCalc(parkingWontFill, [], 0)).toEqual(null);
   });
 
   it("駐車開始点以前", () => {
     const posts: Post[] = [
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -400 }),
     ];
-    expect(selectPostForCalc(parkingWontFill, posts)).toEqual(null);
+    expect(selectPostForCalc(parkingWontFill, posts, 0)).toEqual(null);
   });
 
   it("[0.1(不採用)]", () => {
     const posts: Post[] = [
       Object.assign({}, postBase, { parkingRatio: 0.1, parkingMinutes: -300 }),
     ];
-    expect(selectPostForCalc(parkingWontFill, posts)).toEqual(null);
+    expect(selectPostForCalc(parkingWontFill, posts, 0)).toEqual(null);
   });
 
   it("[0.5(不正)]", () => {
     const posts: Post[] = [
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -211 }),
     ];
-    expect(selectPostForCalc(parkingWontFill, posts)).toEqual(null);
+    expect(selectPostForCalc(parkingWontFill, posts, 0)).toEqual(null);
   });
 
   it("[0.5(不正), 0.5(採用)]", () => {
@@ -330,7 +387,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -211 }),
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 }),
     ];
-    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts, 0)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 })
     );
   });
@@ -339,7 +396,7 @@ describe("selectPostForCalc", () => {
     const posts: Post[] = [
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 }),
     ];
-    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts, 0)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 })
     );
   });
@@ -349,7 +406,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.1, parkingMinutes: -300 }),
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 }),
     ];
-    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts, 0)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 })
     );
   });
@@ -360,7 +417,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 }),
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -190 }),
     ];
-    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts, 0)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 })
     );
   });
@@ -370,7 +427,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 }),
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -190 }),
     ];
-    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts, 0)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 })
     );
   });
@@ -380,7 +437,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 }),
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 }),
     ];
-    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts, 0)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 })
     );
   });
@@ -391,7 +448,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 }),
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -170 }),
     ];
-    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts, 0)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 })
     );
   });
@@ -402,7 +459,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 }),
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -170 }),
     ];
-    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts, 0)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 })
     );
   });
@@ -413,7 +470,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 }),
       Object.assign({}, postBase, { parkingRatio: 1.0, parkingMinutes: -120 }),
     ];
-    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts, 0)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 1.0, parkingMinutes: -120 })
     );
   });
@@ -425,7 +482,7 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 1.0, parkingMinutes: -120 }),
       Object.assign({}, postBase, { parkingRatio: 1.0, parkingMinutes: -100 }),
     ];
-    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts, 0)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 1.0, parkingMinutes: -120 })
     );
   });
@@ -436,9 +493,43 @@ describe("selectPostForCalc", () => {
       Object.assign({}, postBase, { parkingRatio: 0.5, parkingMinutes: -210 }),
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 }),
     ];
-    expect(selectPostForCalc(parkingWontFill, posts)).toMatchObject(
+    expect(selectPostForCalc(parkingWontFill, posts, 0)).toMatchObject(
       Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -180 })
     );
+  });
+
+  it("調整値マイナス:駐車開始点以前だが調整範囲内で選出される", () => {
+    const posts: Post[] = [
+      Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -200 }),
+    ];
+    expect(selectPostForCalc(parkingWillFill, posts, -30)).toMatchObject(
+      Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -200 })
+    );
+  });
+
+  it("調整値マイナス:駐車開始点以前だが調整範囲内に入ったものが選出される", () => {
+    const posts: Post[] = [
+      Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -250 }),
+      Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -200 }),
+    ];
+    expect(selectPostForCalc(parkingWillFill, posts, -30)).toMatchObject(
+      Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -200 })
+    );
+  });
+
+  it("調整値マイナス:駐車開始点以前だが調整範囲内に入るものがなく選出されない", () => {
+    const posts: Post[] = [
+      Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -250 }),
+      Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -240 }),
+    ];
+    expect(selectPostForCalc(parkingWillFill, posts, -30)).toEqual(null);
+  });
+
+  it("調整値プラス:駐車開始点以降だが調整範囲内に入らず選出されない", () => {
+    const posts: Post[] = [
+      Object.assign({}, postBase, { parkingRatio: 0.8, parkingMinutes: -160 }),
+    ];
+    expect(selectPostForCalc(parkingWillFill, posts, 30)).toEqual(null);
   });
 });
 

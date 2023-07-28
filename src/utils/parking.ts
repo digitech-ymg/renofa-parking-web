@@ -6,7 +6,7 @@ import type { ParkingState } from "@/types/Parking";
 const debug = process.env.NEXT_PUBLIC_DEBUG;
 
 export const isDebug = (): boolean => {
-  return debug ? true : false;
+  return debug === "true" ? true : false;
 };
 
 export const parkingStatus = (
@@ -45,8 +45,9 @@ export const parkingStatus = (
     return { state: "afterClosed", percent: 0, fillMinutes: 0 };
   } else {
     const gameStart = new Date(game.startAt.getTime());
-    const post = selectPostForCalc(parking, posts);
+    const post = selectPostForCalc(parking, posts, adjustMinutes);
     if (post) {
+      // console.log("post: ", post);
       const percent = postPercent(now, game, parking, post);
       if (percent >= 100) {
         return { state: "filled", percent: 100, fillMinutes: 0 };
@@ -71,7 +72,11 @@ export const parkingStatus = (
   }
 };
 
-export const selectPostForCalc = (parking: Parking, posts: Post[]): Post | null => {
+export const selectPostForCalc = (
+  parking: Parking,
+  posts: Post[],
+  adjustMinutes: number
+): Post | null => {
   let post: Post | null = null;
 
   const debugMode = isDebug();
@@ -91,7 +96,7 @@ export const selectPostForCalc = (parking: Parking, posts: Post[]): Post | null 
       return false;
     }
 
-    if (minutes < adoption.minutes) {
+    if (minutes < adoption.minutes + adjustMinutes) {
       if (debugMode) {
         console.log(
           `[${parking.id}, ${minutes}, ${ratio}] -> 不採用：許容時間前（許容時間:${adoption.minutes}）`
