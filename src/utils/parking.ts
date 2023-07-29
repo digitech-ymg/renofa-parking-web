@@ -15,7 +15,7 @@ export const parkingStatus = (
   parking: Parking,
   posts: Post[]
 ): ParkingStatus => {
-  const openDate = new Date(game.startAt.getTime());
+  let openDate = new Date(game.startAt.getTime());
   openDate.setHours(openDate.getHours() - parking.hourToOpen);
 
   // 調整地があれば加味する
@@ -24,7 +24,7 @@ export const parkingStatus = (
     const adjust = game.parkingOpenAdjustments.find((adjust) => adjust.parkingId === parking.id);
     if (adjust) {
       adjustMinutes = adjust.minutes;
-      openDate.setMinutes(openDate.getMinutes() + adjustMinutes);
+      openDate = new Date(openDate.getTime() + adjustMinutes * 60 * 1000);
     }
   }
 
