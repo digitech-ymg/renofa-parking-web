@@ -6,24 +6,63 @@ import { useEffect, useState } from "react";
 import Iframe from "react-iframe";
 import { Parking, ParkingInfo } from "@/types/Parking";
 import { useRouter } from "next/router";
-import { getParkings } from "@/lib/firestore";
+import { getMostRecentGame, getParkings } from "@/lib/firestore";
+import { useAuthContext } from "@/context/AuthContext";
+import useSWR from "swr";
+
+// 当日ほとんど変わらないものは1時間
+const intervalHour = 60 * 60 * 1000;
+
+type ParkingContent = {
+  parking: Parking;
+  adjustText: string;
+};
 
 const Parking: NextPage = () => {
-  const [parking, setParking] = useState<Parking | undefined | null>(undefined);
+  const { user } = useAuthContext();
+  const [parkingContent, setParkingContent] = useState<ParkingContent | undefined>(undefined);
   const router = useRouter();
 
-  useEffect(() => {
-    getParkings()
-      .then((parkings) => {
-        const selectedParking = parkings.filter((p) => p.id === router.query.parking)[0];
-        setParking(selectedParking);
-      })
-      .catch((err) => {
-        setParking(null);
-      });
+  const { data: game, error: errorGame } = useSWR(
+    user ? "mostRecentGame" : null,
+    getMostRecentGame,
+    {
+      revalidateOnFocus: false,
+      refreshInterval: intervalHour,
+    }
+  );
+
+  const { data: parkings, error: errorParkings } = useSWR(user ? "parkings" : null, getParkings, {
+    revalidateOnFocus: false,
+    refreshInterval: intervalHour,
   });
 
-  const renderParkingTable = (parking: Parking) => {
+  useEffect(() => {
+    if (game && parkings) {
+      const selectedParking = parkings.find((p) => p.id === router.query.parking);
+      if (!selectedParking) {
+        return;
+      }
+
+      let adjustText = "";
+      if (game.parkingOpenAdjustments) {
+        const adjust = game.parkingOpenAdjustments.find(
+          (adjust) => adjust.parkingId === selectedParking.id
+        );
+        if (adjust && adjust.minutes !== 0) {
+          adjustText = `（当日/直近の試合では${
+            adjust.minutes > 0 ? `${adjust.minutes} 分遅れて` : `${-adjust.minutes} 分早く`
+          }開場します）`;
+        }
+      }
+      setParkingContent({
+        parking: selectedParking,
+        adjustText: adjustText,
+      });
+    }
+  }, [game, parkings, router.query.parking]);
+
+  const renderParkingTable = (parking: Parking, adjustText: string) => {
     const infos: ParkingInfo[] = [
       {
         head: "正式名称",
@@ -47,7 +86,7 @@ const Parking: NextPage = () => {
       },
       {
         head: "開場時間",
-        content: `試合開始時刻の ${parking.hourToOpen}時間前`,
+        content: `試合開始時刻の ${parking.hourToOpen}時間前 ${adjustText}`,
       },
       {
         head: "閉場時間",
@@ -79,28 +118,28 @@ const Parking: NextPage = () => {
     );
   };
 
-  if (parking === null) {
-    return <>データの取得に失敗しました。</>;
-  }
-
   return (
     <Box bgColor="white">
       <Container h="">
-        {parking && (
+        {parkingContent && (
           <>
             <Center h="64px">
               <Image width="7%" marginRight={2} objectFit="cover" src="/reno_02.png" alt="レノ丸" />
               <Heading as="h1" size="sm">
-                {parking.name}
+                {parkingContent.parking.name}
               </Heading>
             </Center>
-            {renderParkingTable(parking)}
+            {renderParkingTable(parkingContent.parking, parkingContent.adjustText)}
             <Box my={5}>
-              <Iframe url={parking.routeUrl} width="100%" height="360" />
+              <Iframe url={parkingContent.parking.routeUrl} width="100%" height="360" />
             </Box>
             <Stack my={5}>
-              {parking.images.map((image, index) => (
-                <Image key={index} src={image} alt={`${parking.name}の画像${index + 1}枚目`} />
+              {parkingContent.parking.images.map((image, index) => (
+                <Image
+                  key={index}
+                  src={image}
+                  alt={`${parkingContent.parking.name}の画像${index + 1}枚目`}
+                />
               ))}
             </Stack>
           </>
