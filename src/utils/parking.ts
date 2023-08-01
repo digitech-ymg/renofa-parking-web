@@ -6,7 +6,7 @@ import type { ParkingState } from "@/types/Parking";
 const debug = process.env.NEXT_PUBLIC_DEBUG;
 
 export const isDebug = (): boolean => {
-  return debug ? true : false;
+  return debug === "true" ? true : false;
 };
 
 export const parkingStatus = (
@@ -15,7 +15,7 @@ export const parkingStatus = (
   parking: Parking,
   posts: Post[]
 ): ParkingStatus => {
-  const openDate = new Date(game.startAt.getTime());
+  let openDate = new Date(game.startAt.getTime());
   openDate.setHours(openDate.getHours() - parking.hourToOpen);
 
   // 調整地があれば加味する
@@ -24,7 +24,7 @@ export const parkingStatus = (
     const adjust = game.parkingOpenAdjustments.find((adjust) => adjust.parkingId === parking.id);
     if (adjust) {
       adjustMinutes = adjust.minutes;
-      openDate.setMinutes(openDate.getMinutes() + adjustMinutes);
+      openDate = new Date(openDate.getTime() + adjustMinutes * 60 * 1000);
     }
   }
 
@@ -45,9 +45,10 @@ export const parkingStatus = (
     return { state: "afterClosed", percent: 0, fillMinutes: 0 };
   } else {
     const gameStart = new Date(game.startAt.getTime());
-    const post = selectPostForCalc(game, parking, posts);
+    const post = selectPostForCalc(parking, posts, adjustMinutes);
     if (post) {
-      const percent = postPercent(now, parking, gameStart, post);
+      // console.log("post: ", post);
+      const percent = postPercent(now, game, parking, post);
       if (percent >= 100) {
         return { state: "filled", percent: 100, fillMinutes: 0 };
       } else {
@@ -71,7 +72,11 @@ export const parkingStatus = (
   }
 };
 
-export const selectPostForCalc = (game: Game, parking: Parking, posts: Post[]): Post | null => {
+export const selectPostForCalc = (
+  parking: Parking,
+  posts: Post[],
+  adjustMinutes: number
+): Post | null => {
   let post: Post | null = null;
 
   const debugMode = isDebug();
@@ -91,7 +96,7 @@ export const selectPostForCalc = (game: Game, parking: Parking, posts: Post[]): 
       return false;
     }
 
-    if (minutes < adoption.minutes) {
+    if (minutes < adoption.minutes + adjustMinutes) {
       if (debugMode) {
         console.log(
           `[${parking.id}, ${minutes}, ${ratio}] -> 不採用：許容時間前（許容時間:${adoption.minutes}）`
@@ -130,7 +135,9 @@ export const selectPostForCalc = (game: Game, parking: Parking, posts: Post[]): 
   return post;
 };
 
-export const postPercent = (now: Date, parking: Parking, gameStart: Date, post: Post): number => {
+export const postPercent = (now: Date, game: Game, parking: Parking, post: Post): number => {
+  const gameStart = new Date(game.startAt.getTime());
+
   // 既に満車
   if (post.parkingRatio === 1.0) {
     return 100;

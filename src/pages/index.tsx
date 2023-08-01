@@ -33,11 +33,6 @@ const Top: NextPage = () => {
       refreshInterval: intervalMinute,
     }
   );
-  if (infos) {
-    console.log(`infos: ${infos.length}`);
-  } else {
-    console.log(`infos: undefined`);
-  }
 
   const { data: game, error: errorGame } = useSWR(
     user ? "mostRecentGame" : null,
