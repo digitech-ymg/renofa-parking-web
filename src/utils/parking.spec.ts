@@ -221,8 +221,13 @@ describe("parkingStatus", () => {
   describe("投稿なし/満車の予測データなし駐車場", () => {
     test.each`
       label                         | now                                | state       | percent | fillMinutes
+      ${"最初の予測地点"}           | ${new Date("2021-11-28T08:00:00")} | ${"opened"} | ${0}    | ${0}
+      ${"2つ目の予測地点"}          | ${new Date("2021-11-28T11:15:00")} | ${"opened"} | ${10}   | ${0}
+      ${"3つ目の予測地点"}          | ${new Date("2021-11-28T11:30:00")} | ${"opened"} | ${50}   | ${0}
+      ${"3つ目と4つ目の予測地点"}   | ${new Date("2021-11-28T11:45:00")} | ${"opened"} | ${65}   | ${0}
+      ${"4つ目の予測地点"}          | ${new Date("2021-11-28T12:00:00")} | ${"opened"} | ${80}   | ${0}
       ${"最後の予測点時間ぴったり"} | ${new Date("2021-11-28T13:00:00")} | ${"opened"} | ${90}   | ${0}
-      ${"最後の予測点時間以降"}     | ${new Date("2021-11-28T13:30:00")} | ${"opened"} | ${90}   | ${0}
+      ${"最後の予測点時間以降"}     | ${new Date("2021-11-28T13:10:00")} | ${"opened"} | ${90}   | ${0}
     `("$label", ({ label, now, state, percent, fillMinutes }) => {
       expect(parkingStatus(now, game, parkingWontFill, emptyPosts)).toMatchObject({
         state: state,
@@ -235,6 +240,11 @@ describe("parkingStatus", () => {
   describe("投稿なし/満車の予測データなし駐車場（駐車場開場調整マイナス）", () => {
     test.each`
       label                         | now                                | state       | percent | fillMinutes
+      ${"最初の予測地点"}           | ${new Date("2021-11-28T07:30:00")} | ${"opened"} | ${0}    | ${0}
+      ${"2つ目の予測地点"}          | ${new Date("2021-11-28T10:45:00")} | ${"opened"} | ${10}   | ${0}
+      ${"3つ目の予測地点"}          | ${new Date("2021-11-28T11:00:00")} | ${"opened"} | ${50}   | ${0}
+      ${"3つ目と4つ目の予測地点"}   | ${new Date("2021-11-28T11:15:00")} | ${"opened"} | ${65}   | ${0}
+      ${"4つ目の予測地点"}          | ${new Date("2021-11-28T11:30:00")} | ${"opened"} | ${80}   | ${0}
       ${"最後の予測点時間ぴったり"} | ${new Date("2021-11-28T12:30:00")} | ${"opened"} | ${90}   | ${0}
       ${"最後の予測点時間以降"}     | ${new Date("2021-11-28T12:40:00")} | ${"opened"} | ${90}   | ${0}
     `("$label", ({ label, now, state, percent, fillMinutes }) => {
@@ -251,6 +261,11 @@ describe("parkingStatus", () => {
   describe("投稿なし/満車の予測データなし駐車場（駐車場開場調整プラス）", () => {
     test.each`
       label                         | now                                | state       | percent | fillMinutes
+      ${"最初の予測地点"}           | ${new Date("2021-11-28T08:30:00")} | ${"opened"} | ${0}    | ${0}
+      ${"2つ目の予測地点"}          | ${new Date("2021-11-28T11:45:00")} | ${"opened"} | ${10}   | ${0}
+      ${"3つ目の予測地点"}          | ${new Date("2021-11-28T12:00:00")} | ${"opened"} | ${50}   | ${0}
+      ${"3つ目と4つ目の予測地点"}   | ${new Date("2021-11-28T12:15:00")} | ${"opened"} | ${65}   | ${0}
+      ${"4つ目の予測地点"}          | ${new Date("2021-11-28T12:30:00")} | ${"opened"} | ${80}   | ${0}
       ${"最後の予測点時間ぴったり"} | ${new Date("2021-11-28T13:30:00")} | ${"opened"} | ${90}   | ${0}
       ${"最後の予測点時間以降"}     | ${new Date("2021-11-28T13:40:00")} | ${"opened"} | ${90}   | ${0}
     `("$label", ({ label, now, state, percent, fillMinutes }) => {
